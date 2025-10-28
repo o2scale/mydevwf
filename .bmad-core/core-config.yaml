@@ -16,7 +16,10 @@ customTechnicalDocuments: null
 devLoadAlwaysFiles:
   - docs/architecture/coding-standards.md
   - docs/architecture/tech-stack.md
-  - docs/architecture/source-tree.md
+  - docs/architecture/unified-project-structure.md
+  - .bmad-core/data/testing-stack-guide.md
 devDebugLog: .ai/debug-log.md
+# Story file location (v3 pattern: flat directory with {epic}.{story}.story.md files)
+# For v4 hierarchical pattern, use: docs/sprint-N/epics/epic-N/
 devStoryLocation: docs/stories
 slashPrefix: BMad

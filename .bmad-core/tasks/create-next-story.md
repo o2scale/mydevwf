@@ -46,7 +46,9 @@ To identify the next logical story based on project progress and epic definition
 
 #### 3.2 Read Architecture Documents Based on Story Type
 
-**For ALL Stories:** tech-stack.md, unified-project-structure.md, coding-standards.md, testing-stack-guide.md
+**For ALL Stories (from docs/architecture/):** tech-stack.md, unified-project-structure.md, coding-standards.md
+
+**For ALL Stories (from .bmad-core/data/):** testing-stack-guide.md
 
 **For Backend/API Stories, additionally:** data-models.md, database-schema.md, backend-architecture.md, rest-api-spec.md, external-apis.md
 
