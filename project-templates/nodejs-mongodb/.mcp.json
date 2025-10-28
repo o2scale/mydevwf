@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "mongodb-local": {
+      "transport": "stdio",
+      "command": "npx",
+      "args": ["@mongodb/mcp-server-mongodb"],
+      "env": {
+        "MONGODB_URI": "mongodb://localhost:27017/myapp_dev"
+      },
+      "description": "Local MongoDB instance"
+    },
+    "swagger-api": {
+      "transport": "http",
+      "url": "http://localhost:4000/api-docs",
+      "description": "Node.js/Express API documentation"
+    }
+  }
+}

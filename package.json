@@ -1,0 +1,25 @@
+{
+  "name": "mydevwf",
+  "version": "1.0.0",
+  "description": "Development workflow templates with BMad Method and Claude Code MCP integration",
+  "scripts": {
+    "create-project": "node scripts/create-project.js",
+    "mcp:list": "claude mcp list",
+    "mcp:verify": "echo '✅ Playwright MCP installed globally' && claude mcp list",
+    "setup": "npm install && echo '✅ Ready to create projects'",
+    "help": "node scripts/help.js"
+  },
+  "keywords": [
+    "workflow",
+    "template",
+    "bmad",
+    "mcp",
+    "claude-code"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "your-repo-url"
+  }
+}

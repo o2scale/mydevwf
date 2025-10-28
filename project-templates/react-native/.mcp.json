@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "swagger-mobile-api": {
+      "transport": "http",
+      "url": "http://localhost:3000/api/mobile/docs",
+      "description": "Mobile backend API endpoints"
+    }
+  },
+  "_note": "Add Supabase or MongoDB MCP based on your chosen backend stack. See .claude/settings.local.json.example for examples."
+}

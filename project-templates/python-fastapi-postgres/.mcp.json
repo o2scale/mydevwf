@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "swagger-api": {
+      "transport": "http",
+      "url": "http://localhost:8000/openapi.json",
+      "description": "FastAPI backend API - auto-generated OpenAPI documentation"
+    }
+  }
+}

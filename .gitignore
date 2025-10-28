@@ -1,0 +1,107 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+*.log
+
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Project-specific (created from templates)
+project-templates/*/node_modules/
+project-templates/*/.env
+project-templates/*/.env.local
+project-templates/*/dist/
+project-templates/*/build/
+project-templates/*/.next/
+
+# Vitest
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Local database files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Debug
+debug/
+.debug/
+
+# Keep folder structure but ignore content in certain test directories (optional)
+# docs/qa/evidence/**/*
+# !docs/qa/evidence/**/.gitkeep
+
+# Keep example/template files
+!docs/templates/
+!project-templates/
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "supabase-staging": {
+      "transport": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=YOUR_PROJECT_REF&read_only=true",
+      "description": "Staging Supabase project (read-only for safety)"
+    },
+    "swagger-api-staging": {
+      "transport": "http",
+      "url": "https://staging-api.example.com/api-docs",
+      "description": "Staging API (override local for remote testing)"
+    }
+  }
+}

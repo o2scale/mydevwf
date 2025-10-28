@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "swagger-api-staging": {
+      "transport": "http",
+      "url": "https://staging-api.example.com/openapi.json",
+      "description": "Staging API (override local for remote testing)"
+    }
+  }
+}

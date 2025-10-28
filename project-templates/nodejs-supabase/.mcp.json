@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "supabase-local": {
+      "transport": "http",
+      "url": "http://localhost:54321/mcp",
+      "description": "Local Supabase instance via CLI"
+    },
+    "swagger-api": {
+      "transport": "http",
+      "url": "http://localhost:3000/api-docs",
+      "description": "Node.js/Express API documentation"
+    }
+  }
+}
