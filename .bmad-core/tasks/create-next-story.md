@@ -28,6 +28,19 @@ To identify the next logical story based on project progress and epic definition
 - **If no story files exist:** The next story is ALWAYS 1.1 (first story of first epic)
 - Announce the identified story to the user: "Identified next story for preparation: {epicNum}.{storyNum} - {Story Title}"
 
+#### 1.2 Check for Database Setup Requirement (Story 1.1 Only)
+
+- **If identified story is 1.1 (first story of first epic):**
+  - Check `docs/architecture/tech-stack.md` for database technology (Supabase, MongoDB, PostgreSQL)
+  - Check `docs/architecture/database-schema.md` exists
+  - **If database exists in project:**
+    - Override Story 1.1 to be "Database Setup"
+    - This story becomes P0 BLOCKER (all other stories depend on this)
+    - Estimated effort: 2 SP
+    - Announce: "Story 1.1 will be Database Setup (P0 BLOCKER) - Required for all backend stories"
+  - **If no database found:**
+    - Proceed with normal Story 1.1 from epic
+
 ### 2. Gather Story Requirements and Previous Story Context
 
 - Extract story requirements from the identified epic file
@@ -81,6 +94,48 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
 
 - Create new story file: `{devStoryLocation}/{epicNum}.{storyNum}.story.md` using Story Template
 - Fill in basic story information: Title, Status (Draft), Story statement, Acceptance Criteria from Epic
+
+#### 5.1 Special Handling for Database Setup Story (Story 1.1 with Database)
+
+**If this is Story 1.1 AND database was detected in Step 1.2:**
+
+- **Title**: "Database Setup"
+- **Epic**: 1 - Foundation
+- **Priority**: P0 (BLOCKER - all other stories depend on this)
+- **Estimate**: 2 SP
+- **Description**: "Implement complete database schema as defined in `docs/architecture/database-schema.md` using Database MCP migration tracking. This ensures the database structure matches architecture documentation exactly with zero schema drift."
+- **Acceptance Criteria**:
+  - AC1: All tables/collections created as documented
+  - AC2: All indexes created for performance
+  - AC3: All relationships/constraints created for data integrity
+  - AC4: All features installed (extensions for PostgreSQL, validation for MongoDB)
+  - AC5: Migration tracked in database (001_initial_schema)
+  - AC6: Schema verification confirms 100% match with documentation
+- **Dev Notes**:
+  - Load: `docs/architecture/database-schema.md` (the schema definition)
+  - Load: `.bmad-core/data/database-workflow-guide.md` (universal principles)
+  - Load: `docs/architecture/database-workflow-{database}.md` (Supabase/MongoDB/Postgres-specific tools)
+  - Database type: [detected from tech-stack.md]
+  - Use: Database MCP migration tool (NOT manual SQL/commands)
+  - Verify: Structure listing, feature verification, migration tracking
+  - Document: Verification results in Dev Agent Record section
+- **Testing**:
+  - Unit Tests: Not applicable for database setup
+  - E2E Tests: Not applicable (database is infrastructure, not user-facing)
+  - Verification: Manual verification via MCP inspection tools
+- **Tasks**:
+  1. Load database schema documentation (docs/architecture/database-schema.md)
+  2. Load database workflow guides (generic + database-specific)
+  3. Apply schema via Database MCP migration tool (001_initial_schema)
+  4. Verify all structures created (tables/collections)
+  5. Verify all features installed (indexes, extensions, validation rules)
+  6. Verify migration tracked in database
+  7. Spot-check structure definitions match documentation
+  8. Document verification results in story Dev Notes
+
+**Skip to Step 6 after populating Database Setup story.**
+
+#### 5.2 Regular Story Population (All Other Stories)
 - **`Dev Notes` section (CRITICAL):**
   - CRITICAL: This section MUST contain ONLY information extracted from architecture documents. NEVER invent or assume technical details.
   - Include ALL relevant technical details from Steps 2-3, organized by category:

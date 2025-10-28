@@ -255,6 +255,58 @@ For existing codebases, follow this sequence:
 
 **See**: `.bmad-core/working-in-the-brownfield.md` for complete brownfield guide
 
+### Database Architecture Workflow
+
+For backend/fullstack projects with databases, database setup is a critical first step.
+
+**Story 1.1: Database Setup (Automatic)**
+
+When creating Story 1.1 for projects with a database, the SM agent automatically creates a Database Setup story as P0 BLOCKER:
+
+1. **SM creates Story 1.1**: `/BMad/tasks/create-next-story`
+   - Detects database in `docs/architecture/tech-stack.md`
+   - Finds schema in `docs/architecture/database-schema.md`
+   - Creates Database Setup story (P0 BLOCKER, 2 SP)
+
+2. **Dev implements database schema**: `/BMad/tasks/execute-checklist`
+   - Loads generic guide: `.bmad-core/data/database-workflow-guide.md`
+   - Loads database-specific guide: `docs/architecture/database-workflow-{database}.md`
+   - Uses Database MCP tools (Supabase/MongoDB MCP)
+   - Applies schema via migration tool (tracked in database)
+   - Verifies 100% match with documentation
+
+3. **All subsequent stories depend on database being ready**
+
+**Key Principles**:
+- ✅ **ALWAYS use Database MCP tools** for schema operations (never manual SQL/commands)
+- ✅ **Schema as source of truth**: `docs/architecture/database-schema.md`
+- ✅ **Migration tracking**: All changes tracked in database via MCP migration tools
+- ✅ **Zero schema drift**: Verification confirms implemented = documented (100%)
+- ✅ **Template-specific guides**: Supabase vs MongoDB have different MCP tools
+
+**Database-Specific Guides**:
+- **Generic workflow**: `.bmad-core/data/database-workflow-guide.md` (universal principles)
+- **Supabase**: `project-templates/nodejs-supabase/docs/architecture/database-workflow-supabase.md`
+- **MongoDB**: `project-templates/nodejs-mongodb/docs/architecture/database-workflow-mongodb.md`
+
+**Example Flow**:
+```
+1. Architect creates database-schema.md (420 lines of perfect schema)
+2. SM creates Story 1.1: Database Setup (auto-generated, P0 BLOCKER)
+3. Dev loads schema + workflow guides
+4. Dev uses Supabase MCP: apply_migration({ name: "001_initial_schema", sql: [schema] })
+5. Dev verifies: list_tables(), list_extensions(), list_migrations()
+6. Dev documents: "✅ 5 tables, 15 indexes, 8 foreign keys, 100% match"
+7. Database ready → All other stories can proceed
+```
+
+**Benefits**:
+- 🎯 **No schema drift**: MCP ensures exact implementation
+- 📊 **Audit trail**: Every change tracked with timestamps
+- 🔄 **Rollback support**: Migration history enables safe rollbacks
+- ⚡ **Fast setup**: Copy schema → Apply via MCP → Verify (< 5 minutes)
+- 📝 **Documentation sync**: Schema docs = database reality
+
 ## QA/Test Architect Integration
 
 The QA agent (Quinn) provides comprehensive quality assurance throughout the development lifecycle.
@@ -346,6 +398,27 @@ This keeps agent context manageable and focused.
 /BMad/tasks/create-next-story
 # Review and approve the generated story
 /BMad/tasks/execute-checklist docs/stories/{story-file}.md
+```
+
+### Database Setup (Story 1.1 for Backend/Fullstack)
+```bash
+# SM creates Story 1.1 (auto-detects database, creates Database Setup story)
+/BMad/tasks/create-next-story
+
+# Dev implements database schema
+/BMad/agents/dev
+*develop-story docs/stories/1.1.story.md
+
+# Dev loads automatically:
+# - .bmad-core/data/database-workflow-guide.md
+# - docs/architecture/database-workflow-{database}.md
+# - docs/architecture/database-schema.md
+
+# Dev uses Database MCP tools:
+# - Supabase: apply_migration, list_tables, list_extensions, list_migrations
+# - MongoDB: collectionSchema, create, read, list (via mongodb-mcp-server)
+
+# Result: Database ready, 100% match with documentation
 ```
 
 ### QA Review Process
