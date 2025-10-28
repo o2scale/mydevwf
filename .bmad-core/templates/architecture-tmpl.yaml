@@ -512,17 +512,19 @@ sections:
           - id: unit-tests
             title: Unit Tests
             template: |
-              - **Framework:** {{unit_test_framework}} {{version}}
-              - **File Convention:** {{unit_test_naming}}
-              - **Location:** {{unit_test_location}}
+              - **Framework:** Vitest {{version}} (ONLY for complex logic with 10+ edge cases)
+              - **File Convention:** {{unit_test_naming}} (e.g., `calculateTax.test.ts`)
+              - **Location:** `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
               - **Mocking Library:** {{mocking_library}}
               - **Coverage Requirement:** {{unit_coverage}}
 
               **AI Agent Requirements:**
-              - Generate tests for all public methods
+              - Write Vitest tests ONLY for complex logic with 10+ edge cases
+              - Examples: Tax calculations, complex validations, algorithms
               - Cover edge cases and error conditions
               - Follow AAA pattern (Arrange, Act, Assert)
               - Mock all external dependencies
+              - Reference: `.bmad-core/data/testing-stack-guide.md`
           - id: integration-tests
             title: Integration Tests
             template: |
@@ -537,10 +539,15 @@ sections:
           - id: e2e-tests
             title: End-to-End Tests
             template: |
-              - **Framework:** {{e2e_framework}} {{version}}
-              - **Scope:** {{e2e_scope}}
+              - **Framework:** Playwright MCP (interactive browser control via 26 MCP tools)
+              - **Format:** Markdown test scenarios (NOT `.spec.ts` files)
+              - **Location:** `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+              - **Scope:** ALL user journeys (login, checkout, forms, workflows)
+              - **Execution:** QA agent uses Playwright MCP tools interactively
               - **Environment:** {{e2e_environment}}
               - **Test Data:** {{e2e_data_strategy}}
+              - **Evidence:** Screenshots and console logs in `docs/qa/evidence/`
+              - **Reference:** `.bmad-core/data/testing-stack-guide.md#playwright-mcp`
       - id: test-data-management
         title: Test Data Management
         template: |

@@ -185,9 +185,9 @@ sections:
           - ["Cache", "{{cache}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["File Storage", "{{storage}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["Authentication", "{{auth}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
-          - ["Frontend Testing", "{{fe_test}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
-          - ["Backend Testing", "{{be_test}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
-          - ["E2E Testing", "{{e2e_test}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Unit Testing", "Vitest", "{{version}}", "Unit tests for complex logic (10+ edge cases)", "Fast, modern, TypeScript-first testing framework"]
+          - ["E2E Testing", "Playwright MCP", "{{version}}", "Interactive browser control for all user journeys", "26 MCP tools for QA agent execution, markdown test scenarios"]
+          - ["NO Jest", "N/A", "N/A", "Eliminated entirely", "Replaced by Vitest + Playwright MCP hybrid approach"]
           - ["Build Tool", "{{build_tool}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["Bundler", "{{bundler}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["IaC Tool", "{{iac_tool}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
@@ -682,7 +682,24 @@ sections:
 
   - id: testing-strategy
     title: Testing Strategy
-    instruction: Define comprehensive testing approach for fullstack application.
+    instruction: |
+      Define comprehensive testing approach for fullstack application.
+
+      CRITICAL: Reference `.bmad-core/data/testing-stack-guide.md` for the hybrid testing workflow.
+
+      **Testing Approach:**
+      - Unit Tests: Vitest (ONLY for complex logic with 10+ edge cases)
+      - E2E Tests: Playwright MCP (interactive browser control for ALL user journeys)
+      - Test Scenarios: Dev writes markdown documentation (NOT test code for E2E)
+      - Test Execution: QA runs Vitest first, then E2E via Playwright MCP tools
+
+      **Key Points:**
+      - NO Jest (eliminated entirely)
+      - Dev writes Vitest tests AND E2E scenarios (markdown)
+      - QA executes tests (Dev does NOT run them)
+      - Evidence collection via Playwright MCP screenshots and console logs
+
+      [Source: .bmad-core/data/testing-stack-guide.md]
     elicit: true
     sections:
       - id: testing-pyramid

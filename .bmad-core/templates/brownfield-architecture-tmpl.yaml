@@ -377,10 +377,25 @@ sections:
     instruction: |
       Define testing approach for the enhancement:
 
-      1. Integrate with existing test suite
-      2. Ensure existing functionality remains intact
-      3. Plan for testing new features
+      1. Integrate with existing test suite (may need to coexist with legacy tests)
+      2. Ensure existing functionality remains intact (regression testing)
+      3. Plan for testing new features using hybrid Vitest + Playwright MCP workflow
       4. Define integration testing approach
+
+      CRITICAL: Reference `.bmad-core/data/testing-stack-guide.md` for the hybrid testing workflow.
+
+      **New Feature Testing Approach:**
+      - Unit Tests: Vitest (ONLY for complex logic with 10+ edge cases)
+      - E2E Tests: Playwright MCP (interactive browser control for ALL user journeys)
+      - Test Scenarios: Dev writes markdown documentation (NOT test code for E2E)
+      - Test Execution: QA runs Vitest first, then E2E via Playwright MCP tools
+
+      **Legacy Test Handling:**
+      - Existing tests may use Jest or other frameworks (keep running)
+      - New tests use Vitest + Playwright MCP workflow
+      - Gradual migration: Convert P0/P1 tests over time
+
+      [Source: .bmad-core/data/testing-stack-guide.md#migration-from-jest]
     elicit: true
     sections:
       - id: existing-test-integration
@@ -395,16 +410,20 @@ sections:
           - id: unit-tests
             title: Unit Tests for New Components
             template: |
-              - **Framework:** {{test_framework}}
-              - **Location:** {{test_location}}
-              - **Coverage Target:** {{coverage_target}}
-              - **Integration with Existing:** {{test_integration}}
+              - **Framework:** Vitest (for complex logic with 10+ edge cases)
+              - **Location:** `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
+              - **Coverage Target:** P0 >90%, P1 >80%, P2 >60%
+              - **Integration with Existing:** May coexist with legacy Jest tests
+              - **Migration Plan:** {{legacy_test_migration_plan}}
           - id: integration-tests
-            title: Integration Tests
+            title: E2E Tests for New Features
             template: |
-              - **Scope:** {{integration_test_scope}}
+              - **Framework:** Playwright MCP (26 interactive browser control tools)
+              - **Format:** Markdown test scenarios (NOT `.spec.ts` files)
+              - **Location:** `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+              - **Scope:** ALL new user journeys and workflows
               - **Existing System Verification:** {{existing_system_verification}}
-              - **New Feature Testing:** {{new_feature_testing}}
+              - **Evidence:** Screenshots and console logs in `docs/qa/evidence/`
           - id: regression-tests
             title: Regression Testing
             template: |

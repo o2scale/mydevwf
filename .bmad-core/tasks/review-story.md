@@ -87,11 +87,52 @@ required:
 - Do NOT alter story content beyond QA Results section
 - Do NOT change story Status or File List; recommend next status only
 
-### 4. Standards Compliance Check
+### 4. Testing Execution (CRITICAL - Follow This Order)
+
+**STEP 1: Run Vitest Tests (if they exist)**
+- Check if Vitest tests exist in `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
+- IF tests exist:
+  - Run `npm run test` (or `npm run test:unit`) FIRST
+  - Verify all tests pass
+  - IF failures: Document in QA Results section, create Developer Handoff, HALT review
+  - IF pass: Proceed to E2E execution
+
+**STEP 2: Execute E2E Test Scenarios via Playwright MCP**
+- Read test scenarios from `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+- Verify background processes running (http://localhost:3000, backend port, etc.)
+- For each test case (TC{AC}.{case}):
+  1. Use `browser_navigate(url)` to navigate to starting page
+  2. Use `browser_snapshot()` to get page structure with element refs
+  3. Use interaction tools for actions:
+     - `browser_click(element, ref)` - Click buttons/links
+     - `browser_type(element, ref, text)` - Type into inputs
+     - `browser_fill_form(fields)` - Fill multiple form fields at once
+     - `browser_select_option(element, ref, value)` - Select dropdowns
+  4. Use `browser_console_messages()` to check for JavaScript errors after each interaction
+  5. Use `browser_take_screenshot(filename)` to capture visual evidence
+  6. Use `browser_wait_for(condition, timeout)` if needed for async operations
+  7. **Manually observe**: Does the behavior match expected outcome?
+  8. Record PASS/FAIL decision for each test case
+
+**STEP 3: Evidence Collection**
+- Save all screenshots to `docs/qa/evidence/sprint-N/epics/epic-N/story-N/`
+- Naming convention: `tc{AC}.{case}-{description}.png` (e.g., `tc1.1-login-success.png`)
+- Capture console logs if any errors found (save to `console-logs.txt`)
+- Document any deviations from expected behavior in notes
+
+**STEP 4: Gap Analysis (Optional)**
+- IF logic gaps found during E2E testing:
+  - QA CAN add Vitest tests in `docs/qa/unit/` to fill gaps
+  - Document added tests in QA Results section
+  - Explain why gap existed and what was added
+
+[Source: .bmad-core/data/testing-stack-guide.md#phase-2-qa-testing-execution]
+
+### 5. Standards Compliance Check
 
 - Verify adherence to `docs/coding-standards.md`
 - Check compliance with `docs/unified-project-structure.md`
-- Validate testing approach against `docs/testing-strategy.md`
+- Validate testing approach against `.bmad-core/data/testing-stack-guide.md`
 - Ensure all guidelines mentioned in the story are followed
 
 ### 5. Acceptance Criteria Validation

@@ -46,7 +46,7 @@ To identify the next logical story based on project progress and epic definition
 
 #### 3.2 Read Architecture Documents Based on Story Type
 
-**For ALL Stories:** tech-stack.md, unified-project-structure.md, coding-standards.md, testing-strategy.md
+**For ALL Stories:** tech-stack.md, unified-project-structure.md, coding-standards.md, testing-stack-guide.md
 
 **For Backend/API Stories, additionally:** data-models.md, database-schema.md, backend-architecture.md, rest-api-spec.md, external-apis.md
 
@@ -87,14 +87,30 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
     - **API Specifications**: Endpoint details, request/response formats, auth requirements [with source references]
     - **Component Specifications**: UI component details, props, state management [with source references]
     - **File Locations**: Exact paths where new code should be created based on project structure
-    - **Testing Requirements**: Specific test cases or strategies from testing-strategy.md
+    - **Testing Requirements**: Specific test cases or strategies from testing-stack-guide.md
     - **Technical Constraints**: Version requirements, performance considerations, security rules
   - Every technical detail MUST include its source reference: `[Source: architecture/{filename}.md#{section}]`
   - If information for a category is not found in the architecture docs, explicitly state: "No specific guidance found in architecture docs"
+- **`Testing` section (CRITICAL):**
+  - **Unit Tests (Vitest)**: Required ONLY if complex logic with 10+ edge cases
+    - Examples: Tax calculations, complex validations, algorithms with multiple branches
+    - Location: `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
+    - Dev writes actual `.test.ts` files with test code
+    - [Source: .bmad-core/data/testing-stack-guide.md]
+  - **E2E Test Scenarios**: Required for ALL user journeys (login, checkout, forms, workflows)
+    - Format: Markdown test scenarios, NOT test code files (no `.spec.ts`)
+    - Location: `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+    - Organize by acceptance criteria: TC{AC-number}.{case-number}
+    - Include for each test case: Steps, Expected behavior, Priority (P0/P1/P2/P3)
+    - Example: TC1.1 (first test case for AC1), TC1.2 (second test case for AC1)
+    - [Source: .bmad-core/data/testing-stack-guide.md#test-scenario-writing-guidelines]
+  - **Context7 Usage**: Add "use context7" to prompts when writing tests for latest Vitest/Playwright patterns
+  - **Testing Workflow**: Dev writes tests but does NOT run them (QA's responsibility)
 - **`Tasks / Subtasks` section:**
   - Generate detailed, sequential list of technical tasks based ONLY on: Epic Requirements, Story AC, Reviewed Architecture Information
   - Each task must reference relevant architecture documentation
-  - Include unit testing as explicit subtasks based on the Testing Strategy
+  - Include Vitest unit test writing as explicit subtasks IF complex logic exists (10+ edge cases)
+  - Include E2E test scenario writing as explicit subtasks for ALL user-facing features
   - Link tasks to ACs where applicable (e.g., `Task 1 (AC: 1, 3)`)
 - Add notes on project structure alignment or discrepancies found in Step 4
 

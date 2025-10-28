@@ -47,6 +47,53 @@ Quick rules:
 - **Integration**: Component interactions, DB operations
 - **E2E**: Critical user journeys, compliance
 
+### 2.5. Test Tooling Selection (CRITICAL)
+
+**Based on test level, select appropriate tooling:**
+
+**Unit Tests → Vitest**
+- **When**: Pure functions, algorithms, complex logic with 10+ edge cases
+- **Format**: `.test.ts` or `.test.tsx` files with actual test code
+- **Location**: `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
+- **Execution**: `npm run test` (QA runs this FIRST)
+- **Examples**:
+  - Tax calculation with 15 tax bracket combinations
+  - Email validation with 12 edge cases (special chars, domains, etc.)
+  - Date parsing with timezone handling (10+ scenarios)
+  - Complex business rules with multiple conditional branches
+
+**E2E Tests → Playwright MCP (Interactive Browser Control)**
+- **When**: ALL user journeys, UI interactions, workflows
+- **Format**: Markdown test scenarios, NOT test code files (no `.spec.ts`)
+- **Location**: `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+- **Execution**: QA uses 26 Playwright MCP tools interactively
+  - Navigation: `browser_navigate`, `browser_navigate_back`, `browser_navigate_forward`
+  - Inspection: `browser_snapshot`, `browser_console_messages`, `browser_take_screenshot`
+  - Interaction: `browser_click`, `browser_type`, `browser_fill_form`, `browser_select_option`, `browser_hover`, `browser_drag`, `browser_press_key`
+  - Utility: `browser_wait_for`, `browser_resize`, `browser_evaluate`, `browser_handle_dialog`, `browser_file_upload`
+  - Advanced: `browser_network_requests`, `browser_close`, `browser_install`
+  - Tabs: `browser_tab_list`, `browser_tab_new`, `browser_tab_select`, `browser_tab_close`
+  - PDF/Code: `browser_pdf_save`, `browser_generate_playwright_test`
+- **Examples**:
+  - Login flow (navigate → fill form → submit → verify redirect)
+  - Checkout process (add to cart → enter shipping → payment → confirm)
+  - Form validation (test error states, field interactions)
+
+**Decision Rule - Vitest vs E2E Only:**
+- Use Vitest: Complex logic with 10+ edge cases (faster to test via code)
+- Use E2E only: Simple CRUD, UI components, features with < 10 edge cases
+- Use Both: Complex calculations (Vitest) + User workflow that uses them (E2E)
+
+**Example - When Both Make Sense:**
+```
+Feature: Tax Calculator Widget
+- Vitest: Test calculateTax() function with 20 edge cases (seconds to run)
+- E2E: Test user entering income → widget displays calculated tax (validates real UX)
+```
+
+[Source: .bmad-core/data/test-levels-framework.md#framework-selection-by-platform]
+[Source: .bmad-core/data/testing-stack-guide.md#when-to-use-vitest-vs-e2e-only]
+
 ### 3. Assign Priorities
 
 **Reference:** Load `test-priorities-matrix.md` for classification

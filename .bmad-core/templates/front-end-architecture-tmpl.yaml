@@ -86,7 +86,8 @@ sections:
           - ["Routing", "{{routing_library}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["Build Tool", "{{build_tool}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
           - ["Styling", "{{styling_solution}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
-          - ["Testing", "{{test_framework}}", "{{version}}", "{{purpose}}", "{{why_chosen}}"]
+          - ["Unit Testing", "Vitest", "{{version}}", "Complex logic with 10+ edge cases", "Fast, modern, TypeScript-first testing"]
+          - ["E2E Testing", "Playwright MCP", "{{version}}", "Interactive browser control for user journeys", "26 MCP tools, markdown scenarios, QA-driven execution"]
           - [
               "Component Library",
               "{{component_lib}}",
@@ -178,7 +179,24 @@ sections:
 
   - id: testing-requirements
     title: Testing Requirements
-    instruction: Define minimal testing requirements based on the chosen framework.
+    instruction: |
+      Define minimal testing requirements based on the chosen framework.
+
+      CRITICAL: Reference `.bmad-core/data/testing-stack-guide.md` for the hybrid testing workflow.
+
+      **Testing Approach:**
+      - Unit Tests: Vitest (ONLY for complex logic with 10+ edge cases)
+      - E2E Tests: Playwright MCP (interactive browser control for ALL user journeys)
+      - Test Scenarios: Dev writes markdown documentation (NOT test code for E2E)
+      - Test Execution: QA runs Vitest first, then E2E via Playwright MCP tools
+
+      **Key Points:**
+      - NO Jest (eliminated entirely)
+      - Vitest for complex logic ONLY (not for UI components)
+      - E2E scenarios in markdown format: `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+      - Dev does NOT run tests (QA's responsibility)
+
+      [Source: .bmad-core/data/testing-stack-guide.md]
     elicit: true
     sections:
       - id: component-test-template
@@ -190,12 +208,14 @@ sections:
         title: Testing Best Practices
         type: numbered-list
         items:
-          - "**Unit Tests**: Test individual components in isolation"
-          - "**Integration Tests**: Test component interactions"
-          - "**E2E Tests**: Test critical user flows (using Cypress/Playwright)"
-          - "**Coverage Goals**: Aim for 80% code coverage"
-          - "**Test Structure**: Arrange-Act-Assert pattern"
-          - "**Mock External Dependencies**: API calls, routing, state management"
+          - "**Unit Tests (Vitest)**: ONLY for complex logic with 10+ edge cases (NOT for UI components)"
+          - "**E2E Tests (Playwright MCP)**: ALL user journeys via 26 interactive MCP tools"
+          - "**Test Scenarios**: Write markdown test scenarios, NOT `.spec.ts` files for E2E"
+          - "**Coverage Goals**: P0 >90%, P1 >80%, P2 >60% based on priority"
+          - "**Test Structure**: AAA pattern (Arrange-Act-Assert) for Vitest"
+          - "**Evidence Collection**: QA captures screenshots and console logs via Playwright MCP"
+          - "**NO Jest**: Eliminated entirely, replaced by Vitest + Playwright MCP hybrid"
+          - "**Reference**: `.bmad-core/data/testing-stack-guide.md` for complete workflow"
 
   - id: environment-configuration
     title: Environment Configuration
