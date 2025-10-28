@@ -70,7 +70,8 @@ QA Gates: docs/qa/gates/
 These files are always loaded by the dev agent (defined in `core-config.yaml`):
 - `docs/architecture/coding-standards.md`
 - `docs/architecture/tech-stack.md`
-- `docs/architecture/source-tree.md`
+- `docs/architecture/unified-project-structure.md` ⚠️ (was: source-tree.md)
+- `.bmad-core/data/testing-stack-guide.md` ✅ (added: testing workflow guidance)
 
 ## Model Context Protocol (MCP) Integration
 
@@ -378,6 +379,199 @@ This keeps agent context manageable and focused.
 - **Knowledge Base**: `.bmad-core/data/bmad-kb.md` - Framework overview
 - **Technical Preferences**: `.bmad-core/data/technical-preferences.md` - Team preferences for tech choices
 
+## Recent System Optimizations (October 2024)
+
+### ⚡ Major Changes Summary
+
+**Status**: PRODUCTION READY ✅
+**Last Updated**: 2025-10-28
+**Phase 1 Critical Path**: VALIDATED ✅
+
+### 🎯 Key Architectural Decisions
+
+#### 1. **Testing Strategy: Vitest + Playwright MCP Hybrid**
+
+**DECIDED**: Hybrid approach for maximum efficiency + reality
+- ✅ **Vitest**: ONLY for complex logic with 10+ edge cases (tax calculations, algorithms, validation)
+- ✅ **Playwright MCP**: ALL user journeys via 26 interactive browser control tools
+- ❌ **Jest**: ELIMINATED ENTIRELY (replaced by Vitest)
+
+**Why**:
+- Vitest = Fast (milliseconds for 100+ tests), perfect for pure functions
+- Playwright MCP = Real-world testing with human observation, no test code maintenance
+
+**Where**: `.bmad-core/data/testing-stack-guide.md` (comprehensive 326-line guide)
+
+**Test Scenarios Format**:
+- Dev writes: Markdown test scenarios (NOT `.spec.ts` files)
+- Format: `TC{AC}.{case}` (e.g., TC1.1, TC1.2)
+- Location: `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
+- Execution: QA uses Playwright MCP tools interactively
+
+**Workflow**:
+1. Dev writes feature + Vitest tests (if complex) + E2E scenarios (markdown)
+2. Dev starts background processes, outputs QA Handoff, HALTS (does NOT run tests)
+3. QA runs Vitest FIRST (`npm run test`), then E2E via Playwright MCP tools
+4. QA manually observes, captures screenshots/console logs, decides PASS/FAIL
+
+#### 2. **Context7 MCP Integration**
+
+**DECIDED**: All planning agents use Context7 MCP for real-time documentation
+- ✅ **Analyst**: Tech stack research, competitive analysis
+- ✅ **PM**: Technical feasibility validation
+- ✅ **Architect**: Framework/library selection, API design (MOST CRITICAL)
+- ✅ **UX Expert**: React/React Native component patterns, UI libraries
+- ✅ **Dev**: Already has Context7 (writes code daily)
+- ✅ **QA**: Already has Context7 (testing patterns)
+
+**Why**: Prevents deprecated code patterns, ensures current best practices
+
+**How**: Add "use context7 - {question}" to prompts when researching technical solutions
+
+#### 3. **Two-Terminal Development Workflow**
+
+**DECIDED**: Dev and QA agents run in separate terminals with structured handoffs
+- **Dev Terminal**: Implements features, writes tests, starts processes
+- **QA Terminal**: Executes tests, validates quality, creates gate files
+
+**Handoff Templates** (in `.bmad-core/data/handoff-templates.md`):
+- QA Handoff (Dev → QA)
+- Developer Handoff (QA → Dev, if issues found)
+- Completion Handoff (QA → SM, if PASS)
+
+### 🔧 Critical Integration Rules
+
+**⚠️ NEVER BREAK THESE INVARIANTS:**
+
+#### File Location Facts
+
+1. **testing-stack-guide.md**:
+   - ✅ LOCATION: `.bmad-core/data/testing-stack-guide.md`
+   - ❌ NOT IN: `docs/architecture/testing-stack-guide.md`
+   - WHO LOADS: create-next-story, review-story, dev agent, QA agent
+
+2. **Architecture Files** (created by architect agent):
+   - ✅ LOCATION: `docs/architecture/`
+   - FILES: coding-standards.md, tech-stack.md, unified-project-structure.md
+   - ❌ NOT: source-tree.md (old name, now unified-project-structure.md)
+
+3. **Story Files**:
+   - ✅ PATTERN: v3 (flat) = `docs/stories/{epic}.{story}.story.md`
+   - ℹ️ ALTERNATIVE: v4 (hierarchical) = `docs/sprint-N/epics/epic-N/story-N.md`
+   - CONFIGURED IN: `core-config.yaml` → `devStoryLocation`
+
+4. **Dev Agent Context Files** (from core-config.yaml):
+   ```yaml
+   devLoadAlwaysFiles:
+     - docs/architecture/coding-standards.md
+     - docs/architecture/tech-stack.md
+     - docs/architecture/unified-project-structure.md
+     - .bmad-core/data/testing-stack-guide.md
+   ```
+
+#### Integration Flow Rules
+
+1. **Workflows → Agents**: Workflows invoke agents by ID (must match `.bmad-core/agents/{agent-id}.md`)
+2. **Agents → Tasks**: Agent commands map to tasks in `.bmad-core/tasks/{task-name}.md`
+3. **Tasks → Templates**: Tasks load templates from `.bmad-core/templates/{template-name}.yaml`
+4. **Tasks → Data**: Tasks reference data files in `.bmad-core/data/{data-file}.md`
+5. **Config Drives All**: `core-config.yaml` defines all paths, ALWAYS check this first
+
+#### Task File References
+
+**create-next-story.md** (Line 49-51):
+```markdown
+For ALL Stories (from docs/architecture/):
+  - tech-stack.md
+  - unified-project-structure.md
+  - coding-standards.md
+
+For ALL Stories (from .bmad-core/data/):
+  - testing-stack-guide.md
+```
+
+**review-story.md** (Line 135):
+```markdown
+Validate testing approach against `.bmad-core/data/testing-stack-guide.md`
+```
+
+### ⚠️ Common Pitfalls to AVOID
+
+1. **DON'T** reference `testing-strategy.md` (file DOESN'T EXIST)
+   - ✅ USE: `testing-stack-guide.md` (in .bmad-core/data/)
+
+2. **DON'T** reference `source-tree.md` (old name)
+   - ✅ USE: `unified-project-structure.md`
+
+3. **DON'T** assume architecture files exist on fresh projects
+   - ℹ️ CHECK: `docs/architecture/` may be empty until architect agent creates them
+
+4. **DON'T** update agent personas without updating tasks
+   - ✅ RULE: Persona + Tasks + Templates must all align
+
+5. **DON'T** write `.spec.ts` files for E2E tests
+   - ✅ WRITE: Markdown test scenarios instead
+   - ✅ FORMAT: TC{AC}.{case} with steps, expected results, priority
+
+6. **DON'T** let Dev run tests
+   - ✅ RULE: Dev writes tests, QA executes them
+   - ✅ WHY: Separation of concerns, prevents "works on my machine"
+
+### 📚 New Documentation Reference
+
+**Comprehensive Guides Created**:
+- `docs/BMAD-SYSTEM-ARCHITECTURE-MAP.md` - Complete system architecture, all relationships
+- `docs/CONSOLIDATION-PLAN.md` - Phased consolidation plan (Phase 1 complete)
+- `docs/PHASE-1-VERIFICATION.md` - Critical path validation report
+- `docs/TASK-INTEGRATION-ANALYSIS.md` - Task file integration analysis
+- `.bmad-core/data/testing-stack-guide.md` - Testing workflow (326 lines)
+- `.bmad-core/data/test-levels-framework.md` - Test level decision matrix
+- `.bmad-core/data/test-priorities-matrix.md` - Priority-based testing
+- `.bmad-core/data/handoff-templates.md` - Structured handoff formats
+
+### 🔄 Git Commit History (Recent)
+
+```
+5e4d6d2 - Fix critical path integration issues (Phase 1 Consolidation) ✅
+e2c2b7e - Update task files and architecture templates (testing workflow) ✅
+7e8ec03 - Add Context7 MCP integration across agents ✅
+2959929 - Optimize MyDevWF with hybrid Vitest + Playwright MCP ✅
+```
+
+### 📊 System Status
+
+**✅ VALIDATED**: Story creation flow works without file reference errors
+**✅ VALIDATED**: Dev agent loads correct context files
+**✅ VALIDATED**: QA agent has testing workflow guidance
+**✅ VALIDATED**: All integration points consistent
+
+**🚀 NEXT PHASES**:
+- Phase 2: Agent verification (read all agent files, verify commands)
+- Phase 3: Data directory audit (document all data files)
+- Phase 4: Integration testing (test end-to-end workflows)
+
+### 🎯 Quick Reference for Development
+
+**When Creating Stories**:
+1. SM agent uses `create-next-story` task
+2. Task loads from `docs/architecture/` + `.bmad-core/data/`
+3. Story includes testing requirements (Vitest + E2E scenarios)
+4. Story saved to `docs/stories/{epic}.{story}.story.md`
+
+**When Implementing**:
+1. Dev loads: coding-standards, tech-stack, unified-project-structure, testing-stack-guide
+2. Dev writes: Code + Vitest tests (if 10+ edge cases) + E2E scenarios (markdown)
+3. Dev starts: Background processes (frontend, backend)
+4. Dev outputs: QA Handoff, then HALTS
+
+**When Testing**:
+1. QA reads: QA Handoff
+2. QA runs: `npm run test` (Vitest) FIRST
+3. QA executes: E2E via Playwright MCP tools (browser_navigate, browser_snapshot, browser_click, etc.)
+4. QA captures: Screenshots, console logs
+5. QA creates: Gate file (PASS/CONCERNS/FAIL/WAIVED)
+6. QA outputs: Developer Handoff (if issues) OR Completion Handoff (if PASS)
+
 ## Session Management & Context Preservation
 
 ### Automatic Session Logging Workflow
@@ -420,7 +614,15 @@ File: docs/SESSION-LOG-BMAD-OPTIMIZATION-2025-10-28.md
 ### Current Session Logs
 
 **Active Optimizations**:
-- `docs/SESSION-LOG-WORKFLOW-OPTIMIZATION-2025-10-28.md` - MCP integration + BMad core optimization (IN PROGRESS)
+- `docs/SESSION-LOG-WORKFLOW-OPTIMIZATION-2025-10-28.md` - MCP integration + BMad core optimization ✅ COMPLETE
+- `docs/SESSION-UPDATE-2025-10-28-PLAYWRIGHT-MCP-DISCOVERY.md` - Playwright MCP testing workflow discovery ✅ COMPLETE
+- `docs/BMAD-OPTIMIZATION-ANALYSIS.md` - System analysis ✅ COMPLETE
+- `docs/WORKFLOW-ECOSYSTEM-OPTIMIZATION.md` - Complete ecosystem optimization plan ✅ COMPLETE
+- `docs/PENDING-OPTIMIZATIONS-ANALYSIS.md` - Pending work identification ✅ COMPLETE
+- `docs/TASK-INTEGRATION-ANALYSIS.md` - Task file integration gaps ✅ COMPLETE
+- `docs/BMAD-SYSTEM-ARCHITECTURE-MAP.md` - Complete system architecture map ✅ COMPLETE
+- `docs/CONSOLIDATION-PLAN.md` - Phased consolidation action plan ✅ COMPLETE
+- `docs/PHASE-1-VERIFICATION.md` - Critical path fixes verification ✅ COMPLETE
 
 ### Working Session Best Practices
 
