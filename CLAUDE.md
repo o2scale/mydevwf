@@ -98,7 +98,23 @@ The shadcn-ui MCP server requires a GitHub token for better rate limits:
 **Without token**: 60 requests/hour
 **With token**: 5000 requests/hour
 
-**Setup**:
+#### Automatic Token Check
+
+**UX Expert and Dev agents will proactively ask for your GitHub token** during activation if it's not configured. This ensures you never forget to set it up.
+
+**How it works**:
+1. Activate UX Expert (`/BMad/agents/ux-expert`) or Dev agent for frontend work
+2. Agent checks `.mcp.json` for GITHUB_PERSONAL_ACCESS_TOKEN
+3. If empty, agent asks: "Please provide your GitHub Personal Access Token"
+4. Agent updates `.mcp.json` with your token
+5. Agent reminds you to restart Claude Code
+
+**This prevents the "forgot to add token" problem** - the workflow reminds you automatically.
+
+#### Manual Setup (Optional)
+
+If you prefer to add the token manually before activating agents:
+
 1. Create GitHub Personal Access Token: https://github.com/settings/tokens/new
 2. Select scope: `public_repo` (read access to public repositories)
 3. Add to `.mcp.json`:
