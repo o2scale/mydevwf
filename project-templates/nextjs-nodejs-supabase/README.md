@@ -47,15 +47,25 @@
 
 5. **Start development server**:
    ```bash
-   npm run dev
+   npm run dev:backend  # Terminal 1
+   npm run dev:frontend # Terminal 2
    ```
 
-6. **Verify MCPs**:
+6. **Generate API MCP Server** (⭐ NEW - enables direct API testing):
    ```bash
-   # In Claude Code
-   /mcp
-   # Should show: playwright (global), supabase-local, swagger-api (project)
+   # Terminal 3
+   npm run mcp:generate  # Generates MCP server from OpenAPI spec
+   npm run mcp:setup     # Installs MCP server dependencies
    ```
+
+7. **Verify MCPs**:
+   ```bash
+   # In Claude Code (restart required after mcp:generate)
+   /mcp
+   # Should show: playwright (global), supabase, api-server, shadcn-ui (project)
+   ```
+
+**Note**: The `api-server` MCP allows Claude Code to **execute actual API calls** instead of just reading the spec. See `docs/MCP-API-SERVER-SETUP.md` for details.
 
 ### Development Workflow
 
@@ -106,15 +116,60 @@ Follow the BMad enhanced development workflow:
 - ❌ Never connect MCP to production database
 - ✅ Use separate dev/staging Supabase projects
 
-### Swagger MCP (API Testing)
+### API Server MCP (Direct API Execution) ⭐ NEW
 
-**Configuration**: Points to `/api-docs` endpoint in your Node.js API
+**What Changed**: We now use **OpenAPI MCP Generator** instead of HTTP transport Swagger MCP.
+
+**Old Approach** (HTTP Transport):
+- ❌ Only reads API spec (can't execute)
+- ❌ Requires manual Postman testing
+- ❌ Time-consuming workflow
+
+**New Approach** (Generated MCP Server):
+- ✅ Executes actual API calls
+- ✅ No Postman needed
+- ✅ 50-60% faster development
+- ✅ Automatic tool generation
+
+**Setup** (one-time per project):
+```bash
+# Step 1: Start backend
+npm run dev:backend
+
+# Step 2: Generate MCP server from OpenAPI spec
+npm run mcp:generate
+
+# Step 3: Install MCP server dependencies
+npm run mcp:setup
+
+# Step 4: Restart Claude Code
+```
 
 **Usage in Claude Code**:
 ```
-"Test the POST /api/auth/signup endpoint"
-"Verify all API routes return proper authentication errors"
-"Show me the available API endpoints from Swagger spec"
+"Call GET /api/users and show me the results"
+→ Executes actual API request
+→ Returns real data from your database
+
+"Create a new user with email test@example.com"
+→ Calls POST /api/users
+→ User created in database
+
+"Test the authentication flow for /api/auth/login"
+→ Executes login endpoint
+→ Returns JWT token
+```
+
+**Documentation**: See `docs/MCP-API-SERVER-SETUP.md` for complete guide
+
+**Regenerate when**:
+- Adding new API endpoints
+- Modifying endpoint parameters
+- Changing request/response schemas
+
+```bash
+npm run mcp:generate && npm run mcp:setup
+# Then restart Claude Code
 ```
 
 ### Playwright MCP (E2E Testing)

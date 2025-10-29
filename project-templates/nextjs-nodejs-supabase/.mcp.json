@@ -9,10 +9,13 @@
       },
       "description": "Supabase database, auth, storage, and real-time features"
     },
-    "swagger-api": {
-      "transport": "http",
-      "url": "http://localhost:3000/api-docs",
-      "description": "Node.js/Express API documentation"
+    "api-server": {
+      "command": "node",
+      "args": [".mcp-server/build/index.js"],
+      "env": {
+        "API_BASE_URL": "http://localhost:3000"
+      },
+      "description": "Generated MCP server for Node.js API - executes actual API calls (run 'npm run mcp:generate' first)"
     },
     "shadcn-ui": {
       "command": "npx",
