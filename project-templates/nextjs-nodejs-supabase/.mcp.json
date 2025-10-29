@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-supabase"],
+      "env": {
+        "SUPABASE_URL": "",
+        "SUPABASE_SERVICE_ROLE_KEY": ""
+      },
+      "description": "Supabase database, auth, storage, and real-time features"
+    },
+    "swagger-api": {
+      "transport": "http",
+      "url": "http://localhost:3000/api-docs",
+      "description": "Node.js/Express API documentation"
+    },
+    "shadcn-ui": {
+      "command": "npx",
+      "args": ["-y", "@jpisnice/shadcn-ui-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      },
+      "description": "shadcn/ui component library for Next.js frontend"
+    }
+  }
+}

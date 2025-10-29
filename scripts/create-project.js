@@ -3,7 +3,7 @@
 /**
  * Project Creation Script
  * Usage: node scripts/create-project.js <template> <project-name>
- * Example: node scripts/create-project.js nodejs-supabase my-new-app
+ * Example: node scripts/create-project.js nextjs-nodejs-supabase my-new-app
  */
 
 const fs = require('fs');
@@ -12,7 +12,7 @@ const { execSync } = require('child_process');
 
 // Configuration
 const TEMPLATES_DIR = path.join(__dirname, '..', 'project-templates');
-const TEMPLATES = ['python-fastapi-postgres', 'nodejs-supabase', 'nodejs-mongodb', 'react-native'];
+const TEMPLATES = ['nextjs-nodejs-supabase', 'nextjs-nodejs-mongodb', 'nextjs-fastapi-supabase', 'react-native-mobile'];
 
 // Parse arguments
 const args = process.argv.slice(2);

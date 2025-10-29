@@ -187,29 +187,39 @@ For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.
 
 ## Available Project Templates
 
-### 1. Python/FastAPI + PostgreSQL
-- **Stack**: React/Next.js + Python/FastAPI + PostgreSQL
-- **MCPs**: Playwright + Swagger
-- **Use**: API-first backends, data-intensive apps, ML pipelines
-- **Template**: `project-templates/python-fastapi-postgres/`
+**All web templates include**: Next.js 14+ (App Router) + Tailwind CSS + TypeScript + shadcn/ui components
 
-### 2. Node.js + Supabase
-- **Stack**: React/Next.js + Node.js + Supabase (PostgreSQL)
-- **MCPs**: Playwright + Supabase + Swagger
-- **Use**: Rapid prototyping, real-time apps, serverless backends
-- **Template**: `project-templates/nodejs-supabase/`
+### 1. Next.js + Node.js + Supabase (Fullstack Web)
+- **Frontend**: Next.js + shadcn/ui
+- **Backend**: Node.js + Express
+- **Database**: Supabase (PostgreSQL + Auth + Storage + Real-time)
+- **MCPs**: Playwright + Supabase + Swagger + shadcn-ui
+- **Use**: Rapid prototyping, SaaS apps, real-time features
+- **Template**: `project-templates/nextjs-nodejs-supabase/`
 
-### 3. Node.js + MongoDB
-- **Stack**: React/Next.js + Node.js/Express + MongoDB
-- **MCPs**: Playwright + MongoDB + Swagger
+### 2. Next.js + Node.js + MongoDB (Fullstack Web)
+- **Frontend**: Next.js + shadcn/ui
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+- **MCPs**: Playwright + MongoDB + Swagger + shadcn-ui
 - **Use**: Document-heavy apps, flexible schemas
-- **Template**: `project-templates/nodejs-mongodb/`
+- **Template**: `project-templates/nextjs-nodejs-mongodb/`
 
-### 4. React Native
-- **Stack**: React Native (TypeScript) + Backend agnostic
-- **MCPs**: Playwright + Backend-specific
+### 3. Next.js + FastAPI + Supabase (Fullstack Web)
+- **Frontend**: Next.js + shadcn/ui
+- **Backend**: Python + FastAPI
+- **Database**: Supabase (PostgreSQL + Auth + Storage + Real-time)
+- **MCPs**: Playwright + Supabase + Swagger + shadcn-ui
+- **Use**: ML/AI applications, data pipelines, Python ecosystem
+- **Template**: `project-templates/nextjs-fastapi-supabase/`
+
+### 4. React Native Mobile (Mobile Only - Needs Backend)
+- **Stack**: React Native (TypeScript)
+- **Backend**: Pair with one of the above templates
+- **MCPs**: Playwright + Backend-specific MCPs
 - **Use**: Cross-platform mobile apps (iOS + Android)
-- **Template**: `project-templates/react-native/`
+- **Template**: `project-templates/react-native-mobile/`
+- **Important**: React Native is FRONTEND ONLY. Choose a backend template (Node.js/Supabase, Node.js/MongoDB, or FastAPI/Supabase) to pair with it.
 
 ## Creating New Projects
 
@@ -219,11 +229,14 @@ For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.
 # From mydevwf directory
 npm run create-project <template> <project-name>
 
-# Examples:
-npm run create-project nodejs-supabase my-saas-app
-npm run create-project python-fastapi-postgres my-api
-npm run create-project nodejs-mongodb my-document-app
-npm run create-project react-native my-mobile-app
+# Examples (web fullstack):
+npm run create-project nextjs-nodejs-supabase my-saas-app
+npm run create-project nextjs-fastapi-supabase my-ml-app
+npm run create-project nextjs-nodejs-mongodb my-document-app
+
+# Example (mobile - needs separate backend):
+npm run create-project react-native-mobile my-mobile-app
+# Then also create backend: nextjs-nodejs-supabase my-mobile-backend
 ```
 
 ### After Project Creation
