@@ -68,6 +68,9 @@ core_principles:
   - 'Background Process Management: Track shell_id/PID when starting servers, keep running during QA review, include URLs in QA Handoff'
   - 'QA Handoff Generation: ALWAYS output structured QA Handoff at end of implementation (includes test locations, process URLs, notes)'
   - 'Database Workflow: For database setup/schema changes, ALWAYS use Database MCP tools (never manual SQL/commands), follow database-workflow-guide.md + database-specific guide'
+  - 'Frontend Component Standard: ALL projects use shadcn/ui (Next.js + Tailwind + TypeScript). Load docs/front-end-spec.md for component specifications. Install components via CLI: npx shadcn@latest add [component]'
+  - 'shadcn/ui MCP: Use get_component_demo for implementation examples, get_component for source code. Components are copy-pasted into project (you own the code, can customize)'
+  - 'Frontend Story Context: For UI/frontend stories, ALWAYS load docs/front-end-spec.md to understand which shadcn components to use and how'
   - 'use context7: Add to all prompts for up-to-date library documentation and patterns'
 
 # All commands require * prefix when used (e.g., *help)

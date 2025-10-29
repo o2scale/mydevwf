@@ -84,10 +84,38 @@ MCPs give Claude Code direct access to external tools, databases, and services. 
 **Global MCP** (installed once, available everywhere):
 - ✅ **Playwright MCP** - E2E testing and browser automation
 
-**Project-Specific MCPs** (configured per template):
-- **Swagger MCP**: API testing via OpenAPI/Swagger specs
+**Project-Specific MCPs** (configured in `.mcp.json`):
+- **Context7 MCP**: Up-to-date library documentation and patterns
+- **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
+- **Swagger MCP**: API testing via OpenAPI/Swagger specs (template-specific)
 - **Supabase MCP**: Database operations, migrations, logs (Supabase projects)
 - **MongoDB MCP**: Database queries, indexes, optimization (MongoDB projects)
+
+### GitHub Personal Access Token (shadcn-ui MCP)
+
+The shadcn-ui MCP server requires a GitHub token for better rate limits:
+
+**Without token**: 60 requests/hour
+**With token**: 5000 requests/hour
+
+**Setup**:
+1. Create GitHub Personal Access Token: https://github.com/settings/tokens/new
+2. Select scope: `public_repo` (read access to public repositories)
+3. Add to `.mcp.json`:
+   ```json
+   {
+     "mcpServers": {
+       "shadcn-ui": {
+         "env": {
+           "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_your_token_here"
+         }
+       }
+     }
+   }
+   ```
+4. Restart Claude Code
+
+**Note**: `.mcp.json` is in `.gitignore` - your token stays private.
 
 ### MCP Commands
 
@@ -307,6 +335,151 @@ When creating Story 1.1 for projects with a database, the SM agent automatically
 - ⚡ **Fast setup**: Copy schema → Apply via MCP → Verify (< 5 minutes)
 - 📝 **Documentation sync**: Schema docs = database reality
 
+### Frontend Component Library Workflow (shadcn/ui)
+
+For frontend/fullstack projects, shadcn/ui is the standard component library.
+
+**Tech Stack**: Next.js + Tailwind CSS + TypeScript + shadcn/ui (built on Radix UI)
+
+**Philosophy**: shadcn/ui is NOT an npm package - it's copy-paste components you own and can customize.
+
+#### Workflow Overview
+
+**1. UX Expert Creates Component Specifications**
+
+UX Expert creates `docs/front-end-spec.md` with shadcn/ui component decisions:
+
+- Uses **shadcn-ui MCP** to explore available components (`list_components`)
+- Specifies EXACT shadcn components for each UI element
+- Documents variants, states, and usage guidelines
+- Groups by category (Forms, Navigation, Data Display, Feedback, Layout)
+
+**Example from front-end-spec.md**:
+```markdown
+## Component Library / Design System
+
+### Forms Category
+
+#### Button
+**shadcn Component**: `<Button>`
+**Variants Used**: default, destructive, outline, ghost, link
+**States**: default, hover, active, focus, disabled, loading
+**Usage Guidelines**:
+- Use `default` for primary actions (limit to 1 per view)
+- Use `destructive` + confirmation dialog for irreversible actions
+
+**Reference**: [shadcn-ui MCP: get_component_demo("button")]
+```
+
+**2. Architect References UX Component Decisions**
+
+Architect reads `front-end-spec.md` and documents technical architecture:
+- Respects UX Expert's component choices
+- Adds technical implementation details in `frontend-architecture.md`
+- Documents shadcn/ui setup and configuration
+
+**3. Dev Implements with shadcn Components**
+
+Dev agent:
+- Loads `docs/front-end-spec.md` (knows which components to use)
+- Uses **shadcn-ui MCP** for implementation examples (`get_component_demo`)
+- Installs components via CLI: `npx shadcn@latest add button form input`
+- Components are copy-pasted (Dev owns code, can customize)
+- Implements exactly as UX Expert specified
+
+**Dev Workflow**:
+```
+1. Read story: "Build user registration form"
+2. Load: docs/front-end-spec.md
+3. See UX spec: "Use shadcn Form + Input + Button + Toast"
+4. Install: npx shadcn@latest add form input button toast
+5. Use shadcn-ui MCP: get_component_demo("form") for examples
+6. Implement form with shadcn components
+7. Customize styling via Tailwind if needed
+```
+
+**4. QA Tests with Consistent Selectors**
+
+shadcn/ui components have predictable DOM structure:
+- All components use proper ARIA attributes (built on Radix UI)
+- Consistent selectors: `button`, `input[name="..."]`, `div[role="dialog"]`
+- E2E tests are more reliable and maintainable
+
+**Example E2E Scenario**:
+```markdown
+### TC1.1: Submit Registration Form
+
+**Steps**:
+1. Type "test@example.com" into input[name="email"]
+2. Type "password123" into input[type="password"]
+3. Click button[type="submit"]
+4. Wait for toast notification
+
+**Expected Result**:
+- Toast shows "Registration successful!"
+- User redirected to /dashboard
+```
+
+#### Key Principles
+
+- ✅ **Single source of truth**: UX Expert specifies components in front-end-spec.md
+- ✅ **Copy-paste, not npm**: Components are added to your codebase (you own them)
+- ✅ **Accessible by default**: Built on Radix UI (ARIA attributes included)
+- ✅ **Customizable**: Modify components via Tailwind classes
+- ✅ **Consistent testing**: Predictable DOM structure for E2E tests
+- ✅ **No component unit tests**: Focus on testing YOUR business logic and workflows
+
+#### shadcn/ui MCP Tools
+
+**Available to UX Expert and Dev Agent**:
+- `list_components` - See all 50+ available components
+- `get_component("button")` - Get component source code
+- `get_component_demo("form")` - Get usage examples
+- `get_block("dashboard-01")` - Get pre-built page sections
+- `list_blocks` - See all available blocks (dashboards, auth, etc.)
+
+#### Example: Complete Frontend Story Flow
+
+```
+1. UX Expert: Creates front-end-spec.md
+   - Specifies: "User profile uses Card + Form + Input + Button + Avatar"
+   - Uses shadcn-ui MCP to validate component names
+
+2. Architect: Reviews front-end-spec.md
+   - Documents: File structure, state management, routing
+
+3. SM: Creates story "Implement User Profile Page"
+   - Dev Notes reference: docs/front-end-spec.md
+
+4. Dev: Implements story
+   - Loads front-end-spec.md
+   - Installs: npx shadcn@latest add card form input button avatar
+   - Uses shadcn-ui MCP get_component_demo("form") for examples
+   - Builds profile page with specified components
+   - Writes E2E test scenarios (markdown)
+
+5. QA: Tests user profile
+   - Reads E2E scenarios
+   - Uses Playwright MCP to execute tests
+   - Verifies: Form submission, avatar upload, profile update
+```
+
+#### Benefits
+
+- 🎨 **Design consistency**: UX defines components, Dev implements exactly
+- ⚡ **Fast development**: Copy-paste components, no reinventing UI
+- ♿ **Accessibility built-in**: Radix UI primitives (WCAG 2.1 Level AA)
+- 🧪 **Testable**: Consistent DOM structure, predictable selectors
+- 🎯 **No drift**: Component specs in front-end-spec.md = implementation
+- 🔧 **Customizable**: Own the code, modify as needed
+
+#### Component Library Resources
+
+- **Generic testing guide**: `.bmad-core/data/testing-stack-guide.md` (section on shadcn/ui)
+- **UX template**: `.bmad-core/templates/front-end-spec-tmpl.yaml` (shadcn-specific)
+- **shadcn/ui docs**: https://ui.shadcn.com (official documentation)
+- **Component catalog**: 50+ components (Button, Form, Dialog, Table, Chart, etc.)
+
 ## QA/Test Architect Integration
 
 The QA agent (Quinn) provides comprehensive quality assurance throughout the development lifecycle.
@@ -419,6 +592,34 @@ This keeps agent context manageable and focused.
 # - MongoDB: collectionSchema, create, read, list (via mongodb-mcp-server)
 
 # Result: Database ready, 100% match with documentation
+```
+
+### Frontend Development with shadcn/ui
+```bash
+# UX Expert creates component specifications
+/BMad/agents/ux-expert
+*create-front-end-spec
+
+# UX Expert uses shadcn-ui MCP:
+# - list_components (see all available components)
+# - get_component_demo("button") (get usage examples)
+# - get_block("dashboard-01") (get pre-built sections)
+
+# Dev implements frontend story
+/BMad/agents/dev
+*develop-story docs/stories/{story-file}.md
+
+# Dev loads automatically:
+# - docs/front-end-spec.md (UX component specifications)
+
+# Dev installs shadcn components:
+npx shadcn@latest add button form input dialog toast
+
+# Dev uses shadcn-ui MCP:
+# - get_component_demo("form") (implementation examples)
+# - get_component("button") (source code if needed)
+
+# Result: Consistent UI, accessible by default, testable
 ```
 
 ### QA Review Process

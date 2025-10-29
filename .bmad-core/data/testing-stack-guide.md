@@ -801,6 +801,238 @@ Use YAML-based flows for iOS + Android testing.
 
 ---
 
+## Testing shadcn/ui Components
+
+**Component Library**: All projects use shadcn/ui (Next.js + Tailwind + TypeScript)
+
+**Key Insight**: shadcn/ui components are built on Radix UI primitives, which have **consistent DOM structure** and **predictable accessibility attributes**. This makes E2E testing more reliable.
+
+### Component Testing Strategy
+
+**NO Component Unit Testing Required**:
+- shadcn/ui components are copy-pasted into your project
+- They're well-tested by the shadcn/ui and Radix UI projects
+- Testing individual components in isolation is unnecessary
+- Focus on testing YOUR business logic and user workflows
+
+**YES E2E Testing for User Workflows**:
+- Test complete user journeys that use shadcn components
+- Test YOUR application logic, not shadcn component internals
+- Test integration of components with YOUR data/state
+
+### shadcn Component Selectors (Playwright MCP)
+
+shadcn/ui components have consistent structure. Use these patterns in E2E scenarios:
+
+#### Button Component
+```markdown
+**Selector Pattern**: button (text), button[type="submit"], button[aria-label="..."]
+
+**Example Scenario**:
+1. Click button "Submit" (finds <Button> by text content)
+2. Click button[type="submit"] (finds submit button)
+3. Verify button is disabled (check aria-disabled="true")
+```
+
+#### Form Components (Form + Input + Label)
+```markdown
+**Selector Pattern**: input[name="..."], input[type="..."], input[aria-label="..."]
+
+**Example Scenario**:
+1. Type "john@example.com" into input[name="email"]
+2. Type "password123" into input[type="password"]
+3. Verify input[name="email"] shows error (check aria-invalid="true")
+```
+
+#### Dialog Component
+```markdown
+**Selector Pattern**: div[role="dialog"], button[aria-label="Close"]
+
+**Example Scenario**:
+1. Click button "Delete Account"
+2. Wait for div[role="dialog"] to appear
+3. Verify dialog contains text "Are you sure?"
+4. Click button "Confirm" within dialog
+5. Wait for dialog to disappear
+```
+
+#### Table Component
+```markdown
+**Selector Pattern**: table, thead, tbody, tr, td, th
+
+**Example Scenario**:
+1. Verify table contains 10 rows (count tbody tr)
+2. Click th "Name" to sort by name
+3. Verify first td contains "Alice"
+```
+
+#### Select/Dropdown Component
+```markdown
+**Selector Pattern**: button[role="combobox"], div[role="listbox"], div[role="option"]
+
+**Example Scenario**:
+1. Click button[role="combobox"] (opens dropdown)
+2. Click div[role="option"][data-value="option-1"]
+3. Verify button shows "Option 1" (check textContent)
+```
+
+### Accessibility Testing with shadcn/ui
+
+**Built-in Accessibility**:
+- All shadcn/ui components use proper ARIA attributes
+- Keyboard navigation works by default
+- Screen reader support included
+
+**What Dev Tests**:
+- ✅ YOUR application's focus management
+- ✅ YOUR custom keyboard shortcuts
+- ✅ YOUR error messages are announced
+- ✅ YOUR loading states are communicated
+
+**What Dev Does NOT Test**:
+- ❌ shadcn component ARIA attributes (already correct)
+- ❌ Built-in keyboard navigation (already works)
+- ❌ Component focus trapping (Radix UI handles this)
+
+**E2E Scenario for Accessibility**:
+```markdown
+### TC1.5: Keyboard Navigation
+
+**Test**: Form can be completed using keyboard only
+
+**Steps**:
+1. Press Tab (focus moves to first input)
+2. Type "John"
+3. Press Tab (focus moves to second input)
+4. Type "Doe"
+5. Press Tab (focus moves to Submit button)
+6. Press Enter (form submits)
+
+**Expected Result**:
+- Focus indicator visible at each step
+- Form submits successfully
+- Toast notification appears and is announced to screen readers
+```
+
+### Testing Component Variants
+
+**shadcn/ui Button Variants**: default, destructive, outline, secondary, ghost, link
+
+**Dev's Responsibility**:
+- Test that YOUR code applies correct variant
+- Test that variant changes based on YOUR application state
+
+**Example E2E Scenario**:
+```markdown
+### TC2.3: Delete Button Shows Destructive Variant
+
+**Test**: Delete actions use destructive button variant
+
+**Steps**:
+1. Navigate to /users/123
+2. Locate button "Delete User"
+3. Use browser_snapshot() to inspect button classes
+
+**Expected Result**:
+- Button has class "bg-destructive text-destructive-foreground"
+- Button shows red color (destructive styling)
+```
+
+### Testing Component States
+
+**Common States**: default, hover, active, focus, disabled, loading, error
+
+**Dev Tests via E2E**:
+- Disabled state prevents interaction
+- Loading state shows spinner
+- Error state displays error message
+- Focus state is visible
+
+**Example E2E Scenario**:
+```markdown
+### TC3.1: Submit Button Disabled During Loading
+
+**Test**: Form submission disables button
+
+**Steps**:
+1. Fill form inputs
+2. Click button "Submit"
+3. Immediately check button state
+
+**Expected Result**:
+- Button shows aria-disabled="true"
+- Button shows loading spinner
+- Button cannot be clicked again
+- After response, button becomes enabled
+```
+
+### Testing Responsive Behavior
+
+**shadcn/ui + Tailwind**: Components adapt to screen size
+
+**Dev Tests**:
+- Layout changes at breakpoints
+- Mobile navigation (hamburger menu)
+- Touch targets are large enough (44x44px minimum)
+
+**Example E2E Scenario**:
+```markdown
+### TC4.1: Mobile Menu
+
+**Test**: Navigation works on mobile viewport
+
+**Steps**:
+1. Use browser_resize(375, 667) (iPhone SE)
+2. Verify hamburger button is visible
+3. Click hamburger button
+4. Verify mobile menu slides in
+5. Click "Dashboard" link
+6. Verify navigation to /dashboard
+```
+
+### Common Pitfalls to Avoid
+
+**❌ DON'T**:
+- Don't write Vitest tests for shadcn component rendering
+- Don't test internal component state
+- Don't test Radix UI primitive behavior
+- Don't test Tailwind CSS classes directly
+
+**✅ DO**:
+- Test YOUR user workflows that happen to use shadcn components
+- Test YOUR data integration with components
+- Test YOUR business logic triggered by component interactions
+- Test YOUR application state changes from component events
+
+### Example: Complete E2E Test Scenario
+
+**Feature**: User Registration Form (uses shadcn Form + Input + Button + Toast)
+
+```markdown
+### TC5.1: Successful User Registration
+
+**Component Stack**: Form, Input (email, password, confirmPassword), Button (submit), Toast (success notification)
+
+**Steps**:
+1. Navigate to http://localhost:3000/register
+2. Type "test@example.com" into input[name="email"]
+3. Type "SecurePass123!" into input[name="password"]
+4. Type "SecurePass123!" into input[name="confirmPassword"]
+5. Click button[type="submit"]
+6. Wait for toast notification to appear
+
+**Expected Result**:
+- Toast shows "Registration successful!"
+- User redirected to /dashboard
+- No error messages displayed
+
+**Priority**: P0 (critical user journey)
+
+**Reference**: [UX Spec: front-end-spec.md - User Registration Flow]
+```
+
+---
+
 ## Summary
 
 **This hybrid testing approach prioritizes**:

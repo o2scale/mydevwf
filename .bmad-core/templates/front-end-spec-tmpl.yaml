@@ -167,25 +167,157 @@ sections:
   - id: component-library
     title: Component Library / Design System
     instruction: |
-      Discuss whether to use an existing design system or create a new one. If creating new, identify foundational components and their key states. Note that detailed technical specs belong in front-end-architecture.
+      CRITICAL: This project uses shadcn/ui (Next.js + Tailwind + TypeScript) as the standard component library.
+
+      Your role is to specify WHICH shadcn/ui components to use for each UI element in the application.
+
+      Workflow:
+      1. Use shadcn-ui MCP to explore available components:
+         - list_components: See all 50+ components available
+         - get_component_demo("button"): Get usage examples for specific component
+         - get_component("form"): Get full source code if needed
+         - get_block("dashboard-01"): Get pre-built page sections
+
+      2. For each major UI pattern in the application, specify:
+         - Exact shadcn component name (e.g., "Button", "Form", "Dialog")
+         - Which variants to use (e.g., Button: default, destructive, outline)
+         - Which states to handle (e.g., loading, disabled, error)
+         - Usage guidelines (when to use each variant)
+
+      3. Reference shadcn-ui MCP queries in your specifications using format:
+         [shadcn-ui MCP: list_components] or [shadcn-ui MCP: get_component_demo("button")]
+
+      4. Group components by category (Forms, Navigation, Data Display, Feedback, Layout)
+
+      Note: Detailed technical implementation (props, TypeScript types) will be added by Architect agent.
+      Focus on DESIGN decisions: which components, which variants, why.
     elicit: true
     sections:
       - id: design-system-approach
-        template: "**Design System Approach:** {{design_system_approach}}"
+        template: "**Design System:** shadcn/ui (Next.js + Tailwind CSS + TypeScript + Radix UI)"
+      - id: shadcn-setup
+        title: shadcn/ui Setup
+        template: |
+          **Installation Command:** `npx shadcn@latest init`
+
+          **Configuration:**
+          - Framework: Next.js
+          - Styling: Tailwind CSS
+          - TypeScript: Yes
+          - Components Path: @/components
+
+          **Theme:** {{theme_approach}}
       - id: core-components
         title: Core Components
+        instruction: |
+          For each UI pattern, specify the shadcn component to use. Group by category.
+
+          Use shadcn-ui MCP to validate component names and get usage examples.
+
+          Categories: Forms, Navigation, Data Display, Feedback, Overlays, Layout
         repeatable: true
         sections:
-          - id: component
-            title: "{{component_name}}"
-            template: |
-              **Purpose:** {{component_purpose}}
+          - id: component-category
+            title: "{{category_name}}"
+            template: "**Category Description:** {{category_description}}"
+            repeatable: true
+            sections:
+              - id: component
+                title: "{{component_name}}"
+                template: |
+                  **shadcn Component:** `{{shadcn_component_name}}`
 
-              **Variants:** {{component_variants}}
+                  **Purpose:** {{component_purpose}}
 
-              **States:** {{component_states}}
+                  **Variants Used:** {{component_variants}}
 
-              **Usage Guidelines:** {{usage_guidelines}}
+                  **States to Handle:** {{component_states}}
+
+                  **Usage Guidelines:** {{usage_guidelines}}
+
+                  **Reference:** [shadcn-ui MCP: {{mcp_query}}]
+      - id: component-examples
+        title: Example Component Specifications
+        template: |
+          ### Forms Category
+
+          #### Button
+          **shadcn Component:** `<Button>`
+          **Purpose:** Primary actions, form submissions, navigation
+          **Variants Used:**
+          - `default`: Primary CTAs (e.g., "Submit", "Save")
+          - `destructive`: Dangerous actions (e.g., "Delete", "Remove")
+          - `outline`: Secondary actions (e.g., "Cancel", "Back")
+          - `ghost`: Tertiary actions (e.g., icon buttons in toolbars)
+          - `link`: Text-style links that need button functionality
+          **States:** default, hover, active, focus, disabled, loading
+          **Usage Guidelines:**
+          - Use `default` for primary actions (limit to 1 per view)
+          - Use `destructive` + confirmation dialog for irreversible actions
+          - Use `outline` for secondary actions
+          - Always provide `disabled` state during async operations
+          **Reference:** [shadcn-ui MCP: get_component_demo("button")]
+
+          #### Form Controls
+          **shadcn Components:** `<Form>` + `<Input>` + `<Label>` + `<Select>` + `<Checkbox>` + `<RadioGroup>`
+          **Purpose:** All user input collection
+          **Variants Used:**
+          - Input: default (no variants, styled via Tailwind)
+          - Select: native select styling
+          **States:** default, focus, error, disabled, readonly
+          **Usage Guidelines:**
+          - Always use `<Form>` wrapper (built on react-hook-form)
+          - Pair every input with `<Label>` for accessibility
+          - Use `<Select>` for <7 options, `<Combobox>` for 7+ options
+          - Show inline validation errors below fields
+          **Reference:** [shadcn-ui MCP: get_component_demo("form")]
+
+          ### Data Display Category
+
+          #### Table
+          **shadcn Component:** `<Table>`
+          **Purpose:** Displaying tabular data
+          **Variants:** default (styled via className)
+          **Features to Use:** Sortable headers, row selection, pagination integration
+          **Usage Guidelines:**
+          - Use for datasets with 3+ columns
+          - Always include loading state (skeleton)
+          - Integrate with `<Pagination>` component for large datasets
+          **Reference:** [shadcn-ui MCP: get_component_demo("table")]
+
+          #### Card
+          **shadcn Component:** `<Card>`
+          **Purpose:** Grouping related content
+          **Parts Used:** `<CardHeader>`, `<CardTitle>`, `<CardDescription>`, `<CardContent>`, `<CardFooter>`
+          **Usage Guidelines:**
+          - Use for dashboard widgets, product cards, feature highlights
+          - Always include CardTitle for accessibility
+          - CardFooter optional, use for actions related to card content
+          **Reference:** [shadcn-ui MCP: get_component_demo("card")]
+
+          ### Feedback Category
+
+          #### Dialog
+          **shadcn Component:** `<Dialog>`
+          **Purpose:** Modal dialogs, confirmations, forms
+          **Parts Used:** `<DialogTrigger>`, `<DialogContent>`, `<DialogHeader>`, `<DialogTitle>`, `<DialogDescription>`, `<DialogFooter>`
+          **Usage Guidelines:**
+          - Use for critical user decisions or focused tasks
+          - Always include DialogTitle (required for accessibility)
+          - Use DialogFooter for action buttons (Cancel + Primary action)
+          - For destructive actions, use Button variant="destructive" in footer
+          **Reference:** [shadcn-ui MCP: get_component_demo("dialog")]
+
+          #### Toast
+          **shadcn Component:** `<Toast>`
+          **Purpose:** Non-blocking notifications
+          **Variants Used:** default, destructive (for errors)
+          **Usage Guidelines:**
+          - Use for success confirmations, non-critical errors, background process updates
+          - Auto-dismiss after 3-5 seconds (configurable)
+          - Position: bottom-right (default)
+          - Max 3 toasts visible simultaneously
+          **Reference:** [shadcn-ui MCP: get_component_demo("toast")]
 
   - id: branding-style
     title: Branding & Style Guide
