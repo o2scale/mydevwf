@@ -87,9 +87,10 @@ MCPs give Claude Code direct access to external tools, databases, and services. 
 **Project-Specific MCPs** (configured in `.mcp.json`):
 - **Context7 MCP**: Up-to-date library documentation and patterns
 - **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
-- **Swagger MCP**: API testing via OpenAPI/Swagger specs (template-specific)
+- **API Server MCP**: Execute actual API calls via generated MCP server (Node.js/FastAPI projects)
 - **Supabase MCP**: Database operations, migrations, logs (Supabase projects)
 - **MongoDB MCP**: Database queries, indexes, optimization (MongoDB projects)
+- **Mobile MCP**: iOS/Android device automation for E2E testing (React Native projects)
 
 ### GitHub Personal Access Token (shadcn-ui MCP)
 
@@ -150,10 +151,10 @@ npm run mcp:verify
 
 MCPs work automatically when you use BMad agents. Examples:
 
-**Dev Agent with Swagger MCP**:
+**Dev Agent with API Server MCP**:
 ```
 "Test the POST /api/users endpoint with sample data"
-→ Claude Code automatically calls API via Swagger MCP
+→ Claude Code automatically calls API via generated MCP server
 ```
 
 **Dev Agent with Database MCP**:
@@ -168,6 +169,12 @@ MCPs work automatically when you use BMad agents. Examples:
 → Claude Code generates Playwright test automatically
 ```
 
+**QA Agent with Mobile MCP**:
+```
+"Launch the app on iPhone 15 Pro and test user registration"
+→ Claude Code controls simulator, taps buttons, enters text, validates screens
+```
+
 ### MCP Benefits
 
 - ⚡ **50-60% faster development** - Less manual testing
@@ -178,10 +185,10 @@ MCPs work automatically when you use BMad agents. Examples:
 ### Template-Specific MCP Configurations
 
 See `.mcp.json` in each project template for exact configurations:
-- `project-templates/python-fastapi-postgres/.mcp.json` - Swagger only
-- `project-templates/nodejs-supabase/.mcp.json` - Swagger + Supabase
-- `project-templates/nodejs-mongodb/.mcp.json` - Swagger + MongoDB
-- `project-templates/react-native/.mcp.json` - Backend-dependent
+- `project-templates/nextjs-fastapi-supabase/.mcp.json` - API Server + Supabase + shadcn-ui
+- `project-templates/nextjs-nodejs-supabase/.mcp.json` - API Server + Supabase + shadcn-ui
+- `project-templates/nextjs-nodejs-mongodb/.mcp.json` - API Server + MongoDB + shadcn-ui
+- `project-templates/react-native-mobile/.mcp.json` - Mobile MCP + Backend API
 
 For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.md`
 
@@ -193,7 +200,7 @@ For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.
 - **Frontend**: Next.js + shadcn/ui
 - **Backend**: Node.js + Express
 - **Database**: Supabase (PostgreSQL + Auth + Storage + Real-time)
-- **MCPs**: Playwright + Supabase + Swagger + shadcn-ui
+- **MCPs**: Playwright + Supabase + API Server + shadcn-ui
 - **Use**: Rapid prototyping, SaaS apps, real-time features
 - **Template**: `project-templates/nextjs-nodejs-supabase/`
 
@@ -201,7 +208,7 @@ For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.
 - **Frontend**: Next.js + shadcn/ui
 - **Backend**: Node.js + Express
 - **Database**: MongoDB
-- **MCPs**: Playwright + MongoDB + Swagger + shadcn-ui
+- **MCPs**: Playwright + MongoDB + API Server + shadcn-ui
 - **Use**: Document-heavy apps, flexible schemas
 - **Template**: `project-templates/nextjs-nodejs-mongodb/`
 
@@ -209,14 +216,14 @@ For comprehensive MCP documentation, see: `docs/templates/MCP-INTEGRATION-GUIDE.
 - **Frontend**: Next.js + shadcn/ui
 - **Backend**: Python + FastAPI
 - **Database**: Supabase (PostgreSQL + Auth + Storage + Real-time)
-- **MCPs**: Playwright + Supabase + Swagger + shadcn-ui
+- **MCPs**: Playwright + Supabase + API Server + shadcn-ui
 - **Use**: ML/AI applications, data pipelines, Python ecosystem
 - **Template**: `project-templates/nextjs-fastapi-supabase/`
 
 ### 4. React Native Mobile (Mobile Only - Needs Backend)
-- **Stack**: React Native (TypeScript)
+- **Stack**: React Native (TypeScript) + Expo
 - **Backend**: Pair with one of the above templates
-- **MCPs**: Playwright + Backend-specific MCPs
+- **MCPs**: Mobile MCP (device automation) + Backend-specific MCPs
 - **Use**: Cross-platform mobile apps (iOS + Android)
 - **Template**: `project-templates/react-native-mobile/`
 - **Important**: React Native is FRONTEND ONLY. Choose a backend template (Node.js/Supabase, Node.js/MongoDB, or FastAPI/Supabase) to pair with it.
@@ -508,6 +515,220 @@ shadcn/ui components have predictable DOM structure:
 - **UX template**: `.bmad-core/templates/front-end-spec-tmpl.yaml` (shadcn-specific)
 - **shadcn/ui docs**: https://ui.shadcn.com (official documentation)
 - **Component catalog**: 50+ components (Button, Form, Dialog, Table, Chart, etc.)
+
+### Mobile Testing Workflow (Mobile MCP)
+
+For React Native mobile projects, Mobile MCP enables automated device testing similar to Playwright MCP for web.
+
+**Tech Stack**: React Native + TypeScript + Expo + Mobile MCP
+
+**Philosophy**: Mobile MCP provides 17 tools for direct control of iOS/Android simulators and real devices, enabling Claude Code to test mobile apps without manual interaction.
+
+#### Workflow Overview
+
+**1. UX Expert Creates Mobile UI Specifications**
+
+UX Expert creates `docs/mobile-ui-spec.md` with React Native component decisions:
+
+- Specifies navigation structure (Stack, Tab, Drawer navigators)
+- Documents screen layouts using React Native primitives
+- Chooses component library (React Native Elements, NativeBase, or custom)
+- Defines accessibility labels for all interactive elements
+
+**Example from mobile-ui-spec.md**:
+```markdown
+## Mobile UI Specifications
+
+### Navigation Structure
+- **Root**: Tab Navigator (Home, Profile, Settings)
+- **Auth Flow**: Stack Navigator (Login, Register, Forgot Password)
+- **Deep Links**: yourapp://profile/:userId
+
+### Login Screen Layout
+
+**Components**:
+- TextInput (Email) - accessible={true} accessibilityLabel="Email input"
+- TextInput (Password) - accessible={true} accessibilityLabel="Password input"
+- TouchableOpacity (Login Button) - accessibilityLabel="Login button"
+- Text (Forgot Password) - accessibilityLabel="Forgot password link"
+
+**Coordinates** (iPhone 15 Pro - 393x852):
+- Email input: (180, 200)
+- Password input: (180, 280)
+- Login button: (200, 400)
+```
+
+**2. Architect Documents Mobile Architecture**
+
+Architect reads `mobile-ui-spec.md` and documents:
+- Backend API integration patterns
+- State management (Context API, Redux, MobX, Zustand)
+- Navigation structure and deep linking
+- Offline-first strategy (AsyncStorage, NetInfo)
+- Device-specific considerations (iOS vs Android)
+
+**3. Dev Implements Mobile Features**
+
+Dev agent:
+- Loads `docs/mobile-ui-spec.md` (knows screen layouts and navigation)
+- Implements React Native components
+- Integrates backend API calls
+- Writes E2E test scenarios (markdown format)
+- Documents coordinates for Mobile MCP testing
+
+**Dev Workflow**:
+```
+1. Read story: "Implement user login screen"
+2. Load: docs/mobile-ui-spec.md
+3. See UX spec: "Login screen with email/password + forgot password link"
+4. Implement: React Native components with accessibility labels
+5. Integrate: API call to POST /api/auth/login
+6. Write E2E scenarios: docs/qa/e2e/TC1.1-login-success.md
+7. Output QA Handoff
+```
+
+**4. QA Tests with Mobile MCP**
+
+QA agent uses Mobile MCP to execute E2E scenarios:
+
+**Example E2E Scenario**:
+```markdown
+### TC1.1: Successful Login
+
+**Priority**: P0 (Critical)
+
+**Steps**:
+1. Launch app on iPhone 15 Pro simulator
+2. Take screenshot of login screen
+3. List UI elements to verify layout
+4. Tap email input at (180, 200)
+5. Type "test@example.com"
+6. Tap password input at (180, 280)
+7. Type "password123"
+8. Tap login button at (200, 400)
+9. Wait 2 seconds for API response
+10. Take screenshot of dashboard
+
+**Expected Result**:
+- Dashboard screen displayed
+- Welcome message: "Welcome, Test User!"
+- User data loaded from API
+
+**Screenshots**:
+- TC1.1_step2_login_screen.png
+- TC1.1_step10_dashboard.png
+```
+
+**QA Execution via Mobile MCP**:
+```
+QA: "Launch app on iPhone 15 Pro and execute TC1.1"
+
+Mobile MCP automatically:
+1. mobile_list_available_devices → Find iPhone 15 Pro
+2. mobile_launch_app → Start app
+3. mobile_take_screenshot → Capture login screen
+4. mobile_list_elements_on_screen → Verify email/password inputs exist
+5. mobile_click_on_screen_at_coordinates(180, 200) → Focus email
+6. mobile_type_keys("test@example.com") → Enter email
+7. mobile_click_on_screen_at_coordinates(180, 280) → Focus password
+8. mobile_type_keys("password123") → Enter password
+9. mobile_click_on_screen_at_coordinates(200, 400) → Tap login
+10. mobile_take_screenshot → Capture dashboard
+
+QA verifies: Backend API called, user authenticated, dashboard displayed
+```
+
+#### Key Principles
+
+- ✅ **Accessibility-first**: All interactive elements MUST have accessibilityLabel
+- ✅ **Cross-platform testing**: Same test runs on iOS and Android (Mobile MCP handles differences)
+- ✅ **Coordinate-based fallback**: When accessibility tree fails, use coordinates
+- ✅ **Screenshot validation**: Capture before/after states for visual verification
+- ✅ **Backend integration**: Test API calls alongside UI interactions
+- ✅ **Real device support**: Test on simulators AND real devices
+
+#### Mobile MCP Tools (17 Total)
+
+**Available to QA Agent**:
+
+**Device Management** (5 tools):
+- `mobile_list_available_devices` - List iOS/Android devices
+- `mobile_launch_app` - Start app by bundle ID
+- `mobile_install_app` - Install .app/.apk file
+- `mobile_terminate_app` - Stop running app
+- `mobile_uninstall_app` - Remove app from device
+
+**UI Interaction** (5 tools):
+- `mobile_click_on_screen_at_coordinates` - Tap buttons/links
+- `mobile_type_keys` - Enter text into inputs
+- `mobile_swipe_on_screen` - Swipe up/down/left/right
+- `mobile_long_press_on_screen_at_coordinates` - Long press gestures
+- `mobile_double_tap_on_screen` - Double tap interactions
+
+**Screen Inspection** (4 tools):
+- `mobile_list_elements_on_screen` - Get accessibility tree
+- `mobile_take_screenshot` - Capture screenshot (base64)
+- `mobile_save_screenshot` - Save screenshot to file
+- `mobile_get_screen_size` - Get device dimensions
+
+**Device Control** (4 tools):
+- `mobile_press_button` - Press hardware buttons (home, back, volume)
+- `mobile_open_url` - Open deep links (yourapp://...)
+- `mobile_set_orientation` - Portrait/landscape
+- `mobile_get_orientation` - Get current orientation
+
+#### Example: Complete Mobile Story Flow
+
+```
+1. UX Expert: Creates mobile-ui-spec.md
+   - Specifies: Login screen layout, navigation flow, component library
+   - Documents: Accessibility labels, coordinates, deep links
+
+2. Architect: Documents mobile architecture
+   - API integration patterns (fetch, axios, React Query)
+   - State management (Context API for auth state)
+   - Navigation structure (Stack Navigator for auth flow)
+   - Offline strategy (AsyncStorage for token persistence)
+
+3. SM: Creates story "Implement User Login"
+   - References mobile-ui-spec.md
+   - Includes E2E test requirements
+
+4. Dev: Implements login screen
+   - Creates LoginScreen component with accessibility labels
+   - Integrates POST /api/auth/login
+   - Implements token storage (AsyncStorage)
+   - Writes E2E scenarios (TC1.1-1.3)
+   - Outputs QA Handoff
+
+5. QA: Tests with Mobile MCP
+   - Reads E2E scenarios from docs/qa/e2e/
+   - Launches app on iPhone 15 Pro: mobile_launch_app
+   - Executes test steps via Mobile MCP tools
+   - Takes screenshots for validation
+   - Repeats test on Android Pixel 7
+   - Creates gate file (PASS/FAIL)
+```
+
+#### Benefits
+
+- 📱 **Cross-platform**: Test iOS and Android from same scenarios
+- ⚡ **60-65% time savings**: Automated vs. manual testing
+- 🎯 **Consistent**: Repeatable tests, no manual errors
+- 📸 **Visual validation**: Screenshots for every critical step
+- 🔗 **Backend integration**: Test full stack (mobile app + API + database)
+- 🧪 **Real device testing**: Not just simulators, actual devices too
+
+#### Mobile Testing Resources
+
+- **Mobile MCP setup**: `project-templates/react-native-mobile/docs/MOBILE-MCP-SETUP.md`
+- **Generic testing guide**: `.bmad-core/data/testing-stack-guide.md` (mobile section)
+- **React Native template**: `project-templates/react-native-mobile/README.md`
+- **Mobile MCP GitHub**: https://github.com/mobile-next/mobile-mcp
+
+#### Trust Score Notice
+
+Mobile MCP has a trust score of 6.5/10. This is acceptable for development and testing, but always review automated actions before executing on production devices. Disable Mobile MCP in production configurations.
 
 ## QA/Test Architect Integration
 

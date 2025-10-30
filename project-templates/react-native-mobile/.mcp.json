@@ -1,10 +1,15 @@
 {
   "mcpServers": {
+    "mobile-mcp": {
+      "command": "npx",
+      "args": ["-y", "@mobilenext/mobile-mcp@latest"],
+      "description": "Mobile device automation for iOS/Android simulators and real devices (E2E testing)"
+    },
     "swagger-mobile-api": {
       "transport": "http",
       "url": "http://localhost:3000/api/mobile/docs",
-      "description": "Mobile backend API endpoints"
+      "description": "Mobile backend API endpoints (configure based on backend stack)"
     }
   },
-  "_note": "Add Supabase or MongoDB MCP based on your chosen backend stack. See .claude/settings.local.json.example for examples."
+  "_note": "Add backend-specific MCPs (Supabase/MongoDB) based on your chosen backend stack. See .claude/settings.local.json.example for examples."
 }
