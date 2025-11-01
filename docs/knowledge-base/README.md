@@ -1,191 +1,172 @@
 # Knowledge Base
 
-**Purpose**: Centralized repository of patterns, integrations, and solutions to prevent "pattern amnesia" between stories and sprints.
+**Purpose**: Project-specific knowledge repository for patterns, integrations, and solutions discovered during development.
+
+**Last Updated**: 2025-11-02
+**Maintained By**: Dev agents during implementation
 
 ---
 
 ## Overview
 
-The Knowledge Base system captures proven patterns and solutions from implemented stories, making them discoverable for future work. This prevents agents from reinventing solutions and ensures consistency across the codebase.
+The Knowledge Base (KB) is a living documentation system that captures reusable patterns, integration guides, and solutions as your project evolves. Unlike static documentation, KB entries are created by Dev agents during story implementation, ensuring documentation stays synchronized with actual code.
+
+### Why Knowledge Base?
+
+**Problems It Solves**:
+- ✅ **Prevents Re-solving Issues**: Solutions documented once, referenced forever
+- ✅ **Maintains Consistency**: Patterns captured ensure consistent implementation
+- ✅ **Accelerates Development**: Future stories reference existing patterns
+- ✅ **Onboarding Aid**: New developers understand established patterns quickly
+- ✅ **Integration Memory**: Third-party integrations documented with gotchas
+
+**Example Workflow**:
+1. Dev agent implements S3 file upload (Story 2.3)
+2. Dev creates `integrations/s3-uploads.md` with pattern
+3. Later story needs file uploads (Story 5.1)
+4. Dev loads `integrations/s3-uploads.md`, reuses pattern
+5. Consistent implementation, zero duplication
 
 ---
 
-## Folder Structure
+## Directory Structure
 
 ```
-knowledge-base/
-├── integrations/         # Third-party service patterns
-│   ├── s3-storage.md
-│   ├── authentication.md
-│   ├── supabase-client.md
-│   └── stripe-payments.md
-├── ui-patterns/          # Frontend patterns
-│   ├── form-validation.md
-│   ├── table-pagination.md
-│   └── modal-handling.md
-├── backend-patterns/     # Backend patterns
-│   ├── api-error-handling.md
-│   ├── database-transactions.md
-│   └── file-uploads.md
-└── common-issues/        # Recurring bugs/fixes
-    ├── cors-debugging.md
-    ├── typescript-errors.md
-    └── deployment-gotchas.md
-```
-
----
-
-## When to Create Knowledge Base Entries
-
-### Dev Agent Creates Entry When:
-- ✅ Implementing third-party integration (S3, Stripe, Auth0, etc.)
-- ✅ Solving complex pattern (authentication flow, file uploads, etc.)
-- ✅ Establishing new UI pattern (modal system, form validation, etc.)
-- ✅ Creating reusable backend pattern (error handling, logging, etc.)
-- ✅ Fixing recurring issue (CORS, env vars, deployment, etc.)
-
-### QA Agent Can Suggest Entry When:
-- Recurring issue found across multiple stories
-- Dev forgot pattern from previous story
-- Solution would benefit future development
-
-### Ownership:
-- **Dev**: Creates and maintains entries
-- **QA**: Can suggest entries during review
-- **User**: Can request entries for important patterns
-
----
-
-## When NOT to Create Entries
-
-Skip knowledge base entries for:
-- ❌ Trivial implementations (simple CRUD)
-- ❌ One-time solutions (unlikely to recur)
-- ❌ Project-specific business logic (belongs in code comments)
-- ❌ Standard patterns already well-documented in framework docs
-
----
-
-## How to Use Knowledge Base
-
-### Before Implementing:
-1. Check `docs/knowledge-base/` for existing patterns
-2. Search by integration name, pattern type, or issue
-3. If pattern exists: Follow reference implementation EXACTLY
-4. If pattern doesn't exist: Implement, then CREATE entry
-
-### After Implementing:
-1. If significant pattern established: Create knowledge base entry
-2. Use template from `_entry-template.md`
-3. Include: Overview, reference implementation, gotchas, when to use
-4. Add timestamp and reference story
-
-### When Updating:
-1. If new gotchas discovered: Update existing entry
-2. Add "Updated" timestamp
-3. Keep reference to original story
-
----
-
-## Entry Template
-
-See `_entry-template.md` for the standard format.
-
-**Key Sections**:
-- Overview
-- Reference Implementation (file path + story reference)
-- Pattern (code example)
-- Common Mistakes
-- Gotchas
-- When to Use / When NOT to Use
-- Related Patterns
-
----
-
-## Examples of Good Knowledge Base Entries
-
-### integrations/s3-storage.md
-- **Why**: S3 setup is complex, easy to forget initialization pattern
-- **Prevents**: Reinitializing S3Client on every request (memory leak)
-- **Value**: 30+ min saved on future S3 implementations
-
-### ui-patterns/form-validation.md
-- **Why**: Form validation pattern spans multiple libraries (React Hook Form, Zod)
-- **Prevents**: Inconsistent validation across forms
-- **Value**: Consistent UX, easier maintenance
-
-### common-issues/cors-debugging.md
-- **Why**: CORS issues recur every few sprints
-- **Prevents**: 1-2 hours of debugging each time
-- **Value**: Quick reference for common CORS fixes
-
----
-
-## Maintenance Workflow
-
-### Creation Flow:
-1. Dev implements feature (e.g., S3 upload in Sprint-1/Epic-1/Story-3)
-2. Feature passes QA
-3. Dev creates `docs/knowledge-base/integrations/s3-storage.md`
-4. Includes: Pattern, gotchas, reference story, timestamp
-5. Commits with story
-
-### Usage Flow:
-1. New story requires S3 (Sprint-3/Epic-2/Story-7)
-2. Dev checks `docs/knowledge-base/integrations/`
-3. Finds `s3-storage.md`
-4. Reads reference implementation from Story-3
-5. Uses exact pattern (avoids reinventing)
-6. Updates entry if new gotchas discovered
-
-### Update Flow:
-1. Dev implementing Sprint-3/Epic-2/Story-7
-2. Discovers new S3 gotcha (bucket CORS issue)
-3. Adds gotcha to existing `s3-storage.md`
-4. Updates timestamp and "Updated By" field
-
----
-
-## Benefits
-
-✅ **Pattern Reuse**: Established once, reused forever
-✅ **Consistency**: Same solutions across codebase
-✅ **Faster Development**: No time wasted reinventing patterns
-✅ **Knowledge Persistence**: New agents learn from past stories
-✅ **Reduced Bugs**: Proven patterns less error-prone
-✅ **Onboarding**: New team members read knowledge base first
-
----
-
-## Integration with BMad Workflow
-
-### Dev Agent Checklist:
-```yaml
-implementation_phase:
-  - "Check docs/knowledge-base/ for existing patterns"
-  - "If pattern exists: Follow reference implementation EXACTLY"
-  - "If pattern doesn't exist: Implement, then CREATE knowledge base entry"
-```
-
-### QA Agent Checklist:
-```yaml
-review_phase:
-  - "If recurring issue found: Suggest knowledge base entry to Dev"
-  - "Verify Dev followed existing knowledge base patterns (if applicable)"
+docs/knowledge-base/
+├── README.md                    # This file
+├── _entry-template.md           # Template for creating new KB entries
+│
+├── backend-patterns/            # Backend architecture patterns
+│   ├── api-error-handling.md   # Example: Standardized error responses
+│   ├── middleware-auth.md      # Example: JWT authentication middleware
+│   └── database-transactions.md # Example: Transaction patterns
+│
+├── ui-patterns/                 # Frontend/UI patterns
+│   ├── form-validation.md      # Example: React Hook Form patterns
+│   ├── data-tables.md          # Example: Sortable/filterable tables
+│   └── modal-dialogs.md        # Example: Modal component patterns
+│
+├── integrations/                # Third-party service integrations
+│   ├── supabase-auth.md        # Example: Supabase authentication
+│   ├── stripe-payments.md      # Example: Stripe checkout flow
+│   └── s3-file-uploads.md      # Example: AWS S3 integration
+│
+└── common-issues/               # Known issues and solutions
+    ├── cors-errors.md          # Example: CORS troubleshooting
+    ├── env-variable-loading.md # Example: Environment config issues
+    └── build-errors.md         # Example: Common build failures
 ```
 
 ---
 
-## Getting Started
+## When to Create KB Entries
 
-1. **First Story**: No knowledge base entries yet - implement as needed
-2. **After Story Complete**: Create entry for significant patterns
-3. **Future Stories**: Check knowledge base BEFORE implementing
-4. **Over Time**: Knowledge base grows, development accelerates
+### Mandatory KB Entry Scenarios
 
-**Golden Rule**: If you spent > 30 minutes solving it, document it in knowledge base!
+Create KB entries when:
+
+1. **Integration Implementation** (Story includes third-party service)
+   - Example: Implementing Stripe, SendGrid, AWS S3
+   - Entry captures: Setup, configuration, code pattern, gotchas
+
+2. **Reusable Pattern Established** (Story creates pattern others will use)
+   - Example: API pagination, error handling, auth middleware
+   - Entry captures: Pattern implementation, use cases, when NOT to use
+
+3. **Non-Obvious Solution** (Story solves complex/tricky issue)
+   - Example: Handling race conditions, optimizing queries
+   - Entry captures: Problem, solution, why this approach works
+
+4. **Dev Notes Require KB** (Story explicitly requests documentation)
+   - Example: Story says "Document this pattern for future stories"
+   - Entry captures: As specified in story requirements
 
 ---
 
-**Last Updated**: 2025-10-28
-**Version**: 1.0
+## How to Create KB Entries
+
+### Step 1: Use the Template
+
+Copy `_entry-template.md` as starting point:
+
+```bash
+# Example: Creating S3 integration entry
+cp docs/knowledge-base/_entry-template.md docs/knowledge-base/integrations/s3-uploads.md
+```
+
+### Step 2: Fill Out Sections
+
+**Required Sections**:
+- **Overview**: What problem does this solve? When to use?
+- **Pattern**: Code example showing correct implementation
+- **Common Mistakes**: What NOT to do (with explanations)
+- **Configuration**: Required env vars, dependencies, setup steps
+- **When to Use / When NOT to Use**: Clear guidance
+
+### Step 3: Reference in Story
+
+When KB entry created, add reference to story
+
+---
+
+## KB Entry Naming Conventions
+
+**Use kebab-case** (lowercase with hyphens):
+- ✅ `api-error-handling.md`
+- ✅ `stripe-checkout-flow.md`
+- ✅ `react-form-validation.md`
+
+**Be specific but concise**:
+- ✅ `supabase-realtime-subscriptions.md`
+- ❌ `realtime.md` (too vague)
+- ❌ `how-to-implement-supabase-realtime-subscriptions-with-websockets.md` (too long)
+
+**Group by category**:
+- Backend patterns → `backend-patterns/`
+- UI patterns → `ui-patterns/`
+- Third-party services → `integrations/`
+- Known issues → `common-issues/`
+
+---
+
+## Using KB Entries During Development
+
+### Dev Agent Workflow
+
+**Before Implementing Story**:
+1. Check if KB has relevant entries
+2. Load applicable patterns
+3. Follow established conventions
+
+### SM Agent Workflow
+
+**When Creating Stories**:
+1. Reference KB entries in Dev Notes
+2. Flag if new pattern should be documented
+3. Include KB requirements in acceptance criteria
+
+---
+
+## KB Best Practices
+
+### DO ✅
+
+- **Be Specific**: Include actual code from your project
+- **Show Examples**: Real implementation > theoretical explanation
+- **Document Gotchas**: Capture non-obvious issues
+- **Update Regularly**: Keep entries current with code
+- **Link Related**: Connect to other KB entries
+
+### DON'T ❌
+
+- **Copy Generic Docs**: KB is project-specific, not library docs
+- **Over-Document**: Only patterns actually used in project
+- **Leave TODOs**: Complete entry before marking story done
+- **Skip Template**: Follow `_entry-template.md` structure
+- **Duplicate Entries**: Search first, update instead of creating
+
+---
+
+**Knowledge Base Status**: ✅ Active
+**Next Step**: Create first KB entry during story implementation
+**Template Ready**: `_entry-template.md` available for use

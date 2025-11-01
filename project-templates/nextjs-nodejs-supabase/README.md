@@ -216,7 +216,8 @@ npm run mcp:generate && npm run mcp:setup
 │   ├── architecture/                 # Architecture docs
 │   ├── epics/                        # Sharded epics
 │   ├── stories/                      # User stories
-│   └── qa/                           # QA assessments and gates
+│   ├── qa/                           # QA assessments and gates
+│   └── knowledge-base/               # Living documentation (patterns, integrations)
 ├── package.json                      # Dependencies
 └── README.md                         # This file
 ```

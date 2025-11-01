@@ -41,7 +41,8 @@ This is a **MyDevWF** (My Development Workflow) system - a comprehensive workflo
 **Generated Project** (after running `npm run create-project`):
 - `.bmad-core/` - Copy of BMad framework
 - `.mcp.json` - Project-specific MCP configuration
-- `docs/` - Project documentation (PRD, architecture, stories, QA assessments)
+- `docs/` - Project documentation (PRD, architecture, stories, QA assessments, knowledge-base)
+- `docs/knowledge-base/` - Living documentation for patterns and integrations
 - `frontend/`, `backend/`, `src/` - Project code
 - `tests/` - Test suites
 
@@ -72,6 +73,43 @@ These files are always loaded by the dev agent (defined in `core-config.yaml`):
 - `docs/architecture/tech-stack.md`
 - `docs/architecture/unified-project-structure.md` ⚠️ (was: source-tree.md)
 - `.bmad-core/data/testing-stack-guide.md` ✅ (added: testing workflow guidance)
+
+### Knowledge Base
+
+**Location**: `docs/knowledge-base/`
+
+The Knowledge Base (KB) is a living documentation system that captures reusable patterns, integrations, and solutions as your project evolves. KB entries are created by Dev agents during story implementation.
+
+**Structure**:
+```
+docs/knowledge-base/
+├── README.md                # KB usage guide
+├── _entry-template.md       # Template for new entries
+├── backend-patterns/        # Backend architecture patterns
+├── ui-patterns/             # Frontend/UI patterns
+├── integrations/            # Third-party service integrations
+└── common-issues/           # Known issues and solutions
+```
+
+**Purpose**:
+- ✅ Prevents re-solving the same problems
+- ✅ Maintains consistent implementation patterns
+- ✅ Accelerates development (reference existing solutions)
+- ✅ Documents integration gotchas and workarounds
+
+**When to Create KB Entries**:
+1. **Integration Implementation** - Third-party services (Stripe, SendGrid, AWS S3)
+2. **Reusable Pattern** - Architecture patterns used across stories
+3. **Non-Obvious Solution** - Complex issues with non-trivial solutions
+4. **Story Requirement** - Dev Notes explicitly request KB documentation
+
+**Workflow**:
+1. Dev implements feature (e.g., S3 file upload in Story 2.3)
+2. Dev creates KB entry: `integrations/s3-uploads.md` with pattern
+3. Future story needs uploads (Story 5.1) → Dev loads KB entry
+4. Consistent implementation, zero duplication
+
+**See**: `docs/knowledge-base/README.md` for complete KB usage guide
 
 ## Model Context Protocol (MCP) Integration
 

@@ -81,6 +81,20 @@ if (fs.existsSync(bmadCorePath)) {
   }
 }
 
+// Copy docs/knowledge-base from parent (single source of truth)
+const knowledgeBasePath = path.join(__dirname, '..', 'docs', 'knowledge-base');
+const projectKnowledgeBasePath = path.join(projectPath, 'docs', 'knowledge-base');
+
+if (fs.existsSync(knowledgeBasePath)) {
+  console.log('📚 Copying Knowledge Base structure...');
+  try {
+    execSync(`xcopy "${knowledgeBasePath}" "${projectKnowledgeBasePath}" /E /I /H /Y`, { stdio: 'inherit' });
+    console.log('✅ Knowledge Base structure copied\n');
+  } catch (error) {
+    console.error('⚠️  Warning: Could not copy Knowledge Base:', error.message);
+  }
+}
+
 // Create .claude/settings.local.json from example
 const settingsExample = path.join(projectPath, '.claude', 'settings.local.json.example');
 const settingsLocal = path.join(projectPath, '.claude', 'settings.local.json');
@@ -108,4 +122,5 @@ console.log('   npm install  (or: pip install -r backend/requirements.txt for Py
 console.log('   # Configure .env files');
 console.log('   npm run dev\n');
 console.log(`📖 Read the README.md for detailed setup instructions`);
-console.log(`🔍 Verify MCPs with: /mcp in Claude Code\n`);
+console.log(`🔍 Verify MCPs with: /mcp in Claude Code`);
+console.log(`📚 Knowledge Base: docs/knowledge-base/ (see README.md)\n`);

@@ -285,7 +285,8 @@ npx playwright test --ui  # Interactive mode
 │   ├── architecture/                 # Architecture docs
 │   ├── front-end-spec.md             # UX Expert creates this (shadcn/ui specs)
 │   ├── stories/                      # User stories
-│   └── qa/                           # QA assessments and gates
+│   ├── qa/                           # QA assessments and gates
+│   └── knowledge-base/               # Living documentation (patterns, integrations)
 └── README.md                         # This file
 ```
 
