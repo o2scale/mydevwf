@@ -229,13 +229,13 @@ The QA agent (Quinn) provides comprehensive quality assurance throughout the dev
 
 ```
 docs/qa/assessments/{epic}.{story}-{type}-{YYYYMMDD}.md
-docs/qa/gates/{epic}.{story}-{slug}.yml
+docs/qa/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
 ```
 
 ## Recent System Optimizations (October-November 2025)
 
 **Status**: PRODUCTION READY ✅
-**Last Updated**: 2025-11-02
+**Last Updated**: 2025-11-04
 **Phase 1 Critical Path**: VALIDATED ✅
 
 ### Key Architectural Decisions
@@ -299,6 +299,48 @@ docs/qa/gates/{epic}.{story}-{slug}.yml
 
 **Status**: Analysis complete, decision pending
 **Document**: `docs/planning/BMAD-V6-MIGRATION-OPTIONS.md`
+
+#### 5. Framework Synchronization with Symlinks
+
+**Decided**: Use symbolic links to sync `.bmad-core/` and `.claude/commands/` across all active projects ⭐ PRODUCTION
+
+**Problem**: Framework improvements in master template don't propagate to active projects (each has its own copy)
+
+**Solution**: Symlink approach for rapid iteration
+- ✅ `.bmad-core/` - Symlinked from master to all projects
+- ✅ `.claude/commands/` - Symlinked from master to all projects
+- ❌ `.claude/settings.local.json` - Project-specific (NOT symlinked)
+- ❌ `CLAUDE.md` - Project-specific (NOT symlinked)
+
+**Setup**: Run `.\scripts\setup-symlinks.ps1` (requires Administrator on Windows)
+
+**Benefits**:
+- Instant framework updates across all projects
+- Zero sync maintenance
+- Consistent framework version everywhere
+- Fast iteration during active development
+
+**Future**: Migrate to Git submodules when framework stabilizes (version pinning, team collaboration)
+
+**Reference**: `scripts/README-SYMLINKS.md`
+
+#### 6. Windows Timestamp Fix
+
+**Decided**: Updated timestamp instructions for cross-platform compatibility (2025-11-04)
+
+**Problem**: Agents had Unix/Linux timestamp command (`date +%Y-%m-%d %H:%M:%S`) that doesn't work on Windows
+
+**Affected Agents**: QA (Quinn), Dev (James), SM (Bob)
+
+**Fix Applied**: Updated timestamp protocol to use PowerShell (cross-platform):
+```yaml
+CRITICAL: Timestamp Protocol - ALL documentation updates MUST include current timestamp
+in format YYYY-MM-DD HH:MM:SS. Use PowerShell: Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+```
+
+**Result**: Agents now add timestamps correctly on Windows, Mac, and Linux
+
+**Files Modified**: `.bmad-core/agents/qa.md`, `.bmad-core/agents/dev.md`, `.bmad-core/agents/sm.md`
 
 ### Critical Integration Rules
 
