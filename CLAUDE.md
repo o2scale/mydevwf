@@ -324,21 +324,21 @@ docs/qa/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
 
 **Reference**: `scripts/README-SYMLINKS.md`
 
-#### 6. Windows Timestamp Fix
+#### 6. Timestamp Protocol (Linux-First Approach)
 
-**Decided**: Updated timestamp instructions for cross-platform compatibility (2025-11-04)
+**Decided**: Bash command as PRIMARY, PowerShell as fallback (2025-11-04)
 
-**Problem**: Agents had Unix/Linux timestamp command (`date +%Y-%m-%d %H:%M:%S`) that doesn't work on Windows
+**Environment**: WSL (Windows Subsystem for Linux) - bash commands work natively
 
-**Affected Agents**: QA (Quinn), Dev (James), SM (Bob)
-
-**Fix Applied**: Updated timestamp protocol to use PowerShell (cross-platform):
+**Timestamp Instruction**:
 ```yaml
-CRITICAL: Timestamp Protocol - ALL documentation updates MUST include current timestamp
-in format YYYY-MM-DD HH:MM:SS. Use PowerShell: Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+CRITICAL: Timestamp Protocol - ALL documentation updates MUST include timestamp via
+date +%Y-%m-%d %H:%M:%S (bash/WSL). Fallback for non-WSL Windows: Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 ```
 
-**Result**: Agents now add timestamps correctly on Windows, Mac, and Linux
+**Philosophy**: Linux-first approach (user planning migration to full Linux environment)
+
+**Affected Agents**: QA (Quinn), Dev (James), SM (Bob)
 
 **Files Modified**: `.bmad-core/agents/qa.md`, `.bmad-core/agents/dev.md`, `.bmad-core/agents/sm.md`
 

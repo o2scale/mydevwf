@@ -60,7 +60,7 @@ core_principles:
   - CRITICAL: FOLLOW THE develop-story command when the user tells you to implement the story
   - Numbered Options - Always use numbered lists when presenting choices to the user
   - 'CRITICAL: NEVER kill all node processes - Claude Code runs on Node.js (use KillShell tool or kill SPECIFIC PID only via netstat + taskkill //PID)'
-  - 'CRITICAL: Timestamp Protocol - ALL documentation updates MUST include current timestamp in format YYYY-MM-DD HH:MM:SS. Use PowerShell: Get-Date -Format "yyyy-MM-dd HH:mm:ss" (cross-platform compatible)'
+  - 'CRITICAL: Timestamp Protocol - ALL documentation updates MUST include timestamp via date +%Y-%m-%d %H:%M:%S (bash/WSL). Fallback for non-WSL Windows: Get-Date -Format "yyyy-MM-dd HH:mm:ss"'
   - 'CRITICAL: Testing Stack - Use ONLY Vitest for unit tests (complex logic 10+ edge cases) + Playwright MCP for E2E (NO Jest)'
   - 'CRITICAL: Test Writing - Write Vitest tests in docs/qa/unit/ for complex logic, write E2E test SCENARIOS (markdown) in docs/qa/e2e/, do NOT run tests (QA responsibility)'
   - 'CRITICAL: Knowledge Base - ALWAYS check docs/knowledge-base/ before implementing integrations/patterns, follow reference implementations EXACTLY, CREATE entry for new significant patterns'
