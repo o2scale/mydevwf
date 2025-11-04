@@ -1,22 +1,64 @@
 # Handoff Format Templates
 
-**Version**: 1.0
-**Last Updated**: 2025-10-28
-**Purpose**: Standardized handoff formats for Dev ↔ QA communication in BMad workflow
+**Version**: 3.0 (Document + Snippet)
+**Last Updated**: 2025-11-04
+**Purpose**: Dual-format handoff system with detailed documents for permanent records and compact snippets for terminal communication in BMad workflow
+
+---
+
+## Document Creation Protocol
+
+**CRITICAL**: All handoff types create TWO outputs:
+
+### 1. **Detailed Handoff Document** (Markdown file)
+
+- **Location**: `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-{type}-handoff.md`
+- **Format**: Comprehensive markdown with sections, details, context
+- **Purpose**:
+  - Permanent record for audit trail and debugging
+  - Comprehensive reference for agents (QA reads for context)
+  - Preserves detailed implementation notes beyond conversation history
+- **Created by**: Outputting agent (Dev, QA, Orchestrator)
+- **Versioning**: Overwrite on rework (git history preserves previous versions)
+
+### 2. **Compact Handoff Snippet** (Terminal output)
+
+- **Format**: 10-15 line copy-paste block with `═══` separators
+- **Purpose**: Quick terminal-to-terminal handoff, includes reference to document
+- **Output**: Terminal text (NOT a file)
+- **Usage**: User copies from source terminal and pastes into target terminal
+
+### File Naming Convention
+
+| Handoff Type | Filename Pattern | Example |
+|--------------|------------------|---------|
+| Story Handoff | `{epic}.{story}-{slug}-story-handoff.md` | `2.2-transcription-story-handoff.md` |
+| QA Handoff | `{epic}.{story}-{slug}-qa-handoff.md` | `2.2-transcription-qa-handoff.md` |
+| Test Review Handoff | `{epic}.{story}-{slug}-test-review-handoff.md` | `2.2-transcription-test-review-handoff.md` |
+| Developer Handoff | `{epic}.{story}-{slug}-developer-handoff.md` | `2.2-transcription-developer-handoff.md` |
+| Completion Handoff | `{epic}.{story}-{slug}-completion-handoff.md` | `2.2-transcription-completion-handoff.md` |
+
+### Why Dual Format?
+
+- **Document**: Permanent, comprehensive, agent-readable context
+- **Snippet**: Quick, copy-paste, essential info only
+- **Together**: Best of both worlds - rich context + fast communication
 
 ---
 
 ## Overview
 
-Handoffs ensure clean communication between Dev and QA terminals with structured, copy-paste formats. These templates prevent information loss and maintain traceability across the two-terminal workflow.
+Handoffs ensure clean communication between terminals with compact, copy-paste formats (10-15 lines). These templates prevent information loss and maintain traceability across two-terminal and three-terminal workflows.
 
 ---
 
-## Three Handoff Types
+## Five Handoff Types
 
 1. **QA Handoff** (Dev → QA): Story ready for testing
 2. **Developer Handoff** (QA → Dev): Issues found, needs fixes
 3. **Completion Handoff** (QA → Dev): All tests passed, ready for commit
+4. **Story Handoff** (Orchestrator → Dev): Story ready for implementation
+5. **Test Review Handoff** (Orchestrator → QA/Dev): Test scenarios vetted
 
 ---
 
@@ -25,115 +67,53 @@ Handoffs ensure clean communication between Dev and QA terminals with structured
 **When**: Dev completes implementation and is ready for QA review
 **From**: Dev Terminal
 **To**: QA Terminal
-**Format**: Copy-paste block
+**Format**: Detailed document + Compact snippet
 
-### Template:
+### Document Creation Steps:
+
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
+
+2. **Create detailed document**: `{epic}.{story}-{slug}-qa-handoff.md` with:
+   - Implementation summary (what was built, how it works)
+   - Background processes (URLs, PIDs, shell IDs, how to verify)
+   - Files created/modified (complete list with paths)
+   - Test details (Vitest tests written, E2E scenarios locations)
+   - Edge cases and focus areas (what QA should pay attention to)
+   - Validation checklist (items for QA to verify)
+   - Dev notes (any gotchas, workarounds, or technical decisions)
+
+3. **Output compact snippet to terminal** (includes document reference)
+
+### Compact Snippet Template:
 
 ```
-═══════════════════════════════════════════════════════
-🎯 QA HANDOFF - Story Ready for Review
-═══════════════════════════════════════════════════════
-
-📋 Story: Sprint-{N}.Epic-{N}.Story-{N} - {Title}
-📁 Story Path: docs/sprint-{N}/epics/epic-{N}/story-{N}.md
-📁 Test Scenarios: docs/qa/e2e/sprint-{N}/epics/epic-{N}/story-{N}/
-📁 Vitest Tests: docs/qa/unit/sprint-{N}/epics/epic-{N}/story-{N}/ (if applicable)
-📊 Status: Ready for QA
-
-✅ Implementation Complete:
-- {List completed tasks/subtasks with checkboxes}
-- {Example: [x] Backend API endpoints created}
-- {Example: [x] Frontend components implemented}
-- {Example: [x] Database migrations applied}
-
-📝 Vitest Unit Tests (if applicable):
-- {filename.test.ts} ({N} test cases)
-- {another.test.ts} ({N} test cases)
-- Total: {N} unit tests
-- Location: docs/qa/unit/sprint-{N}/epics/epic-{N}/story-{N}/
-
-📝 E2E Test Scenarios Written:
-- scenario-{name}.md (AC{N}: {X} test cases, AC{N}: {Y} test cases)
-- scenario-{name2}.md (AC{N}: {Z} test cases)
-- Total: {N} E2E test cases
-- Location: docs/qa/e2e/sprint-{N}/epics/epic-{N}/story-{N}/
-
-🚀 Background Processes Running:
-- Frontend: http://localhost:{PORT} (shell_id: {ID} or PID: {NUMBER})
-- Backend: http://localhost:{PORT} (shell_id: {ID} or PID: {NUMBER})
-- {Database: http://localhost:{PORT} (if applicable)}
-
-💡 Notes for QA:
-- {IF Vitest exists: Run `npm run test` to execute unit tests first}
-- {Test scenarios documented in scenario-*.md files}
-- {Use Playwright MCP tools to execute each E2E test case}
-- {Check console for errors on each interaction}
-- {Any special setup needed - e.g., "Seed database with test data"}
-- {Any known edge cases to pay special attention to}
-
-🔍 Areas of Focus:
-- {Specific areas QA should focus on}
-- {Example: "Validation logic for email format"}
-- {Example: "Error handling for network failures"}
-
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN QA TERMINAL
-═══════════════════════════════════════════════════════
+═══ QA HANDOFF ═══
+📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
+📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+📅 Handed Off: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Dev Agent Name}
+✅ Done: {Brief task summary - what was completed}
+📁 Check: {Key files for QA to review - comma separated}
+🧪 Tests: {N} Vitest ({filename.test.ts if exists}), {N} E2E (docs/qa/e2e/...)
+🚀 Running: {URL} (PID: {PID}), {URL} (PID: {PID})
+💡 Focus: {Specific areas QA should test - edge cases, integrations}
+═══ COPY TO QA TERMINAL ═══
 ```
 
 ### Example (Filled):
 
 ```
-═══════════════════════════════════════════════════════
-🎯 QA HANDOFF - Story Ready for Review
-═══════════════════════════════════════════════════════
-
-📋 Story: Sprint-1.Epic-1.Story-3 - User Login with Email Validation
-📁 Story Path: docs/sprint-1/epics/epic-1/story-3.md
-📁 Test Scenarios: docs/qa/e2e/sprint-1/epics/epic-1/story-3/
-📁 Vitest Tests: docs/qa/unit/sprint-1/epics/epic-1/story-3/
-📊 Status: Ready for QA
-
-✅ Implementation Complete:
-- [x] Login API endpoint (/api/auth/login)
-- [x] Email validation logic with regex
-- [x] Login form component with React Hook Form
-- [x] Error message display for invalid credentials
-- [x] JWT token storage in localStorage
-- [x] Redirect to dashboard on success
-
-📝 Vitest Unit Tests:
-- validateEmail.test.ts (12 test cases)
-- hashPassword.test.ts (5 test cases)
-- Total: 17 unit tests
-- Location: docs/qa/unit/sprint-1/epics/epic-1/story-3/
-
-📝 E2E Test Scenarios Written:
-- scenario-login.md (AC1: 3 test cases, AC2: 2 test cases)
-- scenario-validation.md (AC3: 4 test cases)
-- Total: 9 E2E test cases
-- Location: docs/qa/e2e/sprint-1/epics/epic-1/story-3/
-
-🚀 Background Processes Running:
-- Frontend: http://localhost:3000 (shell_id: bash_1234)
-- Backend: http://localhost:5001 (PID: 9876)
-- Database: PostgreSQL on localhost:5432
-
-💡 Notes for QA:
-- Run `npm run test` to execute Vitest unit tests first
-- Test scenarios documented in scenario-login.md and scenario-validation.md
-- Use Playwright MCP tools to execute each E2E test case
-- Check console for errors on each interaction
-- Database already seeded with test user (user@example.com / password123)
-
-🔍 Areas of Focus:
-- Email validation regex (should reject invalid formats)
-- Error message visibility (CSS opacity issue in previous story)
-- Console errors on failed login (should show 401, not throw)
-
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN QA TERMINAL
-═══════════════════════════════════════════════════════
+═══ QA HANDOFF ═══
+📋 Story: 2.3-media-validation | docs/stories/2.3.story.md
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-qa-handoff.md
+📅 Handed Off: 2025-11-04 12:30:15 | 👤 James (Dev Agent)
+✅ Done: File upload validation, error handling for 50MB+ files, progress tracking
+📁 Check: frontend/src/components/UploadValidator.tsx, backend/api/routers/media.py
+🧪 Tests: 3 Vitest (validation.test.ts), 8 E2E (docs/qa/e2e/sprint-2/epics/epic-2/story-3/)
+🚀 Running: http://localhost:5173 (PID: 12345), http://localhost:8000 (PID: 12346)
+💡 Focus: Error handling for 50MB+ files, network timeout scenarios, progress bar accuracy
+═══ COPY TO QA TERMINAL ═══
 ```
 
 ---
@@ -143,146 +123,55 @@ Handoffs ensure clean communication between Dev and QA terminals with structured
 **When**: QA finds issues during testing
 **From**: QA Terminal
 **To**: Dev Terminal
-**Format**: Copy-paste block
+**Format**: Detailed document + Compact snippet
 
-### Template:
+### Document Creation Steps:
+
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
+
+2. **Create detailed document**: `{epic}.{story}-{slug}-developer-handoff.md` with:
+   - Gate status (FAIL or CONCERNS with rationale)
+   - Comprehensive issue list (all failing test cases with full descriptions)
+   - Evidence references (screenshots, console logs, network traces)
+   - Root cause analysis (QA's assessment of what's wrong)
+   - Suggested fixes (prioritized list of what needs to change)
+   - Test results breakdown (Vitest pass/fail, E2E pass/fail by test case)
+   - Reproduction steps (how Dev can reproduce the issues)
+
+3. **Output compact snippet to terminal** (includes document reference)
+
+### Compact Snippet Template:
 
 ```
-═══════════════════════════════════════════════════════
-🔄 DEVELOPER HANDOFF - Issues Found
-═══════════════════════════════════════════════════════
-
-📋 Story: Sprint-{N}.Epic-{N}.Story-{N} - {Title}
-📊 Gate Decision: {FAIL / CONCERNS}
-📁 Gate File: docs/qa/gates/sprint-{N}/epics/epic-{N}/story-{N}-gate.md
-
-❌ Vitest Issues (if applicable):
-
-**Test Suite**: {filename.test.ts}
-- Failed: {X}/{N} tests
-- Issue: {Brief description of failure}
-- Tests: "{test name 1}", "{test name 2}"
-- Location: docs/qa/unit/sprint-{N}/epics/epic-{N}/story-{N}/{filename.test.ts}
-- Log Output: {Brief error message or "See gate file for details"}
-
-❌ E2E Issues:
-
-**Issue 1: {Title}**
-- Test Case: TC{AC}.{case}
-- Scenario: scenario-{name}.md
-- Severity: {Critical / High / Medium / Low}
-- Description: {What went wrong - be specific}
-- Evidence: docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/tc{AC}.{case}-{description}.{ext}
-- Expected: {What should happen}
-- Actual: {What actually happened}
-- Console Errors: {Any JavaScript errors or "None"}
-
-**Issue 2: {Title}**
-- Test Case: TC{AC}.{case}
-- Scenario: scenario-{name}.md
-- Severity: {Critical / High / Medium / Low}
-- Description: {What went wrong}
-- Evidence: docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/tc{AC}.{case}-{description}.{ext}
-- Expected: {What should happen}
-- Actual: {What actually happened}
-- Console Errors: {Any JavaScript errors or "None"}
-
-{Repeat for each issue}
-
-📊 Summary:
-- Vitest: {X}/{N} passed ({Y} failed) {or "N/A" if no Vitest}
-- E2E Test Cases: {X}/{N} passed ({Y} failed)
-- Blockers: {N} Critical, {N} High, {N} Medium, {N} Low
-
-🔧 Next Steps:
-- Fix issues listed above (prioritize Critical/High)
-- {Specific fix suggestions if obvious}
-- Re-test affected test cases
-- Output new QA Handoff when ready
-
-💡 QA Notes:
-- {Any additional context or suggestions}
-- {Example: "Consider adding validation earlier in form"}
-- {Example: "This issue also affects story-2, may need knowledge base entry"}
-
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN DEV TERMINAL
-═══════════════════════════════════════════════════════
+═══ DEVELOPER HANDOFF ═══
+📋 Story: {epic}.{story}-{slug} | Gate: {FAIL / CONCERNS}
+📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-developer-handoff.md
+📅 Reviewed: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {QA Agent Name}
+📁 Gate: docs/qa/gates/sprint-{N}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
+❌ Issues: TC{AC}.{case} - {brief description}, TC{AC}.{case} - {brief description}
+📸 Evidence: docs/qa/evidence/sprint-{N}/epics/epic-{epic}/story-{story}/
+🔧 Fix: {Primary fix needed - most critical issue}
+📊 Summary: Vitest {X}/{N}, E2E {X}/{N} ({Y} failed)
+💡 Next: Fix issues above, re-test, output new QA Handoff
+═══ COPY TO DEV TERMINAL ═══
 ```
 
 ### Example (Filled):
 
 ```
-═══════════════════════════════════════════════════════
-🔄 DEVELOPER HANDOFF - Issues Found
-═══════════════════════════════════════════════════════
-
-📋 Story: Sprint-1.Epic-1.Story-3 - User Login with Email Validation
-📊 Gate Decision: FAIL
-📁 Gate File: docs/qa/gates/sprint-1/epics/epic-1/story-3-gate.md
-
-❌ Vitest Issues:
-
-**Test Suite**: validateEmail.test.ts
-- Failed: 2/12 tests
-- Issue: Edge cases for international email domains not handled
-- Tests: "should accept .co.uk domains", "should accept .info domains"
-- Location: docs/qa/unit/sprint-1/epics/epic-1/story-3/validateEmail.test.ts
-- Log Output: Expected true, received false
-
-❌ E2E Issues:
-
-**Issue 1: Login button not clickable**
-- Test Case: TC1.1
-- Scenario: scenario-login.md
-- Severity: Critical
-- Description: Login button appears but click event doesn't fire. Suspect z-index overlap with modal backdrop.
-- Evidence: docs/qa/evidence/sprint-1/epics/epic-1/story-3/tc1.1-button-not-clickable.png
-- Expected: Button click triggers form submission
-- Actual: Button click has no effect, no network request, no console error
-- Console Errors: None (no event listener attached?)
-
-**Issue 2: Validation error message not visible**
-- Test Case: TC1.2
-- Scenario: scenario-validation.md
-- Severity: High
-- Description: Error message element exists in DOM but has opacity: 0 in CSS
-- Evidence: docs/qa/evidence/sprint-1/epics/epic-1/story-3/tc1.2-error-invisible.png
-- Expected: Red error message displays below email input
-- Actual: Element rendered but invisible (opacity: 0, check CSS)
-- Console Errors: None
-
-**Issue 3: Redirect after login fails**
-- Test Case: TC1.3
-- Scenario: scenario-login.md
-- Severity: High
-- Description: Login succeeds (200 response, token stored) but no redirect to /dashboard
-- Evidence: docs/qa/evidence/sprint-1/epics/epic-1/story-3/tc1.3-no-redirect.png
-- Expected: Automatic redirect to /dashboard after successful login
-- Actual: Stays on /login page, token is in localStorage
-- Console Errors: None
-
-📊 Summary:
-- Vitest: 10/12 passed (2 failed)
-- E2E Test Cases: 6/9 passed (3 failed)
-- Blockers: 1 Critical, 2 High, 0 Medium, 0 Low
-
-🔧 Next Steps:
-- Fix button z-index issue (check modal CSS, likely overlapping)
-- Fix error message visibility (remove opacity: 0 or add visible class)
-- Fix redirect logic (check if router.push() is called after token storage)
-- Fix Vitest edge cases for international email domains (update regex)
-- Re-test TC1.1, TC1.2, TC1.3 and Vitest tests
-- Output new QA Handoff when ready
-
-💡 QA Notes:
-- Button issue is a blocker - cannot test any login flows
-- Error message CSS issue also appeared in story-2 (consider knowledge base entry for "common CSS visibility issues")
-- Redirect logic might need delay (wait for token storage to complete?)
-
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN DEV TERMINAL
-═══════════════════════════════════════════════════════
+═══ DEVELOPER HANDOFF ═══
+📋 Story: 2.3-media-validation | Gate: CONCERNS
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-developer-handoff.md
+📅 Reviewed: 2025-11-04 14:15:45 | 👤 Quinn (QA Agent)
+📁 Gate: docs/qa/gates/sprint-2/epics/epic-2/2.3-media-validation.yml
+❌ Issues: TC2.3 - Timeout handling shows blank screen (expected error modal)
+📸 Evidence: docs/qa/evidence/sprint-2/epics/epic-2/story-3/tc2.3-timeout-blank.png
+🔧 Fix: Add error boundary to UploadValidator component for timeout scenarios
+📊 Summary: Vitest 3/3 ✅, E2E 7/8 (1 failed - TC2.3)
+💡 Next: Fix error boundary, re-test TC2.3, output new QA Handoff
+═══ COPY TO DEV TERMINAL ═══
 ```
 
 ---
@@ -292,216 +181,307 @@ Handoffs ensure clean communication between Dev and QA terminals with structured
 **When**: All tests pass, story approved for commit
 **From**: QA Terminal
 **To**: Dev Terminal
-**Format**: Copy-paste block
+**Format**: Detailed document + Compact snippet
 
-### Template:
+### Document Creation Steps:
+
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
+
+2. **Create detailed document**: `{epic}.{story}-{slug}-completion-handoff.md` with:
+   - Gate status (PASS with full approval)
+   - Complete test results (all Vitest tests passed, all E2E scenarios passed)
+   - Evidence summary (number of screenshots captured, console logs checked)
+   - Quality notes (code quality observations, performance notes, security checks)
+   - Approval timestamp and QA agent
+   - Suggested commit message (conventional commit format)
+   - Sign-off notes (any final comments or observations)
+
+3. **Output compact snippet to terminal** (includes document reference)
+
+### Compact Snippet Template:
 
 ```
-═══════════════════════════════════════════════════════
-✅ COMPLETION HANDOFF - Story Approved
-═══════════════════════════════════════════════════════
-
-📋 Story: Sprint-{N}.Epic-{N}.Story-{N} - {Title}
-📊 Gate Decision: PASS
-📁 Gate File: docs/qa/gates/sprint-{N}/epics/epic-{N}/story-{N}-gate.md
-
-✅ Vitest Unit Tests (if applicable):
-- {filename.test.ts}: {X}/{X} passed
-- {filename2.test.ts}: {X}/{X} passed
-- Total: {N}/{N} passed (100%)
-- Location: docs/qa/unit/sprint-{N}/epics/epic-{N}/story-{N}/
-
-✅ E2E Test Cases Passed:
-- AC{N}: {X}/{X} test cases passed
-- AC{N}: {X}/{X} test cases passed
-- AC{N}: {X}/{X} test cases passed
-- Total: {N}/{N} test cases passed (100%)
-- Location: docs/qa/e2e/sprint-{N}/epics/epic-{N}/story-{N}/
-
-📸 Evidence Collected:
-- Screenshots: {N} files in docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/
-- Console Logs: No errors
-- Network Requests: All successful ({N} API calls verified)
-- Page Snapshots: {N} snapshots captured
-
-💡 QA Added Tests (if applicable):
-- Added {filename.test.ts} ({N} edge cases for {feature})
-- Reason: {Why tests were added}
-- Location: docs/qa/unit/sprint-{N}/epics/epic-{N}/story-{N}/{filename.test.ts}
-
-💡 QA Notes:
-- {Any observations about implementation quality}
-- {Performance notes - e.g., "Login response time < 300ms"}
-- {Suggestions for future improvements}
-- {Example: "Consider caching user data to reduce API calls"}
-
-✨ Highlights:
-- {Positive observations}
-- {Example: "Excellent error handling"}
-- {Example: "Clean component structure"}
-
-🎯 Ready for Commit:
-- All acceptance criteria validated
-- All tests passing (Vitest + E2E)
-- No blockers or concerns
-- Story can be closed
-
-🚀 Next Steps:
-- Commit changes with message: "{Suggested commit message}"
-- Update story status to "Complete"
-- Close background processes (if no longer needed)
-- Move to next story
-
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN DEV TERMINAL
-═══════════════════════════════════════════════════════
+═══ COMPLETION HANDOFF ═══
+📋 Story: {epic}.{story}-{slug} | Gate: PASS ✅
+📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-handoff.md
+📅 Approved: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {QA Agent Name}
+📁 Gate: docs/qa/gates/sprint-{N}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
+✅ All Tests: Vitest {N}/{N}, E2E {N}/{N} (100%)
+📸 Evidence: {N} screenshots, no console errors
+🚀 Commit: "{Suggested commit message}"
+═══ COPY TO DEV TERMINAL ═══
 ```
 
 ### Example (Filled):
 
 ```
-═══════════════════════════════════════════════════════
-✅ COMPLETION HANDOFF - Story Approved
-═══════════════════════════════════════════════════════
+═══ COMPLETION HANDOFF ═══
+📋 Story: 2.3-media-validation | Gate: PASS ✅
+📅 Approved: 2025-11-04 15:45:30 | 👤 Quinn (QA Agent)
+📁 Gate: docs/qa/gates/sprint-2/epics/epic-2/2.3-media-validation.yml
+✅ All Tests: Vitest 3/3, E2E 8/8 (100%)
+📸 Evidence: 12 screenshots, no console errors
+🚀 Commit: "feat(upload): Add 50MB+ file validation with error handling"
+═══ COPY TO DEV TERMINAL ═══
+```
 
-📋 Story: Sprint-1.Epic-1.Story-3 - User Login with Email Validation
-📊 Gate Decision: PASS
-📁 Gate File: docs/qa/gates/sprint-1/epics/epic-1/story-3-gate.md
+---
 
-✅ Vitest Unit Tests:
-- validateEmail.test.ts: 12/12 passed
-- hashPassword.test.ts: 5/5 passed
-- Total: 17/17 passed (100%)
-- Location: docs/qa/unit/sprint-1/epics/epic-1/story-3/
+## 4. Story Handoff (Orchestrator → Dev)
 
-✅ E2E Test Cases Passed:
-- AC1: 3/3 test cases passed (login with valid credentials)
-- AC2: 2/2 test cases passed (error handling for invalid credentials)
-- AC3: 4/4 test cases passed (email validation)
-- Total: 9/9 test cases passed (100%)
-- Location: docs/qa/e2e/sprint-1/epics/epic-1/story-3/
+**When**: Orchestrator completes story creation and planning
+**From**: Orchestrator Terminal
+**To**: Dev Terminal
+**Format**: Detailed document + Compact snippet
 
-📸 Evidence Collected:
-- Screenshots: 18 files in docs/qa/evidence/sprint-1/epics/epic-1/story-3/
-- Console Logs: No errors
-- Network Requests: All successful (3 API calls verified: /api/auth/login, /api/user/me, /api/config)
-- Page Snapshots: 9 snapshots captured (one per test case)
+### Document Creation Steps:
 
-💡 QA Added Tests:
-- Added validatePhone.test.ts (6 edge cases for phone number validation)
-- Reason: Story mentions "contact info" but Dev didn't add phone validation tests (out of scope but good to have)
-- Location: docs/qa/unit/sprint-1/epics/epic-1/story-3/validatePhone.test.ts
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
 
-💡 QA Notes:
-- Excellent implementation - all edge cases covered
-- Login response time consistently < 300ms (very fast)
-- Error messages are clear and user-friendly
-- Console logs are clean (no warnings or errors during any test)
-- Responsive design works perfectly (tested 375px, 768px, 1920px viewports)
+2. **Create detailed document**: `{epic}.{story}-{slug}-story-handoff.md` with:
+   - Story overview (what needs to be built and why)
+   - Context7 research findings (libraries, patterns, best practices discovered)
+   - Technical decisions made (architecture choices, technology selections)
+   - Acceptance criteria breakdown (detailed explanation of each AC)
+   - Expected test scenarios (what E2E tests Dev should write)
+   - Dependencies and blockers (other stories, external services, prerequisites)
+   - Implementation guidance (suggested approach, patterns to follow, pitfalls to avoid)
+   - Knowledge base references (relevant KB entries for patterns/integrations)
 
-✨ Highlights:
-- Email validation regex handles all edge cases (including international domains after fix)
-- Error handling is robust (network errors, 401, 500 all handled gracefully)
-- Loading states are smooth (spinner displays properly)
-- Accessibility is good (keyboard navigation works, focus styles present)
+3. **Output compact snippet to terminal** (includes document reference)
 
-🎯 Ready for Commit:
-- All acceptance criteria validated
-- All tests passing (17 Vitest + 9 E2E = 26/26 tests)
-- No blockers or concerns
-- Story can be closed
+### Compact Snippet Template:
 
-🚀 Next Steps:
-- Commit changes with message: "feat: implement user login with email validation (story 1.1.3)"
-- Update story status to "Complete"
-- Close background processes (if no longer needed)
-- Move to Sprint-1.Epic-1.Story-4
+```
+═══ STORY HANDOFF ═══
+📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
+📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
+📅 Created: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Orchestrator Agent Name}
+📊 Scope: {Brief description of what needs to be implemented}
+🔍 Research: {Key Context7 findings or tech decisions if applicable}
+📝 ACs: {N} acceptance criteria → {N} E2E scenarios expected
+⚠️ Notes: {Special considerations, dependencies, risks}
+💡 Guidance: {Implementation hints, architecture patterns to use}
+═══ COPY TO DEV TERMINAL ═══
+```
 
-═══════════════════════════════════════════════════════
-📋 COPY THIS BLOCK AND PASTE IN DEV TERMINAL
-═══════════════════════════════════════════════════════
+### Example (Filled):
+
+```
+═══ STORY HANDOFF ═══
+📋 Story: 3.2-pdf-batch-processing | docs/stories/3.2.story.md
+📄 Full Handoff: docs/handoffs/sprint-3/epics/epic-3/3.2-pdf-batch-processing-story-handoff.md
+📅 Created: 2025-11-04 10:15:00 | 👤 Alex (Orchestrator Agent)
+📊 Scope: Implement batch processing for large PDFs (500+ pages) with progress tracking
+🔍 Research: Vertex AI has 10MB payload limit, use streaming approach (Context7)
+📝 ACs: 4 acceptance criteria → 8 E2E scenarios expected (batch split, progress, retry)
+⚠️ Notes: Depends on pgmq setup (Story 3.1), test with real 800-page PDF
+💡 Guidance: Use token-based batching (see docs/knowledge-base/backend-patterns/batch-processing.md)
+═══ COPY TO DEV TERMINAL ═══
+```
+
+---
+
+## 5. Test Review Handoff (Orchestrator → QA/Dev)
+
+**When**: Orchestrator vets Dev's test scenarios for completeness
+**From**: Orchestrator Terminal
+**To**: QA Terminal (if approved) or Dev Terminal (if revisions needed)
+**Format**: Detailed document + Compact snippet
+
+### Document Creation Steps:
+
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
+
+2. **Create detailed document**: `{epic}.{story}-{slug}-test-review-handoff.md` with:
+   - Review summary (APPROVE or REVISE with detailed rationale)
+   - Coverage analysis (which ACs have test scenarios, which are missing)
+   - Strengths assessment (what's well-covered, good edge cases identified)
+   - Gaps identification (missing test scenarios, uncovered edge cases)
+   - Specific recommendations (what needs to be added if REVISE)
+   - Test scenario quality notes (are scenarios detailed enough, clear steps, expected outcomes)
+   - Risk assessment (high-risk areas that need extra test coverage)
+
+3. **Output compact snippet to terminal** (includes document reference)
+
+### Compact Snippet Template:
+
+```
+═══ TEST REVIEW HANDOFF ═══
+📋 Story: {epic}.{story}-{slug}
+📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-review-handoff.md
+📅 Reviewed: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Orchestrator Agent Name}
+📊 Coverage: {N}/{N} ACs have test scenarios
+✅ Strengths: {What's good about the test scenarios}
+❌ Gaps: {Missing scenarios or coverage gaps if any}
+🎯 Recommendation: {APPROVE / REVISE}
+💡 Next: {QA proceed with testing / Dev add missing scenarios}
+═══ COPY TO {QA / DEV} TERMINAL ═══
+```
+
+### Example (Approved):
+
+```
+═══ TEST REVIEW HANDOFF ═══
+📋 Story: 2.3-media-validation
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-test-review-handoff.md
+📅 Reviewed: 2025-11-04 12:45:00 | 👤 Alex (Orchestrator Agent)
+📊 Coverage: 4/4 ACs have test scenarios (10 total test cases)
+✅ Strengths: Edge cases well covered (50MB limit, timeout, network failure)
+❌ Gaps: None - comprehensive coverage
+🎯 Recommendation: APPROVE ✅
+💡 Next: QA proceed with E2E testing using Playwright MCP
+═══ COPY TO QA TERMINAL ═══
+```
+
+### Example (Needs Revision):
+
+```
+═══ TEST REVIEW HANDOFF ═══
+📋 Story: 2.3-media-validation
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-test-review-handoff.md
+📅 Reviewed: 2025-11-04 12:45:00 | 👤 Alex (Orchestrator Agent)
+📊 Coverage: 3/4 ACs have test scenarios (AC3 missing)
+✅ Strengths: Happy path and error handling covered
+❌ Gaps: AC3 (concurrent uploads) - no test scenario, AC2 (validation) - missing edge case for 0-byte files
+🎯 Recommendation: REVISE ❌
+💡 Next: Dev add scenarios for AC3 and 0-byte file edge case, then re-submit for review
+═══ COPY TO DEV TERMINAL ═══
 ```
 
 ---
 
 ## Usage Guidelines
 
+### Three-Terminal Workflow Pattern
+
+**Orchestrator Terminal**: Planning, story creation, research, test vetting
+**Dev Terminal**: Implementation, testing, background processes
+**QA Terminal**: Test execution, validation, gate decisions
+
+### Orchestrator Agent - Story Handoff Generation:
+1. After creating story with `*create-story`, generate Story Handoff
+2. Include Context7 research findings if applicable
+3. Provide implementation guidance and architecture patterns
+4. Note dependencies, risks, and special considerations
+5. Specify expected number of E2E scenarios based on ACs
+
+### Orchestrator Agent - Test Review Handoff Generation:
+1. When Dev completes test scenarios, review for coverage
+2. Check each AC has corresponding E2E scenarios
+3. Identify missing edge cases or gaps
+4. Generate Test Review Handoff with APPROVE or REVISE recommendation
+5. If APPROVE: Send to QA. If REVISE: Send to Dev with specific gaps to address
+
+### Dev Agent - Reading Story Handoff:
+1. Copy Story Handoff from Orchestrator terminal
+2. Read story file at specified path
+3. Note implementation guidance and research findings
+4. Begin development using specified architecture patterns
+
 ### Dev Agent - QA Handoff Generation:
-1. At end of implementation, generate QA Handoff
-2. Include ALL required fields (story path, test locations, process URLs)
-3. Be specific about test counts and locations
-4. Mention any areas QA should focus on
-5. HALT after outputting handoff (wait for QA)
+1. **CRITICAL**: At end of implementation, ALWAYS generate QA Handoff
+2. Include timestamp using: `$(date +%Y-%m-%d\ %H:%M:%S)`
+3. List completed tasks briefly
+4. Specify key files for QA to review
+5. **CRITICAL**: Include ALL background process URLs with PIDs
+6. Mention test counts (Vitest + E2E)
+7. Highlight areas QA should focus on
+8. HALT after outputting handoff (wait for QA)
+
+### Dev Agent - Reading Test Review Handoff:
+1. If APPROVE: Proceed to QA Handoff (no changes needed)
+2. If REVISE: Address identified gaps, add missing scenarios
+3. Re-submit to Orchestrator for review or proceed to QA if gaps are minor
 
 ### QA Agent - Reading QA Handoff:
-1. Copy entire handoff block from Dev terminal
+1. Copy QA Handoff block from Dev terminal
 2. Verify all paths exist (story, test scenarios, Vitest tests)
-3. Verify background processes are running (curl or browser_navigate)
-4. Begin testing workflow (Vitest first if applicable, then E2E)
+3. **CRITICAL**: Verify background processes running (check URLs, confirm PIDs)
+4. Begin testing workflow (Vitest first if exists, then E2E via Playwright MCP)
 
 ### QA Agent - Developer Handoff Generation:
 1. If issues found (FAIL/CONCERNS gate), generate Developer Handoff
-2. Be SPECIFIC about each issue (what/where/why/how to reproduce)
-3. Include evidence file paths
-4. Prioritize by severity (Critical first)
-5. Suggest fixes if obvious
+2. Be SPECIFIC about each issue (use TC numbers, describe briefly)
+3. Include evidence directory path
+4. Prioritize critical issues in "Fix" line
+5. Include timestamp using: `$(date +%Y-%m-%d\ %H:%M:%S)`
 
 ### QA Agent - Completion Handoff Generation:
 1. If all tests pass (PASS gate), generate Completion Handoff
-2. Summarize all test results (Vitest + E2E)
-3. Mention evidence collected
-4. Include any QA-added tests with justification
-5. Provide positive notes and highlights
-6. Suggest commit message
+2. Summarize test results compactly (Vitest X/X, E2E X/X)
+3. Mention evidence collected briefly
+4. Suggest commit message
+5. Include timestamp using: `$(date +%Y-%m-%d\ %H:%M:%S)`
 
 ### Dev Agent - Reading Handoff from QA:
-1. If Developer Handoff: Fix issues in priority order (Critical → High → Medium → Low)
-2. Re-test affected test cases
-3. Generate new QA Handoff when done
-4. If Completion Handoff: Commit changes, update story status, close story
+1. If Developer Handoff: Fix issues in priority order, re-test, output new QA Handoff
+2. If Completion Handoff: Commit with suggested message, update story status, close story
 
 ---
 
 ## Best Practices
 
-### Be Specific:
-❌ "Button doesn't work"
-✅ "Login button click event doesn't fire, suspect z-index overlap with modal backdrop"
+### Keep It Compact:
+✅ Use single-line summaries instead of detailed lists
+✅ Reference paths instead of repeating full content
+✅ Focus on actionable information only
 
-### Include Evidence:
-❌ "Error message not visible"
-✅ "Error message element has opacity: 0 in CSS, see tc1.2-error-invisible.png"
+### Be Specific (But Brief):
+❌ "Button doesn't work"
+✅ "TC2.3 - Timeout shows blank screen (expected error modal)"
+
+### Include Critical Info:
+✅ Always include timestamp (use `$(date +%Y-%m-%d\ %H:%M:%S)`)
+✅ Always include story ID and slug
+✅ Always include background process URLs with PIDs (Dev → QA)
+✅ Always include gate file path (QA → Dev)
 
 ### Track Locations:
-✅ Always include full paths to stories, test scenarios, Vitest tests, evidence
-✅ Include shell_id or PID for background processes
+✅ Use relative paths from project root
+✅ Include evidence directory path, not individual files
+✅ Include PID for each background process (not just shell_id)
 
 ### Copy-Paste Format:
-✅ Use `═══` separator lines for easy visual identification
-✅ Include "COPY THIS BLOCK" footer
-✅ Keep format consistent across all handoffs
+✅ Use `═══` separator for easy visual identification
+✅ Include "COPY TO {TERMINAL}" footer
+✅ Keep format consistent (10-15 lines max)
+✅ Use emojis for visual scanning (📋 Story, 🚀 Running, ✅ Done, ❌ Issues)
 
 ---
 
 ## Integration with Documentation Standards
 
-All handoff contents should follow the timestamp protocol:
-- QA Handoff: Include timestamp of when handoff was generated
-- Developer Handoff: Include timestamp and QA agent name
-- Completion Handoff: Include timestamp and QA agent name
+**Timestamp Protocol** (from `.bmad-core/agents/*.md`):
 
-**Timestamp Format**:
+All handoffs MUST include timestamp using bash command substitution:
+
 ```bash
-date '+%Y-%m-%d %H:%M:%S'
+$(date +%Y-%m-%d\ %H:%M:%S)
 ```
 
-**In Handoff**:
+**In Handoff Template**:
 ```
-📅 Handoff Generated: 2025-10-28 15:45:23
-👤 Generated By: James (Dev Agent) / Quinn (QA Agent)
+📅 Handed Off: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Agent Name}
 ```
+
+**Example Output**:
+```
+📅 Handed Off: 2025-11-04 12:30:15 | 👤 James (Dev Agent)
+```
+
+**Agent Names** (for 👤 field):
+- Dev Agent: "James (Dev Agent)"
+- QA Agent: "Quinn (QA Agent)"
+- Orchestrator Agent: "Alex (Orchestrator Agent)"
 
 ---
 
-**Version**: 1.0
-**Last Updated**: 2025-10-28
+**Version**: 2.0 (Compact + Orchestrator Integration)
+**Last Updated**: 2025-11-04

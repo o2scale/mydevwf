@@ -166,11 +166,11 @@ npm run create-project react-native-mobile my-mobile-app
 - `architect` - System architecture design, technical decisions
 - `ux-expert` - UX specifications, UI design
 - `po` - Product ownership, document validation, sharding
-- `sm` - Story creation from epics
+- `sm` - Story creation from epics (two-terminal workflow)
 - `dev` - Story implementation, coding, testing
 - `qa` - Test architecture, quality gates, code review
 - `analyst` - Market research, brainstorming, project brief creation
-- `orchestrator` - Multi-role coordination
+- `orchestrator` - Three-terminal workflow coordination, story creation with Context7 research, test vetting
 - `bmad-master` - Multi-role agent (can perform most tasks)
 
 ### Core BMad Tasks (`/BMad/tasks/*`)
@@ -205,6 +205,52 @@ npm run create-project react-native-mobile my-mobile-app
 **See**: `.bmad-core/working-in-the-brownfield.md` for complete brownfield guide
 
 **For detailed workflow examples**: See `docs/guides/WORKFLOW-REFERENCE.md`
+
+### Three-Terminal Workflow (Advanced)
+
+The **three-terminal workflow** separates planning, development, and QA across three specialized terminals for improved focus and parallel work.
+
+**Terminals**:
+- **Orchestrator Terminal**: Epic planning, Context7 research, story creation, test vetting
+- **Dev Terminal**: Story implementation, test writing, background processes
+- **QA Terminal**: Test execution, quality gates, evidence collection
+
+**When to Use**:
+- Complex features requiring research (new tech stack, unclear patterns)
+- High-stakes features (payment, auth, data integrity)
+- Learning phase (establish quality standards)
+- Projects with dedicated planning needs
+
+**Key Orchestrator Commands**:
+- `*create-story` - Create next story from epic with Context7 research, output Story Handoff
+- `*vet-tests {story}` - Review test scenarios for coverage, output Test Review Handoff
+
+**Workflow Patterns**:
+1. **Standard Flow**: Orchestrator creates story → Dev implements + tests → QA validates
+2. **With Vetting**: Orchestrator creates story → Dev implements + writes tests → Orchestrator vets tests → QA validates
+3. **Research-Heavy**: Orchestrator researches → Creates story with findings → Dev implements → QA validates
+
+**Handoffs** (Dual-Format System):
+
+All handoffs create TWO outputs:
+1. **Detailed Document**: Permanent record with comprehensive context
+   - Location: `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-{type}-handoff.md`
+   - Contains: Full implementation details, edge cases, validation checklists, dev notes
+2. **Compact Snippet**: Terminal output (10-15 lines) with document reference
+   - QA automatically reads referenced documents for comprehensive context
+
+**Five Handoff Types**:
+- **Story Handoff** (Orchestrator → Dev): Story path, scope, research, guidance, Context7 findings
+- **QA Handoff** (Dev → QA): Tasks done, files, tests, process URLs + PIDs, focus areas
+- **Developer Handoff** (QA → Dev): Issues found, evidence, suggested fixes, root cause analysis
+- **Completion Handoff** (QA → Dev): Test results, approval, suggested commit message
+- **Test Review Handoff** (Orchestrator → QA/Dev): Coverage status, APPROVE or REVISE
+
+**See**: `.bmad-core/data/three-terminal-workflow.md` for complete guide with patterns and examples
+
+**See**: `.bmad-core/data/handoff-templates.md` for all handoff formats with document + snippet templates
+
+**Migration**: Two-terminal workflow (SM + Dev + QA) still works. Adopt three-terminal gradually for complex stories only.
 
 ## QA/Test Architect Integration
 

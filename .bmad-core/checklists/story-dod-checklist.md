@@ -79,6 +79,16 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] User-facing documentation updated, if changes impact users.
    - [ ] Technical documentation (e.g., READMEs, system diagrams) updated if significant architectural changes were made.
 
+8. **QA Handoff & Process Management:**
+
+   [[LLM: CRITICAL - This is YOUR responsibility as Dev, not QA's. Verify each item carefully]]
+   - [ ] All required background processes (frontend, backend, workers, database) have been started and are running.
+   - [ ] Process IDs (PIDs) recorded for each background process.
+   - [ ] All process URLs verified accessible (e.g., http://localhost:3000, http://localhost:8000).
+   - [ ] Detailed QA Handoff document created in `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md` with comprehensive implementation details (implementation summary, background processes with URLs/PIDs/shell IDs, files created/modified, test details, edge cases, validation checklist, dev notes).
+   - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
+   - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, focus areas for testing.
+
 ## Final Confirmation
 
 [[LLM: FINAL DOD SUMMARY

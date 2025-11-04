@@ -161,6 +161,25 @@ docs/qa/evidence/sprint-N/epics/epic-N/story-N/tc{AC}.{case}-{description}.png
 - Description: Brief state description (e.g., `before-login`, `error-state`)
 - Extensions: `.png`, `.jpg`, `.log`, `.json`
 
+### Handoff Document Files:
+```
+docs/handoffs/sprint-N/epics/epic-N/{epic}.{story}-{slug}-{type}-handoff.md
+```
+
+**Examples**:
+- `docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-qa-handoff.md`
+- `docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-developer-handoff.md`
+- `docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-completion-handoff.md`
+- `docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-story-handoff.md`
+- `docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-test-review-handoff.md`
+
+**Format**:
+- Pattern: `{epic}.{story}-{slug}-{type}-handoff.md`
+- Types: `qa`, `developer`, `completion`, `story`, `test-review`
+- Purpose: Permanent record of terminal-to-terminal handoffs with comprehensive context
+- Dual output: Detailed document (file) + Compact snippet (terminal output)
+- Versioning: Overwrite on rework (git history preserves previous versions)
+
 ### Knowledge Base Files:
 ```
 docs/knowledge-base/{category}/{pattern-name}.md
@@ -248,7 +267,8 @@ docs/
 2. **Story files**: Direct `.md` files (not folders)
 3. **Test files**: Stories become folders (can contain multiple test files/scenarios)
 4. **QA artifacts**: All under `docs/qa/` (unit, e2e, evidence, gates)
-5. **No archiving**: All sprints at same level (no `archive/` folder)
+5. **Handoff documents**: All under `docs/handoffs/` (cross-cutting workflow artifacts - QA, Developer, Completion, Story, Test Review handoffs)
+6. **No archiving**: All sprints at same level (no `archive/` folder)
 
 ---
 
