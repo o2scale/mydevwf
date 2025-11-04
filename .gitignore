@@ -62,6 +62,9 @@ project-templates/*/dist/
 project-templates/*/build/
 project-templates/*/.next/
 
+# Active projects (each has its own git repo)
+projects/
+
 # Vitest
 coverage/
 

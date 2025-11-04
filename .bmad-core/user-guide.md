@@ -456,7 +456,7 @@ The Test Architect provides value throughout the entire development lifecycle. H
 | **Development**    | `*trace`    | Mid-implementation      | Verify test coverage       | `docs/qa/assessments/{epic}.{story}-trace-{YYYYMMDD}.md`       |
 |                    | `*nfr`      | While building features | Catch quality issues early | `docs/qa/assessments/{epic}.{story}-nfr-{YYYYMMDD}.md`         |
 | **Review**         | `*review`   | Story marked complete   | Full quality assessment    | QA Results in story + gate file                                |
-| **Post-Review**    | `*gate`     | After fixing issues     | Update quality decision    | Updated `docs/qa/gates/{epic}.{story}-{slug}.yml`              |
+| **Post-Review**    | `*gate`     | After fixing issues     | Update quality decision    | Updated `docs/qa/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml`              |
 
 #### Example Commands
 
@@ -535,7 +535,7 @@ Quick reference for where Test Architect outputs are stored:
 *trace         → docs/qa/assessments/{epic}.{story}-trace-{YYYYMMDD}.md
 *nfr-assess    → docs/qa/assessments/{epic}.{story}-nfr-{YYYYMMDD}.md
 *review        → QA Results section in story + gate file reference
-*gate          → docs/qa/gates/{epic}.{story}-{slug}.yml
+*gate          → docs/qa/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
 ```
 
 ## Technical Preferences System

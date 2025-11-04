@@ -26,7 +26,7 @@ optional:
 
 ## QA Sources to Read
 
-- Gate (YAML): `{qa_root}/gates/{epic}.{story}-*.yml`
+- Gate (YAML): `{qa_root}/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-*.yml`
   - If multiple, use the most recent by modified time
 - Assessments (Markdown):
   - Test Design: `{qa_root}/assessments/{epic}.{story}-test-design-*.md`

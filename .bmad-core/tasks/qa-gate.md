@@ -25,6 +25,23 @@ Slug rules:
 - Strip punctuation
 - Example: "User Auth - Login!" becomes "user-auth-login"
 
+## Variable Substitution
+
+Available variables for gate file path:
+
+- `{epic}` - Epic number (e.g., "2")
+- `{story}` - Story number (e.g., "2.1")
+- `{slug}` - Story slug (e.g., "media-upload")
+- `{sprint}` - Sprint number (e.g., "2")
+  - Derived from story frontmatter `sprint:` field, OR
+  - Calculated from epic number (Epic 1 → Sprint 1, Epic 2-3 → Sprint 2, etc.)
+- `qa.qaLocation` - QA root directory from core-config.yaml (e.g., "docs/qa")
+
+Example:
+- Story: 2.1 "Media Upload & Validation"
+- Sprint: 2
+- Gate file: `docs/qa/gates/sprint-2/epics/epic-2/2.1-media-upload.yml`
+
 ## Minimal Required Schema
 
 ```yaml
@@ -126,11 +143,11 @@ waiver:
 
 ## Output Requirements
 
-1. **ALWAYS** create gate file at: `qa.qaLocation/gates` from `.bmad-core/core-config.yaml`
+1. **ALWAYS** create gate file at: `qa.qaLocation/gates/sprint-{sprint}/epics/epic-{epic}/` from `.bmad-core/core-config.yaml`
 2. **ALWAYS** append this exact format to story's QA Results section:
 
    ```text
-   Gate: {STATUS} → qa.qaLocation/gates/{epic}.{story}-{slug}.yml
+   Gate: {STATUS} → qa.qaLocation/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
    ```
 
 3. Keep status_reason to 1-2 sentences maximum
@@ -151,7 +168,7 @@ After creating gate file, append to story's QA Results section:
 
 ### Gate Status
 
-Gate: CONCERNS → qa.qaLocation/gates/{epic}.{story}-{slug}.yml
+Gate: CONCERNS → qa.qaLocation/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
 ```
 
 ## Key Principles

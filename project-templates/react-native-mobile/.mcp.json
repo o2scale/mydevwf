@@ -1,10 +1,14 @@
 {
   "mcpServers": {
+    "context7": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@upstash/context7-mcp"],
+      "env": {}
+    },
     "swagger-mobile-api": {
-      "transport": "http",
-      "url": "http://localhost:3000/api/mobile/docs",
-      "description": "Mobile backend API endpoints"
+      "type": "http",
+      "url": "http://localhost:3000/api/mobile/docs"
     }
   },
-  "_note": "Add Supabase or MongoDB MCP based on your chosen backend stack. See .claude/settings.local.json.example for examples."
+  "_note": "Add Supabase or MongoDB MCP based on your chosen backend stack. For Supabase: add supabase server with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars. For MongoDB: add mongodb-local server with MONGODB_URI env var."
 }

@@ -220,7 +220,8 @@ describe('calculateTax', () => {
 7. **IF logic gaps found**: Can add more Vitest tests in `docs/qa/unit/`
 8. Code review (if E2E tests pass)
 9. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
-10. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/story-N-gate.md`
+10. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
+    - Example: `docs/qa/gates/sprint-2/epics/epic-2/2.1-media-upload.yml`
 11. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
 
 **QA Decision Criteria**:
