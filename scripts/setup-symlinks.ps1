@@ -84,21 +84,21 @@ foreach ($project in $projects) {
             # Check if it's already a symlink
             $item = Get-Item $projectBmadCore -Force
             if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
-                Write-Host "  ✓ .bmad-core/ already symlinked" -ForegroundColor Green
+                Write-Host "  [OK] .bmad-core/ already symlinked" -ForegroundColor Green
             } else {
                 # Backup existing directory
                 $backupPath = "$projectBmadCore.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-                Write-Host "  → Backing up existing .bmad-core/ to: $(Split-Path $backupPath -Leaf)" -ForegroundColor Yellow
+                Write-Host "  -> Backing up existing .bmad-core/ to: $(Split-Path $backupPath -Leaf)" -ForegroundColor Yellow
                 Move-Item -Path $projectBmadCore -Destination $backupPath -Force
 
                 # Create symlink
                 New-Item -ItemType SymbolicLink -Path $projectBmadCore -Target $masterBmadCore -Force | Out-Null
-                Write-Host "  ✓ .bmad-core/ symlinked successfully" -ForegroundColor Green
+                Write-Host "  [OK] .bmad-core/ symlinked successfully" -ForegroundColor Green
             }
         } else {
             # Create new symlink
             New-Item -ItemType SymbolicLink -Path $projectBmadCore -Target $masterBmadCore -Force | Out-Null
-            Write-Host "  ✓ .bmad-core/ symlinked successfully (new)" -ForegroundColor Green
+            Write-Host "  [OK] .bmad-core/ symlinked successfully (new)" -ForegroundColor Green
         }
 
         # -----------------------
@@ -121,34 +121,34 @@ foreach ($project in $projects) {
             # Check if it's already a symlink
             $item = Get-Item $projectClaudeCommands -Force
             if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
-                Write-Host "  ✓ .claude/commands/ already symlinked" -ForegroundColor Green
+                Write-Host "  [OK] .claude/commands/ already symlinked" -ForegroundColor Green
             } else {
                 # Backup existing directory
                 $backupPath = "$projectClaudeCommands.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-                Write-Host "  → Backing up existing .claude/commands/ to: $(Split-Path $backupPath -Leaf)" -ForegroundColor Yellow
+                Write-Host "  -> Backing up existing .claude/commands/ to: $(Split-Path $backupPath -Leaf)" -ForegroundColor Yellow
                 Move-Item -Path $projectClaudeCommands -Destination $backupPath -Force
 
                 # Create symlink
                 New-Item -ItemType SymbolicLink -Path $projectClaudeCommands -Target $masterClaudeCommands -Force | Out-Null
-                Write-Host "  ✓ .claude/commands/ symlinked successfully" -ForegroundColor Green
+                Write-Host "  [OK] .claude/commands/ symlinked successfully" -ForegroundColor Green
             }
         } else {
             # Create new symlink
             New-Item -ItemType SymbolicLink -Path $projectClaudeCommands -Target $masterClaudeCommands -Force | Out-Null
-            Write-Host "  ✓ .claude/commands/ symlinked successfully (new)" -ForegroundColor Green
+            Write-Host "  [OK] .claude/commands/ symlinked successfully (new)" -ForegroundColor Green
         }
 
         # Restore settings.local.json if it was backed up
         if ($settingsBackup) {
             Set-Content -Path $projectClaudeSettings -Value $settingsBackup -Force
-            Write-Host "  ✓ Preserved .claude/settings.local.json" -ForegroundColor Green
+            Write-Host "  [OK] Preserved .claude/settings.local.json" -ForegroundColor Green
         } else {
             # Create default settings.local.json
             $defaultSettings = @{
                 enableAllProjectMcpServers = $false
             } | ConvertTo-Json
             Set-Content -Path $projectClaudeSettings -Value $defaultSettings -Force
-            Write-Host "  ✓ Created default .claude/settings.local.json" -ForegroundColor Green
+            Write-Host "  [OK] Created default .claude/settings.local.json" -ForegroundColor Green
         }
 
         # -----------------------
@@ -161,19 +161,19 @@ foreach ($project in $projects) {
             $gitignoreContent = Get-Content $gitignorePath -Raw
 
             # Check if .bmad-core is already in .gitignore
-            if ($gitignoreContent -notmatch '\.bmad-core') {
+            if ($gitignoreContent -notmatch "\.bmad-core") {
                 Add-Content -Path $gitignorePath -Value "`n# BMad Framework (symlinked from master)`n.bmad-core/"
                 $gitignoreUpdated = $true
             }
 
             # Check if .claude is in .gitignore (we want to ignore symlinked commands but keep settings.local.json)
-            if ($gitignoreContent -notmatch '\.claude/commands') {
+            if ($gitignoreContent -notmatch "\.claude/commands") {
                 Add-Content -Path $gitignorePath -Value "`n# Claude commands (symlinked from master)`n.claude/commands/"
                 $gitignoreUpdated = $true
             }
 
             if ($gitignoreUpdated) {
-                Write-Host "  ✓ Updated .gitignore" -ForegroundColor Green
+                Write-Host "  [OK] Updated .gitignore" -ForegroundColor Green
             }
         }
 
@@ -189,26 +189,28 @@ foreach ($project in $projects) {
 
 # Summary
 Write-Host "=== Summary ===" -ForegroundColor Cyan
-Write-Host "✓ Success: $successCount project(s)" -ForegroundColor Green
+Write-Host "[OK] Success: $successCount project(s)" -ForegroundColor Green
 if ($errorCount -gt 0) {
     Write-Host "✗ Errors:  $errorCount project(s)" -ForegroundColor Red
 }
 if ($skippedCount -gt 0) {
-    Write-Host "⊘ Skipped: $skippedCount project(s)" -ForegroundColor Yellow
+    Write-Host "[SKIP] Skipped: $skippedCount project(s)" -ForegroundColor Yellow
 }
 
 Write-Host "`n=== Verification ===" -ForegroundColor Cyan
 Write-Host "Run this command to verify symlinks:" -ForegroundColor Gray
-Write-Host "Get-ChildItem -Path '$ProjectsDir\*\.bmad-core' -Force | Select-Object FullName, Target`n" -ForegroundColor White
+Write-Host "Get-ChildItem -Path `"$ProjectsDir\*\.bmad-core`" -Force | Select-Object FullName, Target" -ForegroundColor White
+Write-Host "" # Blank line
 
 Write-Host "=== Next Steps ===" -ForegroundColor Cyan
 Write-Host "1. Verify symlinks are working correctly" -ForegroundColor Gray
 Write-Host "2. Test a project to ensure agents load correctly" -ForegroundColor Gray
 Write-Host "3. Make a change in master .bmad-core/ and verify it appears in projects" -ForegroundColor Gray
-Write-Host "4. Commit project .gitignore updates (if modified)`n" -ForegroundColor Gray
+Write-Host "4. Commit project .gitignore updates (if modified)" -ForegroundColor Gray
+Write-Host "" # Blank line
 
 if ($errorCount -eq 0) {
-    Write-Host "✓ Symlink setup completed successfully!" -ForegroundColor Green
+    Write-Host "[OK] Symlink setup completed successfully!" -ForegroundColor Green
 } else {
-    Write-Host "⚠ Symlink setup completed with errors. Please review above." -ForegroundColor Yellow
+    Write-Host "[WARN] Symlink setup completed with errors. Please review above." -ForegroundColor Yellow
 }
