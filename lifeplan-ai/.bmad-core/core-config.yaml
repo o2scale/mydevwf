@@ -1,0 +1,25 @@
+markdownExploder: true
+qa:
+  qaLocation: docs/qa
+prd:
+  prdFile: docs/prd.md
+  prdVersion: v4
+  prdSharded: true
+  prdShardedLocation: docs/prd
+  epicFilePattern: epic-{n}*.md
+architecture:
+  architectureFile: docs/architecture.md
+  architectureVersion: v4
+  architectureSharded: true
+  architectureShardedLocation: docs/architecture
+customTechnicalDocuments: null
+devLoadAlwaysFiles:
+  - docs/architecture/coding-standards.md
+  - docs/architecture/tech-stack.md
+  - docs/architecture/unified-project-structure.md
+  - .bmad-core/data/testing-stack-guide.md
+devDebugLog: .ai/debug-log.md
+# Story file location (v3 pattern: flat directory with {epic}.{story}.story.md files)
+# For v4 hierarchical pattern, use: docs/sprint-N/epics/epic-N/
+devStoryLocation: docs/stories
+slashPrefix: BMad
