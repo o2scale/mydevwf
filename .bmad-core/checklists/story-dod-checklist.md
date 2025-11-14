@@ -85,9 +85,19 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] All required background processes (frontend, backend, workers, database) have been started and are running.
    - [ ] Process IDs (PIDs) recorded for each background process.
    - [ ] All process URLs verified accessible (e.g., http://localhost:3000, http://localhost:8000).
-   - [ ] Detailed QA Handoff document created in `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md` with comprehensive implementation details (implementation summary, background processes with URLs/PIDs/shell IDs, files created/modified, test details, edge cases, validation checklist, dev notes).
+   - [ ] **IF story modified ANY backend files** (routes, controllers, models, middleware, services, server.js, app.js, or ANY .js/.ts files in backend/server directories): Backend processes restarted with fresh code BEFORE QA Handoff (stop old PIDs, restart backend, verify successful start, record new PID + restart timestamp).
+   - [ ] Detailed QA Handoff document created in `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md` with comprehensive implementation details (implementation summary, background processes with URLs/PIDs/shell IDs, files created/modified, test details, edge cases, validation checklist, dev notes, backend restart confirmation if applicable).
    - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
-   - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, focus areas for testing.
+   - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
+
+9. **Git/Version Control:**
+
+   [[LLM: Git commits ensure code is safely versioned and traceable. Follow git-workflow-guide.md exactly]]
+   - [ ] Implementation commit created BEFORE QA Handoff (feat(story-X.Y): Implementation complete with task list, test counts, file counts per `.bmad-core/data/git-workflow-guide.md` Commit Point 1).
+   - [ ] Commit message follows conventional commits format with proper prefix (feat/fix/chore).
+   - [ ] Commit includes all implemented files (staged with `git add`).
+   - [ ] Commit pushed to story branch (`git push origin story/{epic}.{story}-{slug}`).
+   - [ ] **IF QA finds issues**: Fixes commit created after addressing QA findings (fix(story-X.Y): Address QA findings with issue list, test counts, quality gate status per git-workflow-guide.md Commit Point 2).
 
 ## Final Confirmation
 

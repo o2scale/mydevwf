@@ -78,6 +78,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 2. **Create detailed document**: `{epic}.{story}-{slug}-qa-handoff.md` with:
    - Implementation summary (what was built, how it works)
    - Background processes (URLs, PIDs, shell IDs, how to verify)
+   - Backend restart confirmation (if backend files modified: restart timestamp, new PID, files that triggered restart)
    - Files created/modified (complete list with paths)
    - Test details (Vitest tests written, E2E scenarios locations)
    - Edge cases and focus areas (what QA should pay attention to)
@@ -97,6 +98,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📁 Check: {Key files for QA to review - comma separated}
 🧪 Tests: {N} Vitest ({filename.test.ts if exists}), {N} E2E (docs/qa/e2e/...)
 🚀 Running: {URL} (PID: {PID}), {URL} (PID: {PID})
+🔄 Backend: {Restarted ✅ at [timestamp] (PID: [new-pid]) | No restart needed ⏭️}
 💡 Focus: {Specific areas QA should test - edge cases, integrations}
 ═══ COPY TO QA TERMINAL ═══
 ```
@@ -112,6 +114,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📁 Check: frontend/src/components/UploadValidator.tsx, backend/api/routers/media.py
 🧪 Tests: 3 Vitest (validation.test.ts), 8 E2E (docs/qa/e2e/sprint-2/epics/epic-2/story-3/)
 🚀 Running: http://localhost:5173 (PID: 12345), http://localhost:8000 (PID: 12346)
+🔄 Backend: Restarted ✅ at 2025-11-04 12:29:45 (PID: 12346, Modified: backend/api/routers/media.py)
 💡 Focus: Error handling for 50MB+ files, network timeout scenarios, progress bar accuracy
 ═══ COPY TO QA TERMINAL ═══
 ```

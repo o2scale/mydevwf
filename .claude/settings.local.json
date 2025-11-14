@@ -1,0 +1,8 @@
+{
+  "enableAllProjectMcpServers": false,
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"D:\\Dev\\mydevwf\\projects\\hdav2\\docs\\qa\"\" 2>/dev/null || echo \"QA directory not found or empty \")"
+    ]
+  }
+}

@@ -8,7 +8,7 @@
 
 ## Active Session Logs
 
-### Workflow Optimizations (October 2024)
+### Workflow Optimizations (October-November 2024)
 
 **SESSION-LOG-WORKFLOW-OPTIMIZATION-2025-10-28.md**
 - MCP integration + BMad core optimization
@@ -20,6 +20,18 @@
 
 **SESSION-UPDATE-2025-10-28-PLAYWRIGHT-MCP-DISCOVERY.md**
 - Playwright MCP testing workflow discovery
+- Status: ✅ COMPLETE
+
+**SESSION-LOG-TIMESTAMP-FIX-SYMLINK-SOLUTION-2025-11-04.md**
+- Timestamp protocol fix (bash → PowerShell fallback)
+- Framework synchronization via symlinks
+- Status: ✅ COMPLETE
+
+**SESSION-LOG-BMAD-V6-CRITICAL-ANALYSIS-2025-11-07.md**
+- Comprehensive BMad V6 Alpha exploration and evaluation
+- Critical comparison: V6 vs our V4 customizations
+- Empirical research on Claude Code subagent performance
+- **Strategic Decision**: STAY V4, cherry-pick V6 concepts
 - Status: ✅ COMPLETE
 
 ---

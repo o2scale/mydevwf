@@ -25,6 +25,32 @@ This is a **MyDevWF** (My Development Workflow) system - a comprehensive workflo
 - Project-specific MCP configuration
 - Ready-to-code environment
 
+### BMad IDE Sub-Project
+
+**Location**: `bmad-ide/`
+
+**BMad IDE** is an agentic development environment for power users, automating BMad Method three-terminal workflows while maintaining full transparency and control.
+
+**Vision**: Automated agent handoffs, context pollution monitoring, workflow orchestration - all without sacrificing user control.
+
+**Strategy**: Two-stage architecture
+1. **Stage 1** (Months 1-3): VS Code Extension - validate concept fast (100M+ VS Code users)
+2. **Stage 2** (Months 4-12): Linux Terminal System - revolutionary power-user platform (Ubuntu + Hyprland + DankMaterialShell + Go daemon)
+
+**Current Status**: Phase 0 - Architecture complete, MVD (Minimum Viable Demo) pending this weekend
+
+**Documentation**: `bmad-ide/CLAUDE.md` - Master routing document with branch context architecture
+
+**Branch Contexts** (for focused work):
+- `.context/workstation-context.md` - Linux Terminal System (Ubuntu + Hyprland + DMS)
+- `.context/extension-context.md` - VS Code Extension MVP
+- `.context/daemon-context.md` - Orchestration Daemon (Go)
+- `.context/framework-context.md` - BMad V4 Framework Optimizations
+
+**Key Innovation**: Hierarchical context management - each development thread has its own context file to prevent bloat. Session logs preserve decisions across conversation compactions.
+
+**See**: `bmad-ide/README.md` for project overview, `bmad-ide/.context/README.md` for architecture details
+
 ## Core Architecture
 
 ### Directory Structure
@@ -281,7 +307,7 @@ docs/qa/gates/sprint-{sprint}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
 ## Recent System Optimizations (October-November 2025)
 
 **Status**: PRODUCTION READY ✅
-**Last Updated**: 2025-11-04
+**Last Updated**: 2025-11-07
 **Phase 1 Critical Path**: VALIDATED ✅
 
 ### Key Architectural Decisions
@@ -387,6 +413,90 @@ date +%Y-%m-%d %H:%M:%S (bash/WSL). Fallback for non-WSL Windows: Get-Date -Form
 **Affected Agents**: QA (Quinn), Dev (James), SM (Bob)
 
 **Files Modified**: `.bmad-core/agents/qa.md`, `.bmad-core/agents/dev.md`, `.bmad-core/agents/sm.md`
+
+#### 7. Backend Restart Protocol (2025-11-07)
+
+**Problem Identified**: Node.js backend doesn't hot-reload by default. When Dev modifies backend files during story implementation, changes don't take effect until backend restarts. This caused QA to test against stale code, wasting time debugging "failures" that were actually due to cached code.
+
+**Solution**: Mandatory backend restart before QA Handoff
+
+**Protocol**:
+```yaml
+CRITICAL: Backend Restart Protocol - IF story modified ANY backend files (routes, controllers,
+models, middleware, services, server.js, app.js, or ANY .js/.ts files in backend/server directories):
+BEFORE creating QA Handoff, (1) Stop backend processes ONLY using KillShell or kill SPECIFIC PIDs,
+(2) Restart backend with fresh code, (3) Verify successful start, (4) Record new PID + timestamp,
+(5) Include in QA Handoff: "Backend Restarted ✅ at [timestamp] (PID: [new-pid], Reason: Modified [files])"
+```
+
+**QA Handoff Changes**:
+- Added 🔄 Backend line to compact snippet (shows restart status)
+- Detailed document includes backend restart confirmation section
+- Example: `🔄 Backend: Restarted ✅ at 2025-11-07 15:30:45 (PID: 12346, Modified: backend/routes/auth.js)`
+
+**Benefits**:
+- QA always tests against latest backend code
+- Eliminates "works in dev, fails in QA" confusion
+- Explicit restart tracking in handoff documentation
+- Prevents wasted time debugging stale code issues
+
+**Affected Files**:
+- `.bmad-core/agents/dev.md` (line 70: Backend Restart Protocol, line 89: completion step)
+- `.bmad-core/data/handoff-templates.md` (line 81: detailed document, line 101: compact snippet, line 117: example)
+- `.bmad-core/checklists/story-dod-checklist.md` (line 88: backend restart verification)
+
+**Trigger**: User observed this issue during production development - backend changes not reflected in QA testing
+
+#### 8. Git Workflow Integration (2025-11-14)
+
+**Problem Identified**: BMad V4 had no Git commits integrated into the workflow. Code was implemented but never committed, creating risk of lost work and no version control history.
+
+**Solution**: Three commit points integrated into BMad workflow
+
+**Commit Points**:
+
+1. **Commit Point 1: After Dev Implementation (Before QA)**
+   - **Who**: Dev agent
+   - **When**: After all tasks complete, tests written, BEFORE creating QA Handoff
+   - **Format**: `feat(story-X.Y): Implementation complete` with task list, test counts, file counts
+   - **Example**: `feat(story-1.3): Implement user authentication system`
+
+2. **Commit Point 2: After QA Fixes (If QA FAIL/CONCERNS)**
+   - **Who**: Dev agent
+   - **When**: After addressing QA findings, fixes implemented, tests pass
+   - **Format**: `fix(story-X.Y): Address QA findings` with issue list, test counts, quality gate status
+   - **Example**: `fix(story-1.3): Address QA findings on authentication`
+
+3. **Commit Point 3: After QA PASS (Story Complete)**
+   - **Who**: QA agent OR Dev agent (after receiving Completion Handoff)
+   - **When**: QA validates story, Quality Gate = PASS
+   - **Format**: `chore(story-X.Y): Story complete - QA approved` with AC validation, evidence reference
+   - **Example**: `chore(story-1.3): Story complete - QA approved`
+
+**Branch Strategy**:
+- **Main/Master**: Production-ready code (protected, no direct commits)
+- **Develop/Devwf**: Integration branch for features
+- **Story Branches**: `story/{epic}.{story}-{slug}` (e.g., `story/1.3-user-authentication`)
+
+**Merge Strategy**:
+- After QA PASS: Merge story branch to develop with `--no-ff` (preserve story history)
+- End of sprint/release: Merge develop to main with version tag
+
+**Benefits**:
+- Version control history tracks implementation progress
+- Easy rollback to specific commits if issues arise
+- Clear audit trail of what was done when
+- QA traceability (commits linked to quality gates)
+- Safe collaboration with multiple developers
+
+**Reference**: `.bmad-core/data/git-workflow-guide.md` (complete Git workflow documentation)
+
+**Affected Files**:
+- `.bmad-core/agents/dev.md` (line 91: completion step adds Commit Point 1, line 109: added git-workflow-guide.md dependency)
+- `.bmad-core/tasks/apply-qa-fixes.md` (line 130: completion checklist adds Commit Point 2)
+- `.bmad-core/agents/qa.md` (line 65: Completion Handoff Protocol adds optional Commit Point 3, line 91: added git-workflow-guide.md dependency)
+- `.bmad-core/checklists/story-dod-checklist.md` (section 9: Git/Version Control requirements)
+- `.bmad-core/data/git-workflow-guide.md` (NEW: comprehensive Git workflow guide with examples, troubleshooting, best practices)
 
 ### Critical Integration Rules
 
