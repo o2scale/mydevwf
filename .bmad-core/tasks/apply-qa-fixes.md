@@ -127,7 +127,7 @@ Status Rule:
 - Coverage gaps closed or explicitly documented with rationale
 - Story updated (allowed sections only) including File List and Change Log
 - Status set according to Status Rule
-- COMMIT fixes (fix(story-X.Y): Address QA findings with issue list, test counts, quality gate status per git-workflow-guide.md Commit Point 2)
+- COMMIT fixes (fix(story-X.Y): Address QA findings with issue list, test counts, quality gate status, footer "Authored by O2Scale" per git-workflow-guide.md Commit Point 2)
 
 ## Example: Story 2.2
 

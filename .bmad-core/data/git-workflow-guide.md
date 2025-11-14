@@ -73,8 +73,7 @@ Files: {count} created/modified
 Status: Ready for QA
 Story: docs/stories/{epic}.{story}.story.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 **Example**:
@@ -93,8 +92,7 @@ Files: 8 created/modified
 Status: Ready for QA
 Story: docs/stories/1.3.story.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 ### Commit Point 2: After QA Fixes (If QA FAIL/CONCERNS)
@@ -119,8 +117,7 @@ Quality Gate: {previous-status} → Ready for re-review
 
 Reference: docs/handoffs/.../developer-handoff.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 **Example**:
@@ -138,8 +135,7 @@ Quality Gate: CONCERNS → Ready for re-review
 
 Reference: docs/handoffs/sprint-1/epics/epic-1/1.3-developer-handoff.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 ### Commit Point 3: After QA PASS (Story Complete)
@@ -165,8 +161,7 @@ All acceptance criteria validated:
 Evidence: docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
 Story Status: Complete
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 **Example**:
@@ -185,8 +180,7 @@ All acceptance criteria validated:
 Evidence: docs/qa/gates/sprint-1/epics/epic-1/1.3-user-authentication.yml
 Story Status: Complete
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 ```
 
 ---
@@ -313,8 +307,7 @@ Files: 8 created/modified
 Status: Ready for QA
 Story: docs/stories/1.3.story.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 EOF
 )"
 
@@ -332,6 +325,79 @@ git log --oneline --graph --decorate --all
 
 # See diff before committing
 git diff
+```
+
+### When to Use Git Diff (Compare Branches)
+
+**Use `git diff` to compare branches in these situations:**
+
+**1. Before Merging to Develop** (Pre-Merge Review)
+```bash
+# See all changes that will be merged
+git checkout develop
+git pull origin develop
+git diff develop..story/1.3-user-authentication
+
+# Review the diff - should match expectations from QA Handoff
+```
+**Why**: Verify exactly what code is being merged, catch unexpected changes
+
+**2. When Resuming Work After Context Switch** (Orientation Check)
+```bash
+# See what you changed since branching from develop
+git diff develop...HEAD
+
+# See uncommitted changes in current branch
+git diff
+```
+**Why**: Quickly orient yourself to what's been done, avoid duplicating work
+
+**3. When QA Reports Unexpected Behavior** (Troubleshooting)
+```bash
+# Compare story branch vs develop to see what changed
+git diff develop..story/1.3-user-authentication -- path/to/file.js
+
+# Compare specific commits
+git diff <commit-hash-1>..<commit-hash-2>
+```
+**Why**: Identify what code introduced the issue, narrow down root cause
+
+**4. Before Creating Commit Point 1** (Pre-Commit Validation)
+```bash
+# See all unstaged changes
+git diff
+
+# See staged changes (what will be committed)
+git diff --staged
+```
+**Why**: Review exactly what you're committing, prevent accidental commits
+
+**5. When Merge Conflicts Occur** (Conflict Resolution)
+```bash
+# See conflicted files
+git diff
+
+# After resolving, see remaining diffs
+git diff --check
+```
+**Why**: Understand what conflicts exist, verify resolution is correct
+
+**Git Diff Command Reference**:
+```bash
+# Compare branches (what's in story-branch that's not in develop)
+git diff develop..story/1.3-user-authentication
+
+# Compare branches (what changed since branching)
+git diff develop...story/1.3-user-authentication
+
+# Compare specific file
+git diff develop..story/1.3-user-authentication -- src/auth.js
+
+# See only file names changed
+git diff --name-only develop..story/1.3-user-authentication
+
+# See summary stats
+git diff --stat develop..story/1.3-user-authentication
 ```
 
 ### Merge Story to Develop (After QA PASS)
@@ -513,8 +579,7 @@ Files: 8 created/modified
 Status: Ready for QA
 Story: docs/stories/1.3.story.md
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 EOF
 )"
 git push origin story/1.3-user-authentication
@@ -536,8 +601,7 @@ QA findings addressed:
 Tests: 15 unit + 7 E2E scenarios
 Quality Gate: CONCERNS → Ready for re-review
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 EOF
 )"
 git push origin story/1.3-user-authentication
@@ -561,8 +625,7 @@ All acceptance criteria validated:
 Evidence: docs/qa/gates/sprint-1/epics/epic-1/1.3-user-authentication.yml
 Story Status: Complete
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-Co-Authored-By: Claude <noreply@anthropic.com>
+Authored by O2Scale
 EOF
 )"
 git push origin story/1.3-user-authentication
