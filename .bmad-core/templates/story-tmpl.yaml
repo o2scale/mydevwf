@@ -72,9 +72,13 @@ sections:
     title: Dev Notes
     instruction: |
       Populate relevant information, only what was pulled from actual artifacts from docs folder, relevant to this story:
+      - CRITICAL: Check docs/knowledge-base/ for existing patterns/integrations before implementing (backend-patterns/, ui-patterns/, integrations/, common-issues/)
+      - CRITICAL: Create KB entry if implementing new integration or significant pattern
+      - If using Context7 MCP for research, include key findings and architecture decisions here
       - Do not invent information
       - If known add Relevant Source Tree info that relates to this story
       - If there were important notes from previous story that are relevant to this one, include them here
+      - Include references to relevant KB entries if they exist
       - Put enough information in this section so that the dev agent should NEVER need to read the architecture documents, these notes along with the tasks and subtasks must give the Dev Agent the complete context it needs to comprehend with the least amount of overhead the information to complete the story, meeting all AC and completing all tasks+subtasks
     elicit: true
     owner: scrum-master
@@ -83,10 +87,12 @@ sections:
       - id: testing-standards
         title: Testing
         instruction: |
-          List Relevant Testing Standards from Architecture the Developer needs to conform to:
-          - Test file location
-          - Test standards
-          - Testing frameworks and patterns to use
+          BMad V4 Testing Strategy (per testing-stack-guide.md):
+          - CRITICAL: Vitest ONLY for complex logic (10+ edge cases) → Location: docs/qa/unit/
+          - CRITICAL: E2E test SCENARIOS (markdown format, NOT .spec.ts) → Location: docs/qa/e2e/sprint-{N}/epics/epic-{N}/story-{N}/
+          - CRITICAL: Playwright MCP for E2E execution (26 interactive browser tools)
+          - CRITICAL: Dev writes test scenarios, QA executes tests (Dev does NOT run tests)
+          - CRITICAL: NO Jest allowed (replaced by Vitest)
           - Any specific testing requirements for this story
         elicit: true
         owner: scrum-master
@@ -96,7 +102,9 @@ sections:
     title: Change Log
     type: table
     columns: [Date, Version, Description, Author]
-    instruction: Track changes made to this story document
+    instruction: |
+      Track changes made to this story document.
+      CRITICAL: Use timestamp protocol - date +%Y-%m-%d %H:%M:%S (bash/WSL)
     owner: scrum-master
     editors: [scrum-master, dev-agent, qa-agent]
 
@@ -131,8 +139,29 @@ sections:
         owner: dev-agent
         editors: [dev-agent]
 
+      - id: handoff-references
+        title: Handoff Documents
+        instruction: |
+          Track handoff documents created during story lifecycle (per handoff-templates.md):
+          - Story Handoff (Orchestrator → Dev): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
+          - QA Handoff (Dev → QA): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+          - Developer Handoff (QA → Dev, if FAIL/CONCERNS): docs/handoffs/.../developer-handoff.md
+          - Test Review Handoff (Orchestrator → QA/Dev, if test vetting): docs/handoffs/.../test-review-handoff.md
+          - Completion Handoff (QA → Dev, if PASS): docs/handoffs/.../completion-handoff.md
+          - Git Commits: Track commit hashes for Commit Point 1 (Dev implementation), Commit Point 2 (Dev fixes), Commit Point 3 (QA approval - optional)
+        owner: dev-agent
+        editors: [dev-agent, qa-agent]
+
   - id: qa-results
     title: QA Results
-    instruction: Results from QA Agent QA review of the completed story implementation
+    instruction: |
+      QA review results with quality gate decision:
+      - Quality Gate File: docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
+      - Gate Status: PASS / CONCERNS / FAIL / WAIVED (with rationale)
+      - Test Results: Vitest (X/N passed), E2E (X/N passed)
+      - Evidence Location: docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/ (screenshots, console logs, page snapshots)
+      - Completion Handoff: (if PASS) docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-handoff.md
+      - Developer Handoff: (if FAIL/CONCERNS) docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-developer-handoff.md
+      - CRITICAL: Use timestamp protocol - date +%Y-%m-%d %H:%M:%S (bash/WSL)
     owner: qa-agent
     editors: [qa-agent]
