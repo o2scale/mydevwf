@@ -148,6 +148,7 @@ sections:
           - Developer Handoff (QA → Dev, if FAIL/CONCERNS): docs/handoffs/.../developer-handoff.md
           - Test Review Handoff (Orchestrator → QA/Dev, if test vetting): docs/handoffs/.../test-review-handoff.md
           - Completion Handoff (QA → Dev, if PASS): docs/handoffs/.../completion-handoff.md
+          - Story Completion Summary (Dev → Orchestrator, after PASS): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md
           - Git Commits: Track commit hashes for Commit Point 1 (Dev implementation), Commit Point 2 (Dev fixes), Commit Point 3 (QA approval - optional)
         owner: dev-agent
         editors: [dev-agent, qa-agent]

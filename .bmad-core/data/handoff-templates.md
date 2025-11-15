@@ -37,6 +37,7 @@
 | Test Review Handoff | `{epic}.{story}-{slug}-test-review-handoff.md` | `2.2-transcription-test-review-handoff.md` |
 | Developer Handoff | `{epic}.{story}-{slug}-developer-handoff.md` | `2.2-transcription-developer-handoff.md` |
 | Completion Handoff | `{epic}.{story}-{slug}-completion-handoff.md` | `2.2-transcription-completion-handoff.md` |
+| Story Completion Summary | `{epic}.{story}-{slug}-completion-summary.md` | `2.2-transcription-completion-summary.md` |
 
 ### Why Dual Format?
 
@@ -52,13 +53,14 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 
 ---
 
-## Five Handoff Types
+## Six Handoff Types
 
 1. **QA Handoff** (Dev → QA): Story ready for testing
 2. **Developer Handoff** (QA → Dev): Issues found, needs fixes
 3. **Completion Handoff** (QA → Dev): All tests passed, ready for commit
 4. **Story Handoff** (Orchestrator → Dev): Story ready for implementation
 5. **Test Review Handoff** (Orchestrator → QA/Dev): Test scenarios vetted
+6. **Story Completion Summary** (Dev → Orchestrator): Story complete, context for next story
 
 ---
 
@@ -360,6 +362,124 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 
 ---
 
+## 6. Story Completion Summary (Dev → Orchestrator)
+
+**When**: After QA PASS (Completion Handoff received), before requesting next story creation
+**From**: Dev Terminal
+**To**: Orchestrator Terminal
+**Format**: Detailed document + Compact snippet
+**Purpose**: Provide Orchestrator with story outcome context for creating next story
+
+### Document Creation Steps:
+
+1. **Determine paths**:
+   - Extract sprint number and epic number from story file
+   - Create folder: `docs/handoffs/sprint-{N}/epics/epic-{N}/` (if doesn't exist)
+
+2. **Create detailed document**: `{epic}.{story}-{slug}-completion-summary.md` with:
+   - Story overview (user story, AC status)
+   - Implementation summary (what was built, key files)
+   - Architectural decisions (patterns chosen, rationale, impact on next stories)
+   - Knowledge base entries created (paths, purpose, relevant for which stories)
+   - Database schema changes (new tables, modified columns, migrations)
+   - Dependencies for next stories (what next stories can use/require)
+   - QA findings and lessons learned (critical findings, non-blocking observations)
+   - Git commits (hashes for 3 commit points)
+   - Test results (Vitest pass/fail, E2E pass/fail, quality gate status)
+   - Recommendations for next story (Dev Notes suggestions, technical considerations)
+   - Handoff document references (all handoffs created during story)
+   - Summary for Orchestrator (key takeaways, next story dependencies met)
+
+3. **Output compact snippet to terminal** (includes document reference)
+
+### Compact Snippet Template:
+
+```
+═══ STORY COMPLETION SUMMARY ═══
+📋 Story: {epic}.{story}-{slug} | Epic {N} | Status: COMPLETE ✅
+📄 Full Summary: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md
+📅 Completed: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Dev Agent Name}
+
+✅ IMPLEMENTED:
+   - {Brief implementation summary - 2-3 key deliverables}
+
+🏗️ ARCHITECTURE DECISIONS:
+   - {Key decision 1 and impact}
+   - {Key decision 2 and impact}
+
+📚 KB ENTRIES CREATED:
+   - {category/entry-name.md} ({purpose})
+
+🗄️ SCHEMA CHANGES:
+   - {Table/column changes summary}
+
+🔗 DEPENDENCIES FOR NEXT STORIES:
+   - {What next stories can use}
+   - {What next stories require}
+
+⚠️ LESSONS LEARNED:
+   - {Critical finding 1}
+   - {Critical finding 2}
+
+🧪 TESTS: Vitest {X}/{N} | E2E {X}/{N} | Gate: {PASS/CONCERNS/FAIL}
+
+💡 NEXT STORY ({next-story-num}) NOTES:
+   - {Dev Notes suggestion 1}
+   - {Dev Notes suggestion 2}
+   - {Technical consideration}
+
+═══ COPY TO ORCHESTRATOR TERMINAL ═══
+```
+
+### Example (Filled):
+
+```
+═══ STORY COMPLETION SUMMARY ═══
+📋 Story: 2.1-media-upload | Epic 2 | Status: COMPLETE ✅
+📄 Full Summary: docs/handoffs/sprint-2/epics/epic-2/2.1-media-upload-completion-summary.md
+📅 Completed: 2025-11-15 14:30:00 | 👤 James (Dev Agent)
+
+✅ IMPLEMENTED:
+   - File upload API (POST /api/documents/upload) with 50MB limit
+   - Frontend drag-and-drop (UploadZone.tsx)
+   - Validation layer (file size, PDF format, duplicates)
+
+🏗️ ARCHITECTURE DECISIONS:
+   - Token-based batching (not page-based) due to variable page density
+   - Supabase Storage naming: {timestamp}-{original_name}.pdf to prevent collisions
+   - 50MB file size limit enforced (QA found >50MB causes timeout)
+
+📚 KB ENTRIES CREATED:
+   - backend-patterns/batch-processing.md (token estimation, batch coordination)
+   - integrations/supabase-storage-upload.md (file upload pattern, error handling)
+
+🗄️ SCHEMA CHANGES:
+   - NEW: processing_batches table (batch coordination for AI processing)
+   - MODIFIED: documents table (added file_name, original_name, storage_path)
+
+🔗 DEPENDENCIES FOR NEXT STORIES:
+   - Story 2.2: Requires processing_batches table ✅
+   - Story 2.2: Should reference batch-processing.md pattern
+   - All stories: Must maintain 50MB file size limit
+
+⚠️ LESSONS LEARNED:
+   - Files >50MB cause backend timeout (enforce 50MB limit in all file ops)
+   - Error messages must be user-actionable (generic errors confuse users)
+   - Test with realistic file sizes early in development
+
+🧪 TESTS: Vitest 15/15 ✅ | E2E 8/8 ✅ | Gate: PASS ✅
+
+💡 NEXT STORY (2.2) NOTES:
+   - Reference batch-processing.md in Dev Notes (token estimation pattern)
+   - Reuse processing_batches table for worker coordination
+   - Follow Story 2.1 error handling pattern (user-actionable messages)
+   - Test at 50MB file boundary (edge case validation)
+
+═══ COPY TO ORCHESTRATOR TERMINAL ═══
+```
+
+---
+
 ## Usage Guidelines
 
 ### Three-Terminal Workflow Pattern
@@ -425,7 +545,32 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 
 ### Dev Agent - Reading Handoff from QA:
 1. If Developer Handoff: Fix issues in priority order, re-test, output new QA Handoff
-2. If Completion Handoff: Commit with suggested message, update story status, close story
+2. If Completion Handoff:
+   - Commit with suggested message (Commit Point 3)
+   - Update story status to COMPLETE
+   - Generate Story Completion Summary (detailed document + compact snippet)
+   - Output Story Completion Summary to terminal for Orchestrator
+   - HALT (wait for user to request next story from Orchestrator)
+
+### Dev Agent - Story Completion Summary Generation:
+1. **CRITICAL**: After receiving Completion Handoff from QA, ALWAYS generate Story Completion Summary
+2. Create detailed document with all sections (implementation, architecture, KB entries, schema, dependencies, lessons, recommendations)
+3. Include timestamp using: `$(date +%Y-%m-%d\ %H:%M:%S)`
+4. Extract key information: architectural decisions, KB entries created, schema changes, QA findings
+5. Provide specific recommendations for next story Dev Notes
+6. Output compact snippet to terminal with document reference
+7. HALT and wait for user to request next story from Orchestrator
+
+### Orchestrator Agent - Reading Story Completion Summary:
+1. Copy Story Completion Summary snippet from Dev terminal
+2. Read detailed document at referenced path for complete context
+3. Extract key information for next story creation:
+   - Architectural decisions and patterns established
+   - KB entries to reference in next story Dev Notes
+   - Dependencies (what next story requires from this story)
+   - Lessons learned (what to avoid, edge cases to consider)
+   - Schema changes (what tables/columns are available)
+4. When creating next story, incorporate this context into Dev Notes and Story Handoff
 
 ---
 

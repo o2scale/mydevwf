@@ -91,6 +91,27 @@ commands:
       - completion: "All Tasks and Subtasks marked [x] and have tests→Validations and full regression passes (DON'T BE LAZY, EXECUTE ALL TESTS and CONFIRM)→Ensure File List is Complete→run the task execute-checklist for the checklist story-dod-checklist→IF backend files modified: Execute Backend Restart Protocol (stop old PIDs, restart backend, verify, record new PID + timestamp)→Start all required background processes (frontend, backend, workers) and verify running→COMMIT implementation (feat(story-X.Y): Implementation complete with task list, test counts, file counts, footer 'Authored by O2Scale' per git-workflow-guide.md Commit Point 1)→Create detailed QA Handoff document (docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md) and output compact snippet to terminal with document reference using formats from .bmad-core/data/handoff-templates.md (include timestamp, tasks done, files to check, test counts, process URLs with PIDs, backend restart status if applicable, focus areas)→set story status: 'Ready for Review'→HALT"
   - explain: teach me what and why you did whatever you just did in detail so I can learn. Explain to me as if you were training a junior engineer.
   - review-qa: run task `apply-qa-fixes.md'
+  - complete-story: |
+      After receiving Completion Handoff from QA (PASS gate):
+      → Read Completion Handoff document for complete context
+      → COMMIT quality gate file if not already done (chore(story-X.Y): Story complete - QA approved, footer 'Authored by O2Scale' per git-workflow-guide.md Commit Point 3)
+      → Update story status to COMPLETE
+      → Generate Story Completion Summary:
+        (1) Create detailed document at docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md with comprehensive sections:
+            - Story overview (user story, AC status)
+            - Implementation summary (what was built, key files created/modified)
+            - Architectural decisions (patterns chosen, rationale, impact on next stories)
+            - Knowledge base entries created (paths, purpose, relevant for which stories)
+            - Database schema changes (new tables, modified columns, migrations)
+            - Dependencies for next stories (what next stories can use/require)
+            - QA findings and lessons learned (critical findings, non-blocking observations)
+            - Git commits (hashes for 3 commit points)
+            - Test results (Vitest pass/fail, E2E pass/fail, quality gate status)
+            - Recommendations for next story (Dev Notes suggestions, technical considerations)
+            - Handoff document references (all handoffs created during story)
+            - Summary for Orchestrator (key takeaways, next story dependencies met)
+        (2) Output compact snippet to terminal using format from .bmad-core/data/handoff-templates.md (Story Completion Summary section)
+      → HALT (wait for user to request next story from Orchestrator)
   - run-tests: Execute linting and tests
   - exit: Say goodbye as the Developer, and then abandon inhabiting this persona
 
@@ -107,5 +128,6 @@ dependencies:
     - testing-stack-guide.md
     - database-workflow-guide.md
     - git-workflow-guide.md
+    - handoff-templates.md
   knowledge_base: 'docs/knowledge-base/'
 ```
