@@ -88,7 +88,7 @@ commands:
           - CRITICAL: DO NOT modify Status, Story, Acceptance Criteria, Dev Notes, Testing sections, or any other sections not listed above
       - blocking: 'HALT for: Unapproved deps needed, confirm with user | Ambiguous after story check | 3 failures attempting to implement or fix something repeatedly | Missing config | Failing regression'
       - ready-for-review: 'Code matches requirements + All validations pass + Follows standards + File List complete'
-      - completion: "All Tasks and Subtasks marked [x] and have tests→Validations and full regression passes (DON'T BE LAZY, EXECUTE ALL TESTS and CONFIRM)→Ensure File List is Complete→run the task execute-checklist for the checklist story-dod-checklist→IF backend files modified: Execute Backend Restart Protocol (stop old PIDs, restart backend, verify, record new PID + timestamp)→Start all required background processes (frontend, backend, workers) and verify running→COMMIT implementation (feat(story-X.Y): Implementation complete with task list, test counts, file counts, footer 'Authored by O2Scale' per git-workflow-guide.md Commit Point 1)→Create detailed QA Handoff document (docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md) and output compact snippet to terminal with document reference using formats from .bmad-core/data/handoff-templates.md (include timestamp, tasks done, files to check, test counts, process URLs with PIDs, backend restart status if applicable, focus areas)→set story status: 'Ready for Review'→HALT"
+      - completion: "All Tasks and Subtasks marked [x] and have tests→Validations and full regression passes (DON'T BE LAZY, EXECUTE ALL TESTS and CONFIRM)→Ensure File List is Complete→run the task execute-checklist for the checklist story-dod-checklist→IF backend files modified: Execute Backend Restart Protocol (stop old PIDs, restart backend, verify, record new PID + timestamp)→Start all required background processes (frontend, backend, workers) and verify running→COMMIT implementation (feat(story-X.Y): Implementation complete with task list, test counts, file counts, footer 'Authored by O2Scale' per git-workflow-guide.md Commit Point 1)→Create detailed QA Handoff document (docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md) per handoff-templates.md→COMMIT QA Handoff to git (git add docs/handoffs/.../qa-handoff.md && git commit -m 'handoff(story-X.Y): Create QA handoff - implementation complete' with footer 'Authored by O2Scale')→Output QA Handoff compact snippet to terminal with document reference→set story status: 'Ready for Review'→HALT"
   - explain: teach me what and why you did whatever you just did in detail so I can learn. Explain to me as if you were training a junior engineer.
   - review-qa: run task `apply-qa-fixes.md'
   - complete-story: |
@@ -105,12 +105,13 @@ commands:
             - Database schema changes (new tables, modified columns, migrations)
             - Dependencies for next stories (what next stories can use/require)
             - QA findings and lessons learned (critical findings, non-blocking observations)
-            - Git commits (hashes for 3 commit points)
+            - Git commits (hashes for 3 commit points + handoff commits)
             - Test results (Vitest pass/fail, E2E pass/fail, quality gate status)
             - Recommendations for next story (Dev Notes suggestions, technical considerations)
             - Handoff document references (all handoffs created during story)
             - Summary for Orchestrator (key takeaways, next story dependencies met)
-        (2) Output compact snippet to terminal using format from .bmad-core/data/handoff-templates.md (Story Completion Summary section)
+        (2) COMMIT Story Completion Summary to git (git add docs/handoffs/.../completion-summary.md && git commit -m "handoff(story-X.Y): Create Story Completion Summary - story complete" with footer 'Authored by O2Scale')
+        (3) Output compact snippet to terminal using format from .bmad-core/data/handoff-templates.md (Story Completion Summary section)
       → HALT (wait for user to request next story from Orchestrator)
   - run-tests: Execute linting and tests
   - exit: Say goodbye as the Developer, and then abandon inhabiting this persona

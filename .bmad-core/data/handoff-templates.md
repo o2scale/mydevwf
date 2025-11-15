@@ -1,8 +1,8 @@
 # Handoff Format Templates
 
-**Version**: 3.0 (Document + Snippet)
-**Last Updated**: 2025-11-04
-**Purpose**: Dual-format handoff system with detailed documents for permanent records and compact snippets for terminal communication in BMad workflow
+**Version**: 3.1 (Document + Snippet + Git Integration)
+**Last Updated**: 2025-11-15
+**Purpose**: Dual-format handoff system with detailed documents for permanent records and compact snippets for terminal communication in BMad workflow. All handoffs committed to git for audit trail.
 
 ---
 
@@ -19,7 +19,8 @@
   - Comprehensive reference for agents (QA reads for context)
   - Preserves detailed implementation notes beyond conversation history
 - **Created by**: Outputting agent (Dev, QA, Orchestrator)
-- **Versioning**: Overwrite on rework (git history preserves previous versions)
+- **Versioning**: Committed to git immediately after creation/update (git history preserves all versions)
+- **CRITICAL**: ALWAYS commit handoff to git after creating/updating (see git commit step in each handoff type)
 
 ### 2. **Compact Handoff Snippet** (Terminal output)
 
@@ -87,7 +88,16 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Validation checklist (items for QA to verify)
    - Dev notes (any gotchas, workarounds, or technical decisions)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit handoff to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+   git commit -m "handoff({epic}.{story}): Create QA handoff - implementation complete
+
+   Authored by O2Scale"
+   ```
+   **Why**: Preserves handoff in version control, enables audit trail, allows diff comparison if handoff updated later
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 
@@ -145,7 +155,18 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Test results breakdown (Vitest pass/fail, E2E pass/fail by test case)
    - Reproduction steps (how Dev can reproduce the issues)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit handoff + gate to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-developer-handoff.md \
+           docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
+   git commit -m "handoff({epic}.{story}): Create Developer handoff - {brief-issue-summary}
+
+   Authored by O2Scale"
+   ```
+   **Example**: `git commit -m "handoff(2.3): Create Developer handoff - timeout error boundary missing"`
+   **Why**: Preserves QA findings in version control, enables tracking of what issues were found when
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 
@@ -203,7 +224,17 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Suggested commit message (conventional commit format)
    - Sign-off notes (any final comments or observations)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit handoff + gate to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-handoff.md \
+           docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
+   git commit -m "handoff({epic}.{story}): Create Completion handoff - all tests PASS
+
+   Authored by O2Scale"
+   ```
+   **Why**: Preserves QA approval in version control, enables audit trail of when story was approved
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 
@@ -257,7 +288,16 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Implementation guidance (suggested approach, patterns to follow, pitfalls to avoid)
    - Knowledge base references (relevant KB entries for patterns/integrations)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit handoff to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
+   git commit -m "handoff({epic}.{story}): Create Story handoff - ready for development
+
+   Authored by O2Scale"
+   ```
+   **Why**: Preserves planning decisions in version control, enables tracking of what context Dev received
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 
@@ -313,7 +353,16 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Test scenario quality notes (are scenarios detailed enough, clear steps, expected outcomes)
    - Risk assessment (high-risk areas that need extra test coverage)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit handoff to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-review-handoff.md
+   git commit -m "handoff({epic}.{story}): Create Test Review handoff - {APPROVE/REVISE}
+
+   Authored by O2Scale"
+   ```
+   **Why**: Preserves test vetting decision in version control, enables tracking of test scenario evolution
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 
@@ -384,13 +433,22 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Database schema changes (new tables, modified columns, migrations)
    - Dependencies for next stories (what next stories can use/require)
    - QA findings and lessons learned (critical findings, non-blocking observations)
-   - Git commits (hashes for 3 commit points)
+   - Git commits (hashes for 3 commit points + handoff commits)
    - Test results (Vitest pass/fail, E2E pass/fail, quality gate status)
    - Recommendations for next story (Dev Notes suggestions, technical considerations)
    - Handoff document references (all handoffs created during story)
    - Summary for Orchestrator (key takeaways, next story dependencies met)
 
-3. **Output compact snippet to terminal** (includes document reference)
+3. **CRITICAL: Commit completion summary to git** (IMMEDIATELY after creation):
+   ```bash
+   git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md
+   git commit -m "handoff({epic}.{story}): Create Story Completion Summary - story complete
+
+   Authored by O2Scale"
+   ```
+   **Why**: Preserves complete story outcome in version control, enables Orchestrator to reference historical context
+
+4. **Output compact snippet to terminal** (includes document reference)
 
 ### Compact Snippet Template:
 

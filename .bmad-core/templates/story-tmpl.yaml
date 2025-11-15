@@ -143,13 +143,14 @@ sections:
         title: Handoff Documents
         instruction: |
           Track handoff documents created during story lifecycle (per handoff-templates.md):
-          - Story Handoff (Orchestrator → Dev): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
-          - QA Handoff (Dev → QA): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
-          - Developer Handoff (QA → Dev, if FAIL/CONCERNS): docs/handoffs/.../developer-handoff.md
-          - Test Review Handoff (Orchestrator → QA/Dev, if test vetting): docs/handoffs/.../test-review-handoff.md
-          - Completion Handoff (QA → Dev, if PASS): docs/handoffs/.../completion-handoff.md
-          - Story Completion Summary (Dev → Orchestrator, after PASS): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md
-          - Git Commits: Track commit hashes for Commit Point 1 (Dev implementation), Commit Point 2 (Dev fixes), Commit Point 3 (QA approval - optional)
+          - Story Handoff (Orchestrator → Dev): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md | Git: handoff({story})
+          - QA Handoff (Dev → QA): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md | Git: handoff({story})
+          - Developer Handoff (QA → Dev, if FAIL/CONCERNS): docs/handoffs/.../developer-handoff.md | Git: handoff({story})
+          - Test Review Handoff (Orchestrator → QA/Dev, if test vetting): docs/handoffs/.../test-review-handoff.md | Git: handoff({story})
+          - Completion Handoff (QA → Dev, if PASS): docs/handoffs/.../completion-handoff.md | Git: handoff({story})
+          - Story Completion Summary (Dev → Orchestrator, after PASS): docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md | Git: handoff({story})
+          - CRITICAL: Each handoff document must be committed to git immediately after creation (see git-workflow-guide.md Handoff Commits section)
+          - Code Commits: Track commit hashes for Commit Point 1 (feat: Dev implementation), Commit Point 2 (fix: Dev fixes), Commit Point 3 (chore: QA approval)
         owner: dev-agent
         editors: [dev-agent, qa-agent]
 

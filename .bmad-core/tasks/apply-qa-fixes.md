@@ -128,6 +128,9 @@ Status Rule:
 - Story updated (allowed sections only) including File List and Change Log
 - Status set according to Status Rule
 - COMMIT fixes (fix(story-X.Y): Address QA findings with issue list, test counts, quality gate status, footer "Authored by O2Scale" per git-workflow-guide.md Commit Point 2)
+- Create new QA Handoff document (docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md) with fixes applied, ready for re-testing
+- COMMIT QA Handoff to git (git add docs/handoffs/.../qa-handoff.md && git commit -m "handoff(story-X.Y): Create QA handoff - fixes applied" with footer "Authored by O2Scale")
+- Output QA Handoff compact snippet to terminal for QA to re-test
 
 ## Example: Story 2.2
 

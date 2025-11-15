@@ -185,6 +185,160 @@ Authored by O2Scale
 
 ---
 
+## Handoff Commits (Separate from 3 Code Commit Points)
+
+**Purpose**: All handoff documents are version-controlled with dedicated commits to preserve audit trail and enable version history.
+
+**Philosophy**: Handoff commits are **DOCUMENTATION commits**, separate from the 3 **CODE commits** (Commit Points 1, 2, 3). This separation allows:
+- Independent handoff updates without triggering new code commits
+- Clear audit trail of communication between agents
+- Git diff comparison between handoff versions
+- Blame/attribution tracking for handoffs
+
+**When**: IMMEDIATELY after creating OR updating any handoff document
+
+**Commit Message Format**: `handoff({epic}.{story}): {action} {type} - {brief-reason}`
+
+---
+
+### Handoff Types and Commit Messages
+
+**1. QA Handoff** (Dev → QA):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+git commit -m "handoff({epic}.{story}): Create QA handoff - implementation complete
+
+Authored by O2Scale"
+```
+
+**When to UPDATE** (if Dev re-implements after major changes):
+```bash
+git commit -m "handoff({epic}.{story}): Update QA handoff - fixes applied
+
+Authored by O2Scale"
+```
+
+---
+
+**2. Developer Handoff** (QA → Dev):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-developer-handoff.md \
+        docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
+git commit -m "handoff({epic}.{story}): Create Developer handoff - Gemini API timeout issue
+
+Authored by O2Scale"
+```
+
+**Example with multiple issues**:
+```bash
+git commit -m "handoff({epic}.{story}): Create Developer handoff - 3 E2E failures
+
+Authored by O2Scale"
+```
+
+---
+
+**3. Completion Handoff** (QA → Dev):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-handoff.md \
+        docs/qa/gates/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}.yml
+git commit -m "handoff({epic}.{story}): Create Completion handoff - all tests PASS
+
+Authored by O2Scale"
+```
+
+---
+
+**4. Story Handoff** (Orchestrator → Dev):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
+git commit -m "handoff({epic}.{story}): Create Story handoff - ready for development
+
+Authored by O2Scale"
+```
+
+---
+
+**5. Test Review Handoff** (Orchestrator → QA/Dev):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-review-handoff.md
+git commit -m "handoff({epic}.{story}): Create Test Review handoff - APPROVE
+
+Authored by O2Scale"
+```
+
+**Or if REVISE**:
+```bash
+git commit -m "handoff({epic}.{story}): Create Test Review handoff - REVISE
+
+Authored by O2Scale"
+```
+
+---
+
+**6. Story Completion Summary** (Dev → Orchestrator):
+```bash
+git add docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-summary.md
+git commit -m "handoff({epic}.{story}): Create Story Completion Summary - story complete
+
+Authored by O2Scale"
+```
+
+---
+
+### Why Separate Handoff Commits?
+
+**Lost Without Git**:
+- ❌ No audit trail: Can't see what bugs QA found on Nov 4 vs Nov 15
+- ❌ No version history: Can't revert to previous handoff version
+- ❌ No blame/attribution: Can't track who created/modified handoffs when
+- ❌ No diff comparison: Can't compare what changed between handoff iterations
+- ❌ Breaks handoff intent: Handoffs are "permanent records" but aren't permanent without git
+
+**Gained With Git**:
+- ✅ Complete audit trail of all agent communication
+- ✅ Version history for all handoffs (can diff between versions)
+- ✅ Blame/attribution tracking (git blame shows who wrote what when)
+- ✅ Handoff evolution visible in git log
+- ✅ Can revert to previous handoff version if needed
+
+**Example Workflow**:
+```bash
+# Story 2.2 lifecycle with handoffs
+
+# Orchestrator creates Story Handoff
+git log --oneline --grep="handoff"
+# → a1b2c3d handoff(2.2): Create Story handoff - ready for development
+
+# Dev implements, creates QA Handoff
+# → d4e5f6g feat(story-2.2): Implement media transcription (Commit Point 1)
+# → h7i8j9k handoff(2.2): Create QA handoff - implementation complete
+
+# QA finds bugs, creates Developer Handoff
+# → l0m1n2o handoff(2.2): Create Developer handoff - Gemini API timeout
+
+# Dev fixes, creates updated QA Handoff
+# → p3q4r5s fix(story-2.2): Fix Gemini API timeout handling (Commit Point 2)
+# → t6u7v8w handoff(2.2): Create QA handoff - fixes applied
+
+# QA approves, creates Completion Handoff
+# → x9y0z1a handoff(2.2): Create Completion handoff - all tests PASS
+
+# Dev creates Story Completion Summary
+# → b2c3d4e handoff(2.2): Create Story Completion Summary - story complete
+```
+
+**Git Diff Usefulness**:
+```bash
+# Compare what changed in QA Handoff between first submission and after fixes
+git diff h7i8j9k t6u7v8w -- docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-qa-handoff.md
+
+# See what QA originally found vs final findings
+git diff l0m1n2o x9y0z1a -- docs/handoffs/sprint-2/epics/epic-2/2.2-transcription-developer-handoff.md
+```
+
+---
+
 ## Commit Message Prefixes
 
 Use conventional commit prefixes:
@@ -194,6 +348,7 @@ Use conventional commit prefixes:
 | `feat` | New feature implementation | `feat(story-1.3): Add user authentication` |
 | `fix` | Bug fixes, addressing QA findings | `fix(story-1.3): Fix password validation` |
 | `chore` | Story completion, quality gates | `chore(story-1.3): Story complete - QA approved` |
+| `handoff` | Handoff document creation/updates | `handoff(1.3): Create QA handoff - implementation complete` |
 | `docs` | Documentation-only changes | `docs(story-1.3): Update API documentation` |
 | `test` | Test-only additions/fixes | `test(story-1.3): Add edge case tests` |
 | `refactor` | Code refactoring (no feature change) | `refactor(story-1.3): Extract auth logic to service` |
