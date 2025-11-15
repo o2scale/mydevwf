@@ -218,17 +218,20 @@ describe('calculateTax', () => {
    e. Use `browser_take_screenshot()` to capture evidence
    f. Manually observe: Does behavior match expected?
 7. **IF logic gaps found**: Can add more Vitest tests in `docs/qa/unit/`
-8. Code review (if E2E tests pass)
-9. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
-10. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
+8. **IF environment issues** (processes not running, logs inaccessible, MCP errors): DIAGNOSE issue, DOCUMENT findings, CREATE Developer Handoff, HALT testing (QA diagnoses, Dev fixes)
+9. Code review (only AFTER all tests executed and passed)
+10. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
+11. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
     - Example: `docs/qa/gates/sprint-2/epics/epic-2/2.1-media-upload.yml`
-11. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
+12. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
 
-**QA Decision Criteria**:
-- **PASS**: All Vitest + E2E tests passed, no errors, behavior matches expected
-- **CONCERNS**: Mostly works, minor issues, Vitest failures acceptable if E2E covers (flexible gate)
-- **FAIL**: Critical issues, test cases failed, blockers found
+**QA Decision Criteria** (STRICT - Runtime Testing Mandatory):
+- **PASS**: ALL Vitest + E2E tests executed and passed, no errors, behavior matches expected, runtime verification complete
+- **CONCERNS**: Tests executed, minor non-blocking issues found (cosmetic bugs, missing nice-to-have features, low-priority edge cases)
+- **FAIL**: Tests executed, critical issues found (test failures, blockers, security issues, AC not met, environment issues preventing testing)
 - **WAIVED**: Issues found but accepted (with justification)
+
+**CRITICAL**: Code review does NOT replace testing. PASS requires runtime verification of ALL tests.
 
 **QA Can Add Vitest Tests**:
 - If Dev missed edge cases
@@ -778,12 +781,15 @@ Execute login test scenario using Playwright MCP browser_snapshot and browser_cl
 Default workflow is interactive execution, not test code generation.
 
 ### Q: What if Vitest fails but E2E passes?
-**A**: Flexible gate decision. QA can mark as CONCERNS if:
-- E2E coverage validates behavior
-- Vitest failure is edge case not critical
-- Dependencies incomplete (future story needed)
+**A**: **STRICT gate decision** - Both Vitest AND E2E must pass for PASS gate. If Vitest fails:
+- Gate = FAIL (if critical test) or CONCERNS (if minor edge case)
+- QA documents which tests failed and why
+- QA creates Developer Handoff with test failure details
+- Dev fixes the failing tests
+- Dev outputs new QA Handoff when ready
+- QA re-runs ALL tests (Vitest + E2E)
 
-Prefer strict (both must pass), but allow flexibility for blockers.
+**NO exceptions** for "code looks good" or "E2E covers the Vitest failure". Runtime testing is mandatory.
 
 ### Q: How do I test APIs?
 **A**: Three options:

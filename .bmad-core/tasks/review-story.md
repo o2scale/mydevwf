@@ -89,6 +89,10 @@ required:
 
 ### 4. Testing Execution (CRITICAL - Follow This Order)
 
+**MANDATORY RUNTIME TESTING**: NEVER mark PASS without actual test execution. Code review does NOT replace testing. If tests cannot run due to environment issues, DIAGNOSE the issue, CREATE Developer Handoff with detailed findings, and HALT testing. QA diagnoses environment issues, Dev fixes them.
+
+**STRICT GATE DECISION**: Both Vitest AND E2E must pass for PASS gate. NO exceptions for "code looks good" or "E2E covers Vitest failures". If ANY test fails, gate = FAIL or CONCERNS (never PASS).
+
 **STEP 1: Run Vitest Tests (if they exist)**
 - Check if Vitest tests exist in `docs/qa/unit/sprint-N/epics/epic-N/story-N/`
 - IF tests exist:
@@ -338,13 +342,41 @@ For each issue in `top_issues`, include a `suggested_owner`:
 
 ## Blocking Conditions
 
-Stop the review and request clarification if:
+Stop the review and create Developer Handoff if:
 
 - Story file is incomplete or missing critical sections
 - File List is empty or clearly incomplete
 - No tests exist when they were required
 - Code changes don't align with story requirements
 - Critical architectural issues that require discussion
+
+**Environment Issues (QA Diagnoses, Dev Fixes)**:
+
+Stop testing and create Developer Handoff if:
+
+- **Background processes not running**: Cannot access frontend (localhost:3000) or backend (specified port)
+  - Diagnose: Which process? What port? What error message?
+  - Document: Expected URL, actual error, screenshot of "connection refused"
+  - Handoff to Dev: "Environment Issue - Backend not running on port 3001"
+
+- **Logs not accessible**: Cannot find logs specified in Dev's QA Handoff
+  - Diagnose: Where did Dev say logs are? What's actually at that location?
+  - Document: Expected path, actual directory contents, error accessing logs
+  - Handoff to Dev: "Environment Issue - Cannot access logs at specified path"
+
+- **Playwright MCP errors**: MCP tools fail (browser_navigate timeout, browser_click element not found, etc.)
+  - Diagnose: Which tool failed? What error? Is it environment or code issue?
+  - Document: Exact MCP command attempted, error message, screenshot
+  - Determine: Is this Dev's code bug or environment setup issue?
+  - If environment: Handoff to Dev with diagnosis
+  - If code bug: Continue testing, document in gate as test failure
+
+- **Vitest won't run**: `npm run test` fails with errors
+  - Diagnose: What error? Import issues? Config issues? Missing dependencies?
+  - Document: Exact command run, full error output, environment details
+  - Handoff to Dev: "Environment Issue - Vitest execution failed"
+
+**CRITICAL**: QA's job is to DIAGNOSE and DOCUMENT environment issues, then CREATE Developer Handoff and HALT testing. Dev's job is to FIX environment issues. QA does NOT attempt to fix environment setup, start processes, or debug Dev's configuration.
 
 ## Completion
 
