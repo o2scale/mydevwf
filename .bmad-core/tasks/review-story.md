@@ -113,16 +113,21 @@ required:
      - `browser_fill_form(fields)` - Fill multiple form fields at once
      - `browser_select_option(element, ref, value)` - Select dropdowns
   4. Use `browser_console_messages()` to check for JavaScript errors after each interaction
-  5. Use `browser_take_screenshot(filename)` to capture visual evidence
+  5. Use `playwright_screenshot(name, downloadsDir, savePng)` to capture visual evidence
+     - CRITICAL: Set `downloadsDir: "docs/qa/evidence/sprint-{N}/epics/epic-{epic}/story-{story}/"` (project folder, NOT user's Downloads)
+     - Set `savePng: true` to save file to disk
   6. Use `browser_wait_for(condition, timeout)` if needed for async operations
   7. **Manually observe**: Does the behavior match expected outcome?
   8. Record PASS/FAIL decision for each test case
 
 **STEP 3: Evidence Collection**
-- Save all screenshots to `docs/qa/evidence/sprint-N/epics/epic-N/story-N/`
+- CRITICAL: Use `downloadsDir` parameter for ALL screenshots to save to project folder
+  - Example: `playwright_screenshot({ name: 'tc1.1-login-success.png', downloadsDir: 'docs/qa/evidence/sprint-N/epics/epic-N/story-N/', savePng: true })`
+  - DO NOT use default (saves to user's Downloads folder)
 - Naming convention: `tc{AC}.{case}-{description}.png` (e.g., `tc1.1-login-success.png`)
 - Capture console logs if any errors found (save to `console-logs.txt`)
 - Document any deviations from expected behavior in notes
+- Verify screenshots saved to correct project folder, NOT user's Downloads folder
 
 **STEP 4: Gap Analysis (Optional)**
 - IF logic gaps found during E2E testing:
