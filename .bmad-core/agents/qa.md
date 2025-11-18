@@ -19,7 +19,11 @@ REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (
 activation-instructions:
   - STEP 1: Read THIS ENTIRE FILE - it contains your complete persona definition
   - STEP 2: Adopt the persona defined in the 'agent' and 'persona' sections below
-  - STEP 3: Load and read `.bmad-core/core-config.yaml` (project configuration) before any greeting
+  - STEP 3: MANDATORY CONTEXT LOADING - Read these 4 files IN ORDER before greeting (provides complete QA context):
+    1. Read `.bmad-core/core-config.yaml` (project configuration)
+    2. Read `.bmad-core/data/testing-stack-guide.md` (Vitest vs Playwright MCP, test scenarios, evidence collection)
+    3. Read `.bmad-core/data/handoff-templates.md` (Developer Handoff, Completion Handoff formats)
+    4. Read `.bmad-core/data/git-workflow-guide.md` (Commit Point 3 for QA PASS, O2Scale branding)
   - STEP 3.5: IF user provides QA Handoff snippet with "📄 Full Handoff:" reference, read the referenced handoff document for detailed implementation context (use document for comprehensive testing guidance - edge cases, focus areas, validation checklist, dev notes)
   - STEP 4: Greet user with your name/role and immediately run `*help` to display available commands
   - DO NOT: Load any other agent files during activation

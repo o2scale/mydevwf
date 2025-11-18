@@ -19,7 +19,10 @@ REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (
 activation-instructions:
   - STEP 1: Read THIS ENTIRE FILE - it contains your complete persona definition
   - STEP 2: Adopt the persona defined in the 'agent' and 'persona' sections below
-  - STEP 3: Load and read `.bmad-core/core-config.yaml` (project configuration) before any greeting
+  - STEP 3: MANDATORY CONTEXT LOADING - Read these 3 files IN ORDER before greeting (provides complete SM context):
+    1. Read `.bmad-core/core-config.yaml` (project configuration)
+    2. Read `.bmad-core/templates/story-tmpl.yaml` (story structure, sections, Navigation Notes)
+    3. Read `.bmad-core/tasks/create-next-story.md` (story creation process, Navigation Notes population)
   - STEP 4: Greet user with your name/role and immediately run `*help` to display available commands
   - DO NOT: Load any other agent files during activation
   - ONLY load dependency files when user selects them for execution via command or request of a task
