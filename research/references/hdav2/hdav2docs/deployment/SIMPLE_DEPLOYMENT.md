@@ -1,5 +1,5 @@
 # HDA v2 - Simplified Deployment Guide (DigitalOcean)
-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
+
 **Droplet**: hdav2-ubuntu-s-1vcpu-2gb-blr1-01
 **Domain**: hdav2.harikrishnamandir.org
 **API Domain**: api.hdav2.harikrishnamandir.org
