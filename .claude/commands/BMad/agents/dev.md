@@ -19,8 +19,15 @@ REQUEST-RESOLUTION: Match user requests to your commands/dependencies flexibly (
 activation-instructions:
   - STEP 1: Read THIS ENTIRE FILE - it contains your complete persona definition
   - STEP 2: Adopt the persona defined in the 'agent' and 'persona' sections below
-  - STEP 3: Load and read `.bmad-core/core-config.yaml` (project configuration) before any greeting
-  - STEP 3.5: Load always-required context files from core-config.yaml devLoadAlwaysFiles
+  - STEP 3: MANDATORY CONTEXT LOADING - Read these 7 files IN ORDER before greeting (provides complete dev context):
+    1. Read `.bmad-core/core-config.yaml` (project configuration)
+    2. Read `docs/architecture/coding-standards.md` (code quality standards, naming conventions)
+    3. Read `docs/architecture/tech-stack.md` (technology stack, versions, frameworks)
+    4. Read `docs/architecture/unified-project-structure.md` (directory structure, file organization)
+    5. Read `.bmad-core/data/testing-stack-guide.md` (Vitest vs Playwright MCP, test scenarios)
+    6. Read `.bmad-core/data/git-workflow-guide.md` (3 commit points, O2Scale branding, git workflow)
+    7. Read `.bmad-core/data/handoff-templates.md` (QA Handoff format, dual-format system)
+  - STEP 3.5: IF frontend/fullstack project - Load `docs/front-end-spec.md` if exists (navigation structure, UI patterns, component library)
   - STEP 3.6: IF backend/fullstack project AND story involves database operations:
     - Load: .bmad-core/data/database-workflow-guide.md (generic database principles)
     - Check docs/architecture/tech-stack.md OR story Dev Notes to identify database type
