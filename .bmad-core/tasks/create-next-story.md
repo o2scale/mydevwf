@@ -171,6 +171,27 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
   - Link tasks to ACs where applicable (e.g., `Task 1 (AC: 1, 3)`)
 - Add notes on project structure alignment or discrepancies found in Step 4
 
+#### 5.3 Populate Navigation Notes (If Frontend/UI Story)
+
+**ONLY if story involves user-facing UI (pages, navigation, forms, dashboards):**
+
+- Load `docs/front-end-spec.md` to understand navigation design
+- Review Navigation Structure section:
+  - Primary Navigation (main menu)
+  - Secondary Navigation (sub-menus, sidebars)
+  - Breadcrumbs strategy
+  - User flows and entry points
+- Populate **Navigation Notes** subsection in story Dev Notes:
+  - **Menu Items**: Specify which menu needs new items (e.g., "Primary Nav: 'Transcriptions' → /transcriptions")
+  - **Buttons/Links**: Specify which existing pages need new buttons (e.g., "Queue Page: 'Verify' button → /verify/{id}")
+  - **Breadcrumbs**: Specify hierarchy (e.g., "Dashboard > Transcriptions > Verify")
+  - **Entry Points**: List how users discover this feature (e.g., "1) Primary nav menu, 2) Dashboard widget")
+- **If front-end-spec.md doesn't exist:**
+  - Alert user: "ALERT: No front-end-spec.md found. For UI stories, UX Expert should create this first via `*create-front-end-spec` command."
+  - Leave Navigation Notes section empty with note: "TO BE POPULATED after UX Expert creates front-end-spec.md"
+- **If story does NOT involve user-facing UI:**
+  - Skip this step, Navigation Notes section will remain empty (which is correct)
+
 ### 6. Story Draft Completion and Review
 
 - Review all sections for completeness and accuracy
