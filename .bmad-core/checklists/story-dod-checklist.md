@@ -90,7 +90,18 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
    - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
 
-9. **Git/Version Control:**
+9. **UI/UX Integration (If Story Has User-Facing Changes):**
+
+   [[LLM: Navigation is critical for user experience. Check story Navigation Notes section. Verify users can REACH your feature, not just that it WORKS. If Navigation Notes section exists in story, ALL navigation elements MUST be implemented.]]
+   - [ ] Feature is accessible via normal user navigation (not just direct URL).
+   - [ ] All menu items specified in story Navigation Notes are implemented and functional.
+   - [ ] All buttons/links specified in story Navigation Notes are implemented on correct pages.
+   - [ ] Users can reach the new feature from dashboard/menu/previous workflow step.
+   - [ ] Breadcrumbs implemented correctly (if specified in Navigation Notes).
+   - [ ] Navigation follows front-end spec design patterns (consistent with existing UI).
+   - [ ] Navigation elements tested in E2E test scenarios (users can discover and access feature).
+
+10. **Git/Version Control:**
 
    [[LLM: Git commits ensure code is safely versioned and traceable. Follow git-workflow-guide.md exactly]]
    - [ ] Implementation commit created BEFORE QA Handoff (feat(story-X.Y): Implementation complete with task list, test counts, file counts per `.bmad-core/data/git-workflow-guide.md` Commit Point 1).

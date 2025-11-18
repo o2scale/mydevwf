@@ -20,6 +20,7 @@ devLoadAlwaysFiles:
   - .bmad-core/data/testing-stack-guide.md
   - .bmad-core/data/git-workflow-guide.md
   - .bmad-core/data/handoff-templates.md
+  - docs/front-end-spec.md
 devDebugLog: .ai/debug-log.md
 # Story file location (v3 pattern: flat directory with {epic}.{story}.story.md files)
 # For v4 hierarchical pattern, use: docs/sprint-N/epics/epic-N/

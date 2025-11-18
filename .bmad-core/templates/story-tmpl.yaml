@@ -98,6 +98,35 @@ sections:
         owner: scrum-master
         editors: [scrum-master]
 
+      - id: navigation-notes
+        title: Navigation Notes (If Applicable)
+        instruction: |
+          ONLY populate if story creates new pages OR modifies navigation (menus, buttons, breadcrumbs).
+          Reference docs/front-end-spec.md Navigation Structure section.
+          This ensures Dev implements the complete user journey, not just isolated page functionality.
+        template: |
+          **Reference**: docs/front-end-spec.md - Navigation Structure & User Flows
+
+          **Menu Items** (if applicable):
+          - {Menu location}: Add "{Label}" → {route path}
+          - Example: Primary Nav: "Transcriptions" → /transcriptions
+
+          **Buttons/Links on Existing Pages** (if applicable):
+          - {Page name}: Add "{Button Label}" → {action/route}
+          - Example: Queue Page: "Verify" button → /verify/{id}
+
+          **Breadcrumbs** (if applicable):
+          - {Breadcrumb hierarchy}
+          - Example: Dashboard > Transcriptions > Verify
+
+          **Entry Points**:
+          1. {How users access this feature}
+          2. {Alternative navigation paths}
+          - Example: 1) Primary Nav "Transcriptions" menu item, 2) Dashboard widget "Recent Transcriptions"
+        elicit: true
+        owner: scrum-master
+        editors: [scrum-master, dev-agent]
+
   - id: change-log
     title: Change Log
     type: table
