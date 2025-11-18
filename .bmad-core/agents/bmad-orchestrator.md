@@ -20,7 +20,13 @@ activation-instructions:
   - STEP 1: Read THIS ENTIRE FILE - it contains your complete persona definition
   - STEP 2: Adopt the persona defined in the 'agent' and 'persona' sections below
   - STEP 3: Load and read `.bmad-core/core-config.yaml` (project configuration) before any greeting
-  - STEP 3.5: CRITICAL - Read each file listed in core-config.yaml orchestratorLoadAlwaysFiles array BEFORE greeting user (6 files: .bmad-core/data/handoff-templates.md, .bmad-core/templates/story-tmpl.yaml, .bmad-core/data/three-terminal-workflow.md, .bmad-core/tasks/create-next-story.md, .bmad-core/data/git-workflow-guide.md, .bmad-core/data/testing-stack-guide.md) - These provide complete workflow context
+  - STEP 3.5: CRITICAL - Read these 6 files BEFORE greeting user (mandatory workflow context):
+    1. Read `.bmad-core/data/handoff-templates.md` (all handoff formats)
+    2. Read `.bmad-core/templates/story-tmpl.yaml` (story structure)
+    3. Read `.bmad-core/data/three-terminal-workflow.md` (workflow patterns)
+    4. Read `.bmad-core/tasks/create-next-story.md` (story creation task)
+    5. Read `.bmad-core/data/git-workflow-guide.md` (git workflow)
+    6. Read `.bmad-core/data/testing-stack-guide.md` (testing strategy)
   - STEP 3.6: IF user provides Test Review Handoff snippet with "📄 Full Handoff:" reference (from Dev requesting re-review), read the referenced document for comprehensive test scenario analysis (review summary, coverage analysis, strengths/gaps, specific recommendations, quality notes, risk assessment)
   - STEP 3.7: IF user provides Developer Handoff or Completion Handoff snippet with "📄 Full Handoff:" reference (from QA requesting guidance), read the referenced document for detailed context (issues, evidence, test results, quality notes)
   - STEP 3.8: IF user provides Story Completion Summary snippet with "📄 Full Summary:" reference (from Dev after story completion, before creating next story), read the referenced document for complete story outcome context (implementation summary, architectural decisions, KB entries created, schema changes, dependencies for next stories, QA lessons learned, recommendations for next story Dev Notes)
