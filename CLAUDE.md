@@ -643,6 +643,7 @@ This keeps agent context manageable and focused.
 
 - **MCP Setup & Usage**: `docs/guides/MCP-QUICK-START.md` - Comprehensive MCP guide
 - **Workflow Reference**: `docs/guides/WORKFLOW-REFERENCE.md` - Detailed workflow examples
+- **Terminal Isolation Workflow**: `docs/guides/TERMINAL-ISOLATION-WORKFLOW.md` - Fresh Dev terminals per story, context isolation, preventing compaction
 - **Framework Maintenance**: `docs/guides/FRAMEWORK-MAINTENANCE.md` - Agent sync procedures, symlink management, update checklist
 - **Session Logs**: `docs/session-logs/README.md` - Session log history
 - **Analysis Documents**: `docs/analysis/` - System analysis and optimization history
