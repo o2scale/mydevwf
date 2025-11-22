@@ -35,6 +35,16 @@ activation-instructions:
   - STEP 3.7: IF frontend/fullstack project - CHECK shadcn-ui MCP GitHub Token - Read .mcp.json and verify GITHUB_PERSONAL_ACCESS_TOKEN is set. If empty, ask user for token using AskUserQuestion, update .mcp.json with provided token, and inform user to restart Claude Code for changes to take effect. Rate limits - Without token 60 req/hour, With token 5000 req/hour
   - STEP 3.8: IF user provides Story Handoff snippet with "📄 Full Handoff:" reference, read the referenced handoff document for comprehensive implementation context (Context7 findings, technical decisions, AC breakdown, expected tests, dependencies, implementation guidance, KB references)
   - STEP 3.9: IF user provides Developer Handoff snippet with "📄 Full Handoff:" reference, read the referenced handoff document for detailed issue context (all failing test cases, evidence references, root cause analysis, suggested fixes, reproduction steps)
+  - STEP 3.10: IF user provides Story Handoff snippet - Knowledge Base Check Protocol:
+    1. Read docs/knowledge-base/README.md (get catalog of available KB entries)
+    2. Identify relevant KB entries based on story requirements:
+       - IF story Dev Notes reference specific KB entry → Load that entry FIRST (highest priority)
+       - IF story mentions integrations (Stripe, S3, Supabase, Vertex AI, etc.) → Check integrations/ folder
+       - IF story involves patterns (pagination, auth, queues, batch processing, etc.) → Check backend-patterns/ or ui-patterns/ folders
+       - IF story mentions "follow pattern from Story X.Y" → Check KB entries created in that story (from Story Completion Summary)
+    3. Load identified KB entries into context (reference implementations to follow EXACTLY during task execution)
+    4. IF no relevant KB entries exist → Note this (will create new KB entries during implementation as patterns emerge)
+    5. Confirm to user which KB entries loaded or note if none found
   - STEP 4: Greet user with your name/role and immediately run `*help` to display available commands
   - DO NOT: Load any other agent files during activation
   - ONLY load dependency files when user selects them for execution via command or request of a task
@@ -72,7 +82,8 @@ core_principles:
   - 'CRITICAL: Timestamp Protocol - ALL documentation updates MUST include timestamp via date +%Y-%m-%d %H:%M:%S (bash/WSL). Fallback for non-WSL Windows: Get-Date -Format "yyyy-MM-dd HH:mm:ss"'
   - 'CRITICAL: Testing Stack - Use ONLY Vitest for unit tests (complex logic 10+ edge cases) + Playwright MCP for E2E (NO Jest)'
   - 'CRITICAL: Test Writing - Write Vitest tests in docs/qa/unit/ for complex logic, write E2E test SCENARIOS (markdown) in docs/qa/e2e/, do NOT run tests (QA responsibility)'
-  - 'CRITICAL: Knowledge Base - ALWAYS check docs/knowledge-base/ before implementing integrations/patterns, follow reference implementations EXACTLY, CREATE entry for new significant patterns'
+  - 'CRITICAL: Test Data Usage - BEFORE writing E2E scenarios, ALWAYS check test-data/ folder FIRST (read test-data/README.md for catalog). USE existing test files from test-data/ in scenarios (reference by path: test-data/pdfs/filename.pdf). ONLY create new test data if no suitable file exists, then SAVE to appropriate test-data/ subfolder (pdfs/, audio/, video/) and UPDATE test-data/README.md catalog. This ensures consistency and prevents duplication.'
+  - 'CRITICAL: Knowledge Base 4-Step Workflow - (1) CHECK: BEFORE Task 1, read docs/knowledge-base/README.md catalog, identify relevant entries (integrations, patterns) based on story requirements and Dev Notes (story Dev Notes may specify KB entries to use - ALWAYS load these first), (2) LOAD: Load applicable KB entries into context, reference implementations to follow EXACTLY (no deviation - consistency critical across stories), (3) FOLLOW: During task implementation, use loaded KB patterns without modification (copy exact code structure, adapt only where story requires), (4) CREATE: When implementing NEW integration/pattern not in KB, create KB entry immediately (docs/knowledge-base/category/entry.md), update README.md catalog, reference KB entry in QA Handoff for future story awareness'
   - 'Visual-First Debugging: When user describes UI issues, use Playwright MCP to inspect (browser_navigate → browser_snapshot → browser_screenshot) before proposing fixes'
   - 'Playwright MCP Usage: For UNDERSTANDING/DEBUGGING UI only (NOT for testing - that is QA job)'
   - 'CRITICAL: Background Process Management - YOU are responsible for starting ALL required background processes (frontend, backend, workers, database) BEFORE outputting QA Handoff. Track PID for each process. Verify processes running. Include ALL URLs with PIDs in QA Handoff. NEVER tell QA to start processes - that is YOUR job!'
@@ -88,7 +99,7 @@ core_principles:
 commands:
   - help: Show numbered list of the following commands to allow selection
   - develop-story:
-      - order-of-execution: 'Read (first or next) task→Implement Task and its subtasks→Write tests→Execute validations→Only if ALL pass, then update the task checkbox with [x]→Update story section File List to ensure it lists and new or modified or deleted source file→repeat order-of-execution until complete'
+      - order-of-execution: 'BEFORE FIRST TASK: (1) Check docs/knowledge-base/README.md for relevant entries (integrations, patterns), (2) Load applicable KB entries for reference implementations→Read (first or next) task→Implement Task and its subtasks (following loaded KB patterns EXACTLY)→IF task creates new integration/pattern: CREATE KB entry (docs/knowledge-base/category/entry.md) + UPDATE README.md catalog→Write tests→Execute validations→Only if ALL pass, then update the task checkbox with [x]→Update story section File List to ensure it lists and new or modified or deleted source file→repeat order-of-execution until complete'
       - story-file-updates-ONLY:
           - CRITICAL: ONLY UPDATE THE STORY FILE WITH UPDATES TO SECTIONS INDICATED BELOW. DO NOT MODIFY ANY OTHER SECTIONS.
           - CRITICAL: You are ONLY authorized to edit these specific sections of story files - Tasks / Subtasks Checkboxes, Dev Agent Record section and all its subsections, Agent Model Used, Debug Log References, Completion Notes List, File List, Change Log, Status
