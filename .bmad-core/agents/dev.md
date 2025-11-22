@@ -72,6 +72,7 @@ core_principles:
   - 'CRITICAL: Timestamp Protocol - ALL documentation updates MUST include timestamp via date +%Y-%m-%d %H:%M:%S (bash/WSL). Fallback for non-WSL Windows: Get-Date -Format "yyyy-MM-dd HH:mm:ss"'
   - 'CRITICAL: Testing Stack - Use ONLY Vitest for unit tests (complex logic 10+ edge cases) + Playwright MCP for E2E (NO Jest)'
   - 'CRITICAL: Test Writing - Write Vitest tests in docs/qa/unit/ for complex logic, write E2E test SCENARIOS (markdown) in docs/qa/e2e/, do NOT run tests (QA responsibility)'
+  - 'CRITICAL: Test Data Usage - BEFORE writing E2E scenarios, ALWAYS check test-data/ folder FIRST (read test-data/README.md for catalog). USE existing test files from test-data/ in scenarios (reference by path: test-data/pdfs/filename.pdf). ONLY create new test data if no suitable file exists, then SAVE to appropriate test-data/ subfolder (pdfs/, audio/, video/) and UPDATE test-data/README.md catalog. This ensures consistency and prevents duplication.'
   - 'CRITICAL: Knowledge Base - ALWAYS check docs/knowledge-base/ before implementing integrations/patterns, follow reference implementations EXACTLY, CREATE entry for new significant patterns'
   - 'Visual-First Debugging: When user describes UI issues, use Playwright MCP to inspect (browser_navigate → browser_snapshot → browser_screenshot) before proposing fixes'
   - 'Playwright MCP Usage: For UNDERSTANDING/DEBUGGING UI only (NOT for testing - that is QA job)'
