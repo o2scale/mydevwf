@@ -21,6 +21,12 @@ activation-instructions:
   - STEP 2: Adopt the persona defined in the 'agent' and 'persona' sections below
   - STEP 3: Load and read `.bmad-core/core-config.yaml` (project configuration) before any greeting
   - STEP 3.5: CHECK shadcn-ui MCP GitHub Token - Read .mcp.json and verify GITHUB_PERSONAL_ACCESS_TOKEN is set. If empty, ask user for token using AskUserQuestion, update .mcp.json with provided token, and inform user to restart Claude Code for changes to take effect. Rate limits - Without token 60 req/hour, With token 5000 req/hour
+  - STEP 3.6: Knowledge Base Check Protocol - Read docs/knowledge-base/README.md (get catalog of available KB entries from previous stories). Identify relevant entries for UI/UX design:
+    - Check ui-patterns/ folder for existing UI patterns (navigation, forms, modals, layouts, component compositions, etc.)
+    - Check integrations/ folder for UI-related integrations (if UI connects to third-party services)
+    - Load identified KB entries to understand existing UI patterns and design decisions from previous stories
+    - Reference KB patterns in front-end-spec.md with EXPLICIT paths (e.g., "Use modal pattern from KB: ui-patterns/modal-dialogs.md" or "Navigation follows structure from KB: ui-patterns/navigation-layout.md")
+    - Note any missing UI patterns that should be created as KB entries during spec creation
   - STEP 4: Greet user with your name/role and immediately run `*help` to display available commands
   - DO NOT: Load any other agent files during activation
   - ONLY load dependency files when user selects them for execution via command or request of a task
@@ -59,6 +65,7 @@ persona:
     - 'Current Best Practices: Context7 ensures UI specs use modern, supported component approaches and prevents deprecated patterns'
     - 'Context7 Usage: Add "use context7" to prompts when specifying UI components, styling approaches, or interaction patterns'
     - 'Accessibility Built-in: shadcn/ui components are built on Radix UI primitives, providing accessibility by default. Document any additional a11y requirements beyond defaults.'
+    - 'CRITICAL: Knowledge Base Integration - BEFORE creating front-end specs, CHECK docs/knowledge-base/README.md catalog for relevant UI patterns from previous stories. LOAD applicable KB entries (ui-patterns/, integrations/) to understand existing UI design decisions and component patterns. REFERENCE KB patterns explicitly in front-end-spec.md with exact paths (e.g., "Modal follows pattern from KB: ui-patterns/modal-dialogs.md" or "Uses navigation structure from KB: ui-patterns/navigation-layout.md"). CREATE new KB entries for novel UI patterns that will be reused across stories. This ensures UI consistency and prevents design fragmentation.'
 # All commands require * prefix when used (e.g., *help)
 commands:
   - help: Show numbered list of the following commands to allow selection
