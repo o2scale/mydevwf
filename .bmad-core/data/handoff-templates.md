@@ -286,7 +286,8 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Expected test scenarios (what E2E tests Dev should write)
    - Dependencies and blockers (other stories, external services, prerequisites)
    - Implementation guidance (suggested approach, patterns to follow, pitfalls to avoid)
-   - Knowledge base references (relevant KB entries for patterns/integrations)
+   - Knowledge base references (relevant KB entries Dev must USE from previous stories)
+   - Knowledge base creation expectations (KB entries Dev must CREATE per story-dod-checklist.md section 10 - integrations, patterns, complex solutions)
 
 3. **CRITICAL: Commit handoff to git** (IMMEDIATELY after creation):
    ```bash
@@ -308,6 +309,8 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📅 Created: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Orchestrator Agent Name}
 📊 Scope: {Brief description of what needs to be implemented}
 🔍 Research: {Key Context7 findings or tech decisions if applicable}
+📚 KB Use: {Existing KB entries to follow if any, or "No KB dependencies"}
+📝 KB Create: {Expected KB entries to create, or "No KB creation expected"}
 📝 ACs: {N} acceptance criteria → {N} E2E scenarios expected
 ⚠️ Notes: {Special considerations, dependencies, risks}
 💡 Guidance: {Implementation hints, architecture patterns to use}
@@ -323,9 +326,11 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📅 Created: 2025-11-04 10:15:00 | 👤 Alex (Orchestrator Agent)
 📊 Scope: Implement batch processing for large PDFs (500+ pages) with progress tracking
 🔍 Research: Vertex AI has 10MB payload limit, use streaming approach (Context7)
+📚 KB Use: backend-patterns/batch-processing.md (token-based batching from Story 2.1)
+📝 KB Create: integrations/vertex-ai-streaming.md (large payload handling pattern for Stories 3.3, 4.1)
 📝 ACs: 4 acceptance criteria → 8 E2E scenarios expected (batch split, progress, retry)
 ⚠️ Notes: Depends on pgmq setup (Story 3.1), test with real 800-page PDF
-💡 Guidance: Use token-based batching (see docs/knowledge-base/backend-patterns/batch-processing.md)
+💡 Guidance: Follow batch-processing.md pattern exactly, document Vertex AI streaming approach
 ═══ COPY TO DEV TERMINAL ═══
 ```
 
