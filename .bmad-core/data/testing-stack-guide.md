@@ -282,6 +282,185 @@ QA translates navigation scenarios to Playwright MCP commands:
 5. Verify URL change, page title, breadcrumbs
 6. `browser_screenshot()` to capture evidence
 
+---
+
+### **Authentication Testing with Test Credentials**
+
+CRITICAL: Authentication features require coordinated test data setup between Dev and QA.
+
+#### **For Developers: Creating Test Users**
+
+When implementing authentication features (login, signup, password reset, role-based access):
+
+**1. Check for existing credentials file**:
+```bash
+# Does test-data/auth/creds.txt exist?
+cat test-data/auth/creds.txt
+```
+
+**2. If missing, create test credentials**:
+```bash
+# Create auth directory
+mkdir -p test-data/auth
+
+# Copy template
+cp .bmad-core/templates/creds-template.txt test-data/auth/creds.txt
+cp .bmad-core/templates/auth-creds-README.md test-data/auth/README.md
+
+# Edit creds.txt if needed (add more test accounts, roles, etc.)
+```
+
+**3. Create seed script matching creds.txt**:
+
+**Location**: `database/seeds/auth_test_users.sql` OR `backend/scripts/seed_test_users.py`
+
+**SQL Example** (Supabase Auth):
+```sql
+-- database/seeds/auth_test_users.sql
+-- MUST match test-data/auth/creds.txt EXACTLY
+
+INSERT INTO auth.users (email, encrypted_password, email_confirmed_at, role)
+VALUES
+  ('test@example.com', crypt('testpassword123', gen_salt('bf')), NOW(), 'user'),
+  ('admin@example.com', crypt('adminpass456', gen_salt('bf')), NOW(), 'admin')
+ON CONFLICT (email) DO NOTHING;
+```
+
+**Python Example** (FastAPI + custom auth):
+```python
+# backend/scripts/seed_test_users.py
+from api.services.auth import create_user
+
+# MUST match test-data/auth/creds.txt EXACTLY
+async def seed_test_users():
+    await create_user("test@example.com", "testpassword123", role="user")
+    await create_user("admin@example.com", "adminpass456", role="admin")
+```
+
+**4. Run seed script**:
+```bash
+# SQL
+psql $DATABASE_URL -f database/seeds/auth_test_users.sql
+
+# Python
+python backend/scripts/seed_test_users.py
+```
+
+**5. Verify test users exist**:
+```bash
+# Check database
+psql $DATABASE_URL -c "SELECT email, role FROM auth.users WHERE email LIKE '%example.com%'"
+```
+
+**6. Include in QA Handoff**:
+```markdown
+✅ **Test Data Setup**:
+- Credentials: test-data/auth/creds.txt
+- Seed script: database/seeds/auth_test_users.sql
+- Test users created: test@example.com (user), admin@example.com (admin)
+- Verified in dev database: ✅
+```
+
+---
+
+#### **For QA: Using Test Credentials**
+
+**1. ALWAYS use test-data/auth/creds.txt** for authentication testing:
+
+❌ **DON'T** make up random credentials:
+```markdown
+# WRONG - Don't do this
+Fill email: "user@test.com"  ← Where did this come from?
+Fill password: "password123"  ← Not in creds.txt!
+```
+
+✅ **DO** reference creds.txt explicitly:
+```markdown
+# CORRECT
+**Test Data**: test-data/auth/creds.txt (test user account)
+Fill email: test@example.com (from creds.txt)
+Fill password: testpassword123 (from creds.txt)
+```
+
+**2. E2E Test Scenario Format**:
+
+```markdown
+### TC1.1: Login with valid user credentials
+
+**Test Data**: `test-data/auth/creds.txt` (username/password)
+
+**Prerequisites**:
+- Test user exists in development database (Dev responsibility)
+- Backend running on http://localhost:8000
+- Frontend running on http://localhost:3000
+
+**Steps**:
+1. Navigate to http://localhost:3000/login
+2. Read credentials from test-data/auth/creds.txt
+3. Fill email field: test@example.com
+4. Fill password field: testpassword123
+5. Click "Login" button
+6. Verify redirect to /dashboard
+7. Verify user name displays in header
+8. Verify localStorage contains auth token
+
+**Expected**:
+- Successful login
+- Dashboard page loads
+- User authenticated
+- No console errors
+
+**Playwright MCP Execution**:
+browser_navigate("http://localhost:3000/login")
+browser_snapshot()  # Get form structure
+browser_fill("input[name='email']", "test@example.com")
+browser_fill("input[name='password']", "testpassword123")
+browser_click("button[type='submit']")
+browser_snapshot()  # Verify dashboard loaded
+```
+
+**3. Role-Based Testing**:
+
+```markdown
+### TC2.1: Admin access to admin panel
+
+**Test Data**: `test-data/auth/creds.txt` (admin_username/admin_password)
+
+**Steps**:
+1. Login as admin (admin@example.com / adminpass456 from creds.txt)
+2. Navigate to /admin
+3. Verify admin panel accessible
+4. Verify user management features visible
+
+### TC2.2: Standard user cannot access admin panel
+
+**Test Data**: `test-data/auth/creds.txt` (username/password - non-admin)
+
+**Steps**:
+1. Login as standard user (test@example.com from creds.txt)
+2. Attempt to navigate to /admin
+3. Verify access denied (403 or redirect to dashboard)
+```
+
+**4. If test login fails**:
+
+```
+ERROR: Invalid credentials
+
+DIAGNOSIS CHECKLIST:
+□ Is backend running? (check http://localhost:8000/health)
+□ Are credentials correct? (verify exact match with creds.txt)
+□ Do test users exist in database? (ask Dev to verify)
+□ Was seed script run? (check with Dev)
+□ Database reset recently? (re-run seed script)
+
+RESOLUTION:
+- FLAG as blocking issue in Developer Handoff
+- Dev must verify test users exist and credentials match
+- Dev re-runs seed script if needed
+- Re-test after confirmation
+```
+
 **Example Vitest Unit Test**:
 ```typescript
 // docs/qa/unit/sprint-1/epics/epic-1/story-3/calculateTax.test.ts

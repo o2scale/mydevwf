@@ -1,0 +1,24 @@
+# Test Authentication Credentials
+# Location: test-data/auth/creds.txt
+# Purpose: Dummy credentials for authentication testing
+# SECURITY: These are FAKE credentials for testing ONLY
+
+# Standard test user (basic user role)
+username: test@example.com
+password: testpassword123
+user_role: user
+
+# Admin test account (admin role)
+admin_username: admin@example.com
+admin_password: adminpass456
+admin_role: admin
+
+# Additional test accounts (uncomment if needed)
+# guest_username: guest@example.com
+# guest_password: guestpass789
+# guest_role: guest
+
+# IMPORTANT:
+# - Dev: Create seed scripts that match these exact credentials
+# - QA: Use these credentials in E2E test scenarios
+# - Keep this file in sync with database seed scripts

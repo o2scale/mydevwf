@@ -49,20 +49,31 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] All tests (unit, integration, E2E if applicable) pass successfully.
    - [ ] Test coverage meets project standards (if defined).
 
-4. **Functionality & Verification:**
+4. **Authentication Test Data (If story implements authentication):**
+
+   [[LLM: If story implements login, signup, role-based access, password reset, or any authentication features, you MUST provide test credentials and seed scripts for QA testing. QA cannot test authentication without valid test users in database. This section is MANDATORY for auth-related stories - mark N/A ONLY if story has zero authentication changes.]]
+   - [ ] Checked if `test-data/auth/creds.txt` exists (run: `cat test-data/auth/creds.txt`)
+   - [ ] **IF creds.txt missing**: Created directory (`mkdir -p test-data/auth`), copied credential template (`cp .bmad-core/templates/creds-template.txt test-data/auth/creds.txt`), and copied README (`cp .bmad-core/templates/auth-creds-README.md test-data/auth/README.md`)
+   - [ ] Created seed script matching creds.txt credentials EXACTLY (database/seeds/auth_test_users.sql OR backend/scripts/seed_test_users.py with email, password, role matching creds.txt)
+   - [ ] Ran seed script to populate development database with test users (SQL: `psql $DATABASE_URL -f database/seeds/auth_test_users.sql` OR Python: `python backend/scripts/seed_test_users.py`)
+   - [ ] Verified test users exist in database (via SQL query `SELECT email, role FROM auth.users WHERE email IN ('test@example.com', 'admin@example.com')`, database UI, or Supabase/MongoDB MCP)
+   - [ ] Included Test Data Setup section in QA Handoff detailed document: credentials file path (test-data/auth/creds.txt), seed script location (database/seeds/ OR backend/scripts/), test users created with emails and roles, verification status (✅ Verified in dev database)
+   - [ ] **CRITICAL**: Test users must exist BEFORE QA Handoff - QA cannot create test users themselves (this is YOUR responsibility as Dev)
+
+5. **Functionality & Verification:**
 
    [[LLM: Did you actually run and test your code? Be specific about what you tested]]
    - [ ] Functionality has been manually verified by the developer (e.g., running the app locally, checking UI, testing API endpoints).
    - [ ] Edge cases and potential error conditions considered and handled gracefully.
 
-5. **Story Administration:**
+6. **Story Administration:**
 
    [[LLM: Documentation helps the next developer. What should they know?]]
    - [ ] All tasks within the story file are marked as complete.
    - [ ] Any clarifications or decisions made during development are documented in the story file or linked appropriately.
    - [ ] The story wrap up section has been completed with notes of changes or information relevant to the next story or overall project, the agent model that was primarily used during development, and the changelog of any changes is properly updated.
 
-6. **Dependencies, Build & Configuration:**
+7. **Dependencies, Build & Configuration:**
 
    [[LLM: Build issues block everyone. Ensure everything compiles and runs cleanly]]
    - [ ] Project builds successfully without errors.
@@ -72,14 +83,14 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] No known security vulnerabilities introduced by newly added and approved dependencies.
    - [ ] If new environment variables or configurations were introduced by the story, they are documented and handled securely.
 
-7. **Documentation (If Applicable):**
+8. **Documentation (If Applicable):**
 
    [[LLM: Good documentation prevents future confusion. What needs explaining?]]
    - [ ] Relevant inline code documentation (e.g., JSDoc, TSDoc, Python docstrings) for new public APIs or complex logic is complete.
    - [ ] User-facing documentation updated, if changes impact users.
    - [ ] Technical documentation (e.g., READMEs, system diagrams) updated if significant architectural changes were made.
 
-8. **QA Handoff & Process Management:**
+9. **QA Handoff & Process Management:**
 
    [[LLM: CRITICAL - This is YOUR responsibility as Dev, not QA's. Verify each item carefully]]
    - [ ] All required background processes (frontend, backend, workers, database) have been started and are running.
@@ -90,7 +101,7 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
    - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
 
-9. **Navigation Integration (MANDATORY for user-facing changes):**
+10. **Navigation Integration (MANDATORY for user-facing changes):**
 
    [[LLM: Navigation is CRITICAL - users must be able to REACH your feature via normal navigation flow (not just direct URL). Check story Navigation Notes section - ALL specified menu items, breadcrumbs, and navigation elements are MANDATORY. If story creates new page but has NO Navigation Notes OR Navigation Notes say "N/A - Backend only", verify story is truly backend-only with zero UI changes. If story has UI changes but missing Navigation Notes, FLAG THIS AS BLOCKING ISSUE - you CANNOT proceed without navigation design (return to UX Expert). Do NOT mark this section N/A unless story is truly backend-only with zero UI changes. QA will independently verify navigation and FAIL stories with missing menus.]]
    - [ ] **CRITICAL**: Story Navigation Notes section is populated (if missing for user-facing story, BLOCK until UX provides navigation design)
@@ -103,7 +114,7 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Navigation follows front-end spec design patterns (consistent with existing UI, same menu styling/behavior)
    - [ ] Navigation elements included in E2E test scenarios (at least 1 test case starts with "User navigates from X to feature via menu/link")
 
-10. **Knowledge Base Documentation:**
+11. **Knowledge Base Documentation:**
 
    [[LLM: KB entries preserve patterns for future stories. Review story implementation carefully BEFORE creating Story Completion Summary. This is MANDATORY - not optional. Check each trigger carefully and be honest about whether KB documentation is needed.]]
    - [ ] **BEFORE creating Story Completion Summary**, reviewed story implementation against KB triggers:
@@ -117,7 +128,7 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] If KB entry created: Verified KB entry has actual implementation code from THIS story (not generic documentation)
    - [ ] If NO KB entry needed: Confirmed story doesn't match any KB trigger criteria above (document reasoning in Completion Notes)
 
-11. **Git/Version Control:**
+12. **Git/Version Control:**
 
    [[LLM: Git commits ensure code is safely versioned and traceable. Follow git-workflow-guide.md exactly]]
    - [ ] Implementation commit created BEFORE QA Handoff (feat(story-X.Y): Implementation complete with task list, test counts, file counts per `.bmad-core/data/git-workflow-guide.md` Commit Point 1).
