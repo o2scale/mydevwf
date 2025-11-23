@@ -440,6 +440,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - QA findings and lessons learned (critical findings, non-blocking observations)
    - Git commits (hashes for 3 commit points + handoff commits)
    - Test results (Vitest pass/fail, E2E pass/fail, quality gate status)
+   - Process cleanup (background processes killed, PIDs, timestamp, ports released)
    - Recommendations for next story (Dev Notes suggestions, technical considerations)
    - Handoff document references (all handoffs created during story)
    - Summary for Orchestrator (key takeaways, next story dependencies met)
@@ -486,6 +487,10 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 
 🧪 TESTS: Vitest {X}/{N} | E2E {X}/{N} | Gate: {PASS/CONCERNS/FAIL}
 
+🔌 PROCESS CLEANUP:
+   - Frontend (PID {pid}), Backend (PID {pid}), Workers (PID {pid}) - Killed at {timestamp}
+   - Ports released: {3000, 8000, 5000} ✅ | Clean slate for next story
+
 💡 NEXT STORY ({next-story-num}) NOTES:
    - {Dev Notes suggestion 1}
    - {Dev Notes suggestion 2}
@@ -531,6 +536,10 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Test with realistic file sizes early in development
 
 🧪 TESTS: Vitest 15/15 ✅ | E2E 8/8 ✅ | Gate: PASS ✅
+
+🔌 PROCESS CLEANUP:
+   - Frontend (PID 12340), Backend (PID 12348), Workers (PID 12352) - Killed at 2025-11-15 14:28:30
+   - Ports released: 3000, 8000, 5000 ✅ | Clean slate for next story
 
 💡 NEXT STORY (2.2) NOTES:
    - Reference batch-processing.md in Dev Notes (token estimation pattern)
