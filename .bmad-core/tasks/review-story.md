@@ -97,6 +97,37 @@ required:
   - Flag as CONCERN in quality gate ("Story should have created KB entry for [integration/pattern/solution] - missing documentation")
   - Note this in Developer Handoff (if gate is not PASS)
 
+**H. Navigation Integration Verification**
+
+CRITICAL: This check is MANDATORY for stories that create/modify user-facing pages. Navigation gaps make features unreachable.
+
+- Read story Navigation Notes section
+  - IF Navigation Notes missing for user-facing story: Flag as BLOCKING FAIL ("Story lacks Navigation Notes - navigation design missing")
+  - IF Navigation Notes say "N/A - Backend only": Verify story truly has zero UI changes (no new pages, no UI modifications)
+- IF Navigation Notes populated, verify navigation design completeness:
+  - Menu items specified (which menu, label, position)
+  - Breadcrumbs specified (page hierarchy)
+  - User journey documented (entry points from existing screens)
+  - Contextual links identified (related pages that should link to feature)
+- Use Playwright MCP to verify navigation implementation (INDEPENDENT verification, don't trust Dev checklist):
+  - browser_navigate to dashboard or main landing page
+  - browser_snapshot to get page structure with element references
+  - Verify menu item exists per Navigation Notes (search snapshot for menu label)
+  - browser_click menu item reference → verify navigates to new feature (check URL, page title)
+  - Check breadcrumbs present and functional (click breadcrumb links)
+  - Test minimum 2 entry points from Navigation Notes (different paths to reach feature)
+  - If story specifies contextual links: Navigate to related page, verify link exists, click to test
+- Navigation verification results:
+  - IF all navigation elements implemented correctly: PASS navigation check
+  - IF menu items missing: Flag as FAIL ("Feature unreachable - missing menu items: [list specific items from Navigation Notes]")
+  - IF breadcrumbs missing/incorrect: Flag as CONCERN ("Breadcrumbs missing or incorrect - expected: [hierarchy from Navigation Notes]")
+  - IF contextual links missing: Flag as CONCERN ("Missing contextual links from: [list pages from Navigation Notes]")
+  - IF only accessible via direct URL (no menu entry): Flag as FAIL ("Feature has no navigation entry point - users cannot discover feature")
+- Document navigation gaps in Developer Handoff with specific details:
+  - Which menu items are missing (exact label, expected location)
+  - Which entry points don't work (expected path vs actual)
+  - Screenshots showing navigation gaps (use browser_screenshot)
+
 ### 3. Active Refactoring
 
 - Refactor code where safe and appropriate

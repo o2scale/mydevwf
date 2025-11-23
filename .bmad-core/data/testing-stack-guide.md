@@ -173,6 +173,115 @@ appId: com.yourapp
 - Console shows no errors (expected API 401)
 ```
 
+### **Navigation Test Scenarios (MANDATORY for user-facing features)**
+
+CRITICAL: EVERY story that creates/modifies user-facing pages MUST include navigation test scenarios.
+These scenarios verify users can REACH the feature via normal navigation (not just direct URL).
+
+**Why This Matters**: Features without navigation integration are unreachable and effectively broken.
+Missing menus are a common defect that significantly degrades user experience.
+
+**When to Include**:
+- Story creates new page/route
+- Story adds new feature to existing application
+- Story modifies navigation structure
+
+**Navigation Test Format**:
+- Create dedicated test case: `TC{AC}.nav` - Navigation Accessibility
+- Test minimum 2 entry points from story Navigation Notes
+- Verify menu items, breadcrumbs, contextual links
+
+**Navigation Test Template**:
+```markdown
+### TC{AC}.nav: Navigation Accessibility to [Feature Name]
+
+**Priority**: P0 (Navigation is critical - unreachable features are broken)
+
+**Precondition**: User logged in, on starting page (dashboard/main menu/related page)
+
+**Test Entry Point 1 - Main Menu**:
+1. Navigate to [starting page - e.g., /dashboard]
+2. Verify [menu name] menu exists (header/sidebar)
+3. Click "[Menu Item Label]" menu item
+4. Verify page navigates to [expected URL]
+5. Verify page title is "[Expected Page Title]"
+6. Verify breadcrumb shows "[Expected Hierarchy]"
+7. Click breadcrumb elements to verify navigation works
+
+**Expected**:
+- Menu item visible in correct menu location
+- Clicking menu item navigates to feature
+- Breadcrumbs present and functional
+- Page loads without errors
+
+**Test Entry Point 2 - Contextual Link** (if applicable):
+1. Navigate to [related page - e.g., /documents/list]
+2. Verify "[Button/Link Label]" button/link exists
+3. Click button/link
+4. Verify navigates to feature page
+
+**Expected**:
+- Contextual link visible on related page
+- Link navigates to correct destination
+- Context preserved (e.g., document ID in URL)
+
+**Negative Test**:
+1. Verify feature is NOT only accessible via direct URL
+2. New users should discover feature through normal navigation
+```
+
+**Example - Batch Processing Navigation**:
+```markdown
+### TC1.nav: Navigation Accessibility to Batch Processing
+
+**Priority**: P0
+**Precondition**: User logged in on dashboard
+
+**Test Entry Point 1 - Primary Navigation Menu**:
+1. Navigate to /dashboard
+2. Verify "Documents" menu exists in primary navigation (header)
+3. Click "Documents" menu item → Opens dropdown
+4. Verify "Batch Processing" option in dropdown
+5. Click "Batch Processing"
+6. Verify navigates to /documents/batch
+7. Verify page title "Batch Processing"
+8. Verify breadcrumb: "Home > Documents > Batch Processing"
+9. Click "Documents" in breadcrumb → Returns to /documents
+10. Click "Home" in breadcrumb → Returns to /dashboard
+
+**Expected**:
+- Documents menu in header with Batch Processing submenu item
+- Navigation works smoothly
+- Breadcrumbs functional
+- No console errors
+
+**Test Entry Point 2 - Document List Contextual Link**:
+1. Navigate to /documents/list
+2. Locate any document in list
+3. Verify "Start Batch" button exists on document card/row
+4. Click "Start Batch" button
+5. Verify navigates to /documents/batch?documentId={id}
+6. Verify document pre-selected in batch form
+
+**Expected**:
+- Contextual button visible on document items
+- Navigation preserves document context
+- User can initiate batch from document list
+
+**Negative Test Verification**:
+- Feature accessible via 2+ navigation paths (not just direct URL)
+- New user can discover Batch Processing without knowing URL
+```
+
+**QA Execution Using Playwright MCP**:
+QA translates navigation scenarios to Playwright MCP commands:
+1. `browser_navigate(url)` to starting page
+2. `browser_snapshot()` to get menu structure
+3. Find menu item reference in snapshot
+4. `browser_click(element, ref)` to click menu
+5. Verify URL change, page title, breadcrumbs
+6. `browser_screenshot()` to capture evidence
+
 **Example Vitest Unit Test**:
 ```typescript
 // docs/qa/unit/sprint-1/epics/epic-1/story-3/calculateTax.test.ts

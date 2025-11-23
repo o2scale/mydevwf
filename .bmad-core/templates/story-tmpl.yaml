@@ -99,11 +99,18 @@ sections:
         editors: [scrum-master]
 
       - id: navigation-notes
-        title: Navigation Notes (If Applicable)
+        title: Navigation Notes (MANDATORY for user-facing features)
         instruction: |
-          ONLY populate if story creates new pages OR modifies navigation (menus, buttons, breadcrumbs).
+          CRITICAL: This section is MANDATORY for stories that create/modify user-facing pages or features.
+          You MUST specify EXACT menu items, breadcrumbs, and user journey - how users will REACH this feature.
+
+          If story is backend-only with NO UI changes: Write "N/A - Backend only, no navigation changes"
+          If story has ANY user-facing component: MUST populate all applicable sections below.
+
           Reference docs/front-end-spec.md Navigation Structure section.
-          This ensures Dev implements the complete user journey, not just isolated page functionality.
+
+          WHY THIS MATTERS: Features without navigation integration are UNREACHABLE and effectively broken.
+          Dev cannot skip this - QA will verify navigation independently and FAIL stories with missing menus.
         template: |
           **Reference**: docs/front-end-spec.md - Navigation Structure & User Flows
 

@@ -90,16 +90,18 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
    - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
 
-9. **UI/UX Integration (If Story Has User-Facing Changes):**
+9. **Navigation Integration (MANDATORY for user-facing changes):**
 
-   [[LLM: Navigation is critical for user experience. Check story Navigation Notes section. Verify users can REACH your feature, not just that it WORKS. If Navigation Notes section exists in story, ALL navigation elements MUST be implemented.]]
-   - [ ] Feature is accessible via normal user navigation (not just direct URL).
-   - [ ] All menu items specified in story Navigation Notes are implemented and functional.
-   - [ ] All buttons/links specified in story Navigation Notes are implemented on correct pages.
-   - [ ] Users can reach the new feature from dashboard/menu/previous workflow step.
-   - [ ] Breadcrumbs implemented correctly (if specified in Navigation Notes).
-   - [ ] Navigation follows front-end spec design patterns (consistent with existing UI).
-   - [ ] Navigation elements tested in E2E test scenarios (users can discover and access feature).
+   [[LLM: Navigation is CRITICAL - users must be able to REACH your feature via normal navigation flow (not just direct URL). Check story Navigation Notes section - ALL specified menu items, breadcrumbs, and navigation elements are MANDATORY. If story creates new page but has NO Navigation Notes OR Navigation Notes say "N/A - Backend only", verify story is truly backend-only with zero UI changes. If story has UI changes but missing Navigation Notes, FLAG THIS AS BLOCKING ISSUE - you CANNOT proceed without navigation design (return to UX Expert). Do NOT mark this section N/A unless story is truly backend-only with zero UI changes. QA will independently verify navigation and FAIL stories with missing menus.]]
+   - [ ] **CRITICAL**: Story Navigation Notes section is populated (if missing for user-facing story, BLOCK until UX provides navigation design)
+   - [ ] **CRITICAL**: Feature is accessible via normal user navigation (not just direct URL) - manually tested from dashboard/main menu
+   - [ ] All menu items specified in Navigation Notes are implemented in correct menu locations (header/sidebar/dashboard)
+   - [ ] Menu items use exact labels specified in Navigation Notes (consistent terminology)
+   - [ ] All buttons/links specified in Navigation Notes are implemented on correct pages with exact placement
+   - [ ] Users can reach the new feature from multiple entry points per Navigation Notes (minimum 2 paths tested)
+   - [ ] Breadcrumbs implemented correctly per Navigation Notes (page hierarchy accurate)
+   - [ ] Navigation follows front-end spec design patterns (consistent with existing UI, same menu styling/behavior)
+   - [ ] Navigation elements included in E2E test scenarios (at least 1 test case starts with "User navigates from X to feature via menu/link")
 
 10. **Knowledge Base Documentation:**
 
