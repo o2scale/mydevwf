@@ -101,7 +101,21 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Navigation follows front-end spec design patterns (consistent with existing UI).
    - [ ] Navigation elements tested in E2E test scenarios (users can discover and access feature).
 
-10. **Git/Version Control:**
+10. **Knowledge Base Documentation:**
+
+   [[LLM: KB entries preserve patterns for future stories. Review story implementation carefully BEFORE creating Story Completion Summary. This is MANDATORY - not optional. Check each trigger carefully and be honest about whether KB documentation is needed.]]
+   - [ ] **BEFORE creating Story Completion Summary**, reviewed story implementation against KB triggers:
+     - Did story implement third-party integration? (Stripe, S3, Supabase, Vertex AI, SendGrid, etc.) → CREATE KB entry in `docs/knowledge-base/integrations/`
+     - Did story establish reusable pattern? (pagination, auth, error handling, batch processing, middleware, etc.) → CREATE KB entry in `docs/knowledge-base/backend-patterns/` or `docs/knowledge-base/ui-patterns/`
+     - Did story solve complex/non-obvious issue? (race conditions, performance optimization, data integrity, etc.) → CREATE KB entry in `docs/knowledge-base/common-issues/`
+     - Did story Dev Notes explicitly request KB documentation? → CREATE KB entry per requirements
+   - [ ] If KB entry created: Used `docs/knowledge-base/_entry-template.md` as starting point
+   - [ ] If KB entry created: Filled all required sections (Overview, Pattern with code example, Common Mistakes, Configuration, When to Use/Not Use)
+   - [ ] If KB entry created: Updated `docs/knowledge-base/README.md` catalog with new entry (added to appropriate category section)
+   - [ ] If KB entry created: Verified KB entry has actual implementation code from THIS story (not generic documentation)
+   - [ ] If NO KB entry needed: Confirmed story doesn't match any KB trigger criteria above (document reasoning in Completion Notes)
+
+11. **Git/Version Control:**
 
    [[LLM: Git commits ensure code is safely versioned and traceable. Follow git-workflow-guide.md exactly]]
    - [ ] Implementation commit created BEFORE QA Handoff (feat(story-X.Y): Implementation complete with task list, test counts, file counts per `.bmad-core/data/git-workflow-guide.md` Commit Point 1).

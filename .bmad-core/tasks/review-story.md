@@ -79,6 +79,24 @@ required:
 - Outdated dependencies
 - Architecture violations
 
+**G. Knowledge Base Validation**
+
+- Check if story implemented any KB triggers per story-dod-checklist.md section 10:
+  - Third-party integration (Stripe, S3, Supabase, Vertex AI, SendGrid, etc.)
+  - Reusable pattern (pagination, auth, error handling, batch processing, middleware, etc.)
+  - Complex/non-obvious solution (race conditions, performance optimization, data integrity, etc.)
+  - Dev Notes explicit KB documentation request
+- IF KB trigger matched AND KB entry exists:
+  - Read KB entry from docs/knowledge-base/
+  - Verify KB entry is complete (not TODOs/placeholders)
+  - Verify KB entry has actual implementation code from THIS story
+  - Verify KB entry includes all required sections (Overview, Pattern, Common Mistakes, Configuration, When to Use/Not Use)
+  - Verify docs/knowledge-base/README.md catalog updated with entry
+  - IF incomplete: Flag as CONCERN in quality gate ("KB entry incomplete - missing [sections]")
+- IF KB trigger matched BUT NO KB entry exists:
+  - Flag as CONCERN in quality gate ("Story should have created KB entry for [integration/pattern/solution] - missing documentation")
+  - Note this in Developer Handoff (if gate is not PASS)
+
 ### 3. Active Refactoring
 
 - Refactor code where safe and appropriate
