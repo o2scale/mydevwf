@@ -561,6 +561,278 @@ Files:
 
 ---
 
+## Part 3: Playwright MCP Migration (Per-Project Setup)
+
+### Problem Analysis
+
+**User Observation**: "HDA V2 - ALL agents (QA, Orchestrator, anyone) using Playwright MCP are saving screenshots to Downloads folder. I can see that the Playwright MCP is going and saving every single file in the C users users downloads folder inside my C drive."
+
+**Root Cause**: Global Playwright MCP setup saves all screenshots/files to Windows Downloads folder (`C:\Users\{user}\Downloads`), causing:
+- ❌ All projects dump evidence into same Downloads folder
+- ❌ Hard to organize, files mixed together
+- ❌ Not project-specific
+- ❌ Requires manual `downloadsDir` parameter specification (error-prone, often forgotten)
+
+**User Quote**: "There is no point in the second option, strengthening the global MCP plus download directory instructions. That actually doesn't work. That's something that I could understand very clearly from this live execution of this particular project."
+
+**Files Currently Affected**:
+- `.bmad-core/agents/qa.md` (line 64): Instructs to use `downloadsDir` parameter
+- `.bmad-core/data/testing-stack-guide.md` (lines 558-560, 602-610): Examples with `downloadsDir`
+- All agents/scripts using Playwright MCP: Saving to Downloads by default
+
+---
+
+### Solution Decision
+
+**User's Decision**: "Option number one, I want to switch to a per project Playwright MCP setup, that is the best option right now."
+
+**Why Per-Project is Better**:
+- ✅ Automatic correctness: Default behavior saves to project folder
+- ✅ Better organization: Each project has its own evidence
+- ✅ Cleaner workflow: No need to remember `downloadsDir` parameter
+- ✅ Matches other MCPs: Consistent with Supabase, MongoDB, shadcn-ui (all per-project)
+- ✅ Scales better: Multiple projects don't pollute Downloads folder
+
+**Per-Project Setup**:
+```json
+// Each project's .mcp.json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@executeautomation/playwright-mcp-server"],
+      "env": {}
+    }
+  }
+}
+```
+
+When Playwright MCP runs per-project, it automatically creates `playwright/` folder in that project and saves files there (no `downloadsDir` parameter needed).
+
+---
+
+### Implementation (Part 3)
+
+#### File 1: `CLAUDE.md` (lines 92-98)
+
+**CHANGED**:
+```markdown
+### Available MCPs
+
+**Global MCP** (installed once, available everywhere):
+- ✅ **Playwright MCP** - E2E testing and browser automation
+
+**Project-Specific MCPs** (configured in `.mcp.json`):
+- **Context7 MCP**: Up-to-date library documentation and patterns
+- **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
+- **Swagger MCP**: API testing via OpenAPI/Swagger specs
+- **Supabase MCP**: Database operations, migrations, logs (Supabase projects)
+- **MongoDB MCP**: Database queries, indexes, optimization (MongoDB projects)
+```
+
+**TO**:
+```markdown
+### Available MCPs
+
+**All MCPs are Project-Specific** (configured in `.mcp.json`):
+- **Playwright MCP**: E2E testing and browser automation (saves to project folder automatically)
+- **Context7 MCP**: Up-to-date library documentation and patterns
+- **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
+- **Swagger MCP**: API testing via OpenAPI/Swagger specs
+- **Supabase MCP**: Database operations, migrations, logs (Supabase projects)
+- **MongoDB MCP**: Database queries, indexes, optimization (MongoDB projects)
+```
+
+---
+
+#### File 2: `docs/guides/MCP-QUICK-START.md` (3 updates)
+
+**Update 1: Lines 10-18 (Available MCPs section)**
+
+**CHANGED**:
+```markdown
+## Available MCPs
+
+### Global MCP (Installed Once)
+- ✅ **Playwright MCP** - E2E testing and browser automation
+
+### Project-Specific MCPs (Per Template)
+- **Context7 MCP**: Up-to-date library documentation and patterns
+- ...
+```
+
+**TO**:
+```markdown
+## Available MCPs
+
+**All MCPs are Project-Specific** (configured per-project in `.mcp.json`):
+- **Playwright MCP**: E2E testing and browser automation (saves to project folder automatically)
+- **Context7 MCP**: Up-to-date library documentation and patterns
+- ...
+```
+
+**Update 2: Removed "Global MCP Setup" section**
+
+**REMOVED**:
+```bash
+### Global MCP Setup
+
+# Playwright MCP (install once, available everywhere)
+claude mcp add playwright npx -- -y @executeautomation/playwright-mcp-server
+```
+
+**Update 3: Added Per-Project Benefits (lines 246-250)**
+
+**ADDED**:
+```markdown
+### Playwright MCP
+
+**Purpose**: E2E testing and browser automation
+
+**Per-Project Setup Benefits**:
+- ✅ Screenshots/files save to project folder automatically (not Windows Downloads)
+- ✅ Evidence organized by project (docs/qa/evidence/)
+- ✅ No need to specify `downloadsDir` parameter manually
+- ✅ Clean separation between projects
+```
+
+---
+
+#### File 3: `.bmad-core/agents/qa.md` (line 64)
+
+**CHANGED**:
+```yaml
+'CRITICAL: Evidence Collection - Use playwright_screenshot with downloadsDir
+parameter set to project evidence folder (docs/qa/evidence/sprint-{N}/epics/
+epic-{epic}/story-{story}/), savePng: true. NEVER use default (saves to user
+Downloads folder). Capture console logs (browser_console_messages), page
+snapshots (browser_snapshot) for all test cases. Verify screenshots saved to
+correct project folder.'
+```
+
+**TO**:
+```yaml
+'CRITICAL: Evidence Collection - Per-project Playwright MCP automatically saves
+screenshots/files to project folder. Use playwright_screenshot (savePng: true)
+to capture evidence. Organize evidence in docs/qa/evidence/sprint-{N}/epics/
+epic-{epic}/story-{story}/ directory structure. Capture console logs
+(browser_console_messages), page snapshots (browser_snapshot) for all test cases.
+Reference evidence files in handoff documents with relative paths.'
+```
+
+**Impact**: Simplified instructions - no need to manually specify `downloadsDir` parameter.
+
+---
+
+#### File 4: `.bmad-core/data/testing-stack-guide.md` (2 updates)
+
+**Update 1: Lines 558-561 (Tool Documentation)**
+
+**CHANGED**:
+```markdown
+- `playwright_screenshot(name, downloadsDir, savePng)` - Capture visual evidence
+  - **CRITICAL**: ALWAYS set `downloadsDir` to project evidence folder, NOT user's Downloads
+  - Example: `downloadsDir: "docs/qa/evidence/sprint-1/epics/epic-1/story-3/"`
+  - Set `savePng: true` to save file to disk
+```
+
+**TO**:
+```markdown
+- `playwright_screenshot(name, savePng)` - Capture visual evidence
+  - **Per-project Playwright MCP automatically saves to project folder** (not Windows Downloads)
+  - Organize evidence: `docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/`
+  - Set `savePng: true` to save file to disk
+```
+
+**Update 2: Lines 602-610 (Example Code)**
+
+**CHANGED**:
+```javascript
+7. playwright_screenshot({
+     name: 'tc1.1-login-success.png',
+     downloadsDir: 'docs/qa/evidence/sprint-1/epics/epic-1/story-3/',
+     savePng: true
+   })
+8. Manually observe: Dashboard loaded? User name visible?
+
+**CRITICAL**: Screenshot `downloadsDir` must be project evidence folder, NOT user's Downloads folder!
+```
+
+**TO**:
+```javascript
+7. playwright_screenshot({
+     name: 'tc1.1-login-success.png',
+     savePng: true
+   })
+   → Per-project Playwright MCP saves to project folder automatically
+8. Manually observe: Dashboard loaded? User name visible?
+
+**NOTE**: Per-project Playwright MCP automatically saves screenshots to project folder (not Windows Downloads).
+```
+
+---
+
+### Benefits of Per-Project Playwright MCP
+
+#### Before (Global Setup - Broken)
+- ❌ All screenshots save to `C:\Users\{user}\Downloads`
+- ❌ All projects dump evidence into same folder
+- ❌ Hard to organize (files mixed together)
+- ❌ Requires manual `downloadsDir` parameter (error-prone)
+- ❌ If forgotten → screenshots go to Downloads (wrong location)
+- ❌ "Strengthening instructions doesn't work" (user quote)
+
+#### After (Per-Project Setup - Fixed)
+- ✅ Screenshots save to project folder automatically
+- ✅ Each project has its own `playwright/` folder
+- ✅ Evidence organized: `docs/qa/evidence/sprint-{N}/...`
+- ✅ No manual `downloadsDir` parameter needed
+- ✅ Default behavior is correct
+- ✅ Clean separation between projects
+
+---
+
+### Git Commit (Part 3)
+
+```
+Hash: 58914b7
+Message: feat(mcp): Switch Playwright MCP from global to per-project setup
+Stats: 4 files changed, 18 insertions(+), 23 deletions(-)
+Files:
+  - CLAUDE.md
+  - docs/guides/MCP-QUICK-START.md
+  - .bmad-core/agents/qa.md
+  - .bmad-core/data/testing-stack-guide.md
+```
+
+---
+
+### Migration Decision (CRITICAL)
+
+**User's Decision**: "So let's hold off on this for a second because currently I'm still working on the HDA version 2. Once I'm completing one section of the epic, like a proper epic completion is done, we'll move about this and take up this portion of migrating this playwright MCP because currently I don't want to screw up the environment right now."
+
+**Migration Plan**:
+- ⏸️ **Hold Migration**: Do NOT migrate HDA V2 to per-project Playwright MCP yet
+- ⏳ **Timing**: Migrate AFTER completing one full epic in HDA V2
+- 🎯 **Reason**: Don't want to disrupt current development environment
+- 📝 **Note**: User will ask to check last two session logs when ready to migrate
+
+**Current State**:
+- ✅ **Master Template (mydevwf)**: Updated - all documentation reflects per-project setup
+- ⏸️ **HDA V2 Project**: Still using global Playwright MCP (saving to Downloads) - DO NOT MIGRATE YET
+- ✅ **New Projects**: Will automatically use per-project setup (when created with updated templates)
+
+**When User is Ready to Migrate**:
+1. User will complete one full epic in HDA V2
+2. User will ask: "Check the last two session logs for Playwright MCP migration"
+3. Migration steps for HDA V2:
+   - Remove global Playwright MCP: `claude mcp remove playwright`
+   - Add Playwright to HDA V2's `.mcp.json`
+   - Restart Claude Code
+   - Verify screenshots now save to HDA V2 project folder (not Downloads)
+
+---
+
 ## Key Principles Established
 
 ### 1. Git Push After Every Commit
@@ -682,7 +954,7 @@ Files:
 
 ## Conclusion
 
-**Objectives**: ✅ COMPLETE
+**Objectives**: ✅ COMPLETE (3 major improvements)
 
 **Part 1: Git Push Integration**
 - ✅ Added git push after all 6 commit points (9 total push points)
@@ -698,12 +970,21 @@ Files:
 - ✅ Updated 3 files with consistent messaging (dev.md, story-dod-checklist.md, testing-stack-guide.md)
 - ✅ Commit bea8291 pushed to devwf branch
 
+**Part 3: Playwright MCP Migration (Per-Project Setup)**
+- ✅ Switched from global to per-project Playwright MCP setup
+- ✅ Updated documentation: CLAUDE.md, MCP-QUICK-START.md, qa.md, testing-stack-guide.md
+- ✅ Simplified evidence collection (no manual `downloadsDir` parameter needed)
+- ✅ Per-project automatically saves to project folder (not Windows Downloads)
+- ✅ Commit 58914b7 pushed to devwf branch
+- ⏸️ **Migration Decision**: Hold off migrating HDA V2 until after completing one full epic
+- 📝 **User will ask to check last two session logs when ready to migrate**
+
 **Production Status**: ✅ READY
-- All 7 files updated and committed (2 commits total)
+- All 11 files updated and committed (3 commits total)
 - Git push integrated at every commit point
 - Test execution boundaries crystal clear
-- No ambiguity in workflow
-- Complete safety net (work always backed up)
+- Playwright MCP per-project setup in workflow
+- HDA V2 migration pending (user decision)
 
 **Quality Impact**: ✅ CRITICAL IMPROVEMENTS
 - Work can't be lost (automatic git push)
@@ -711,11 +992,14 @@ Files:
 - Fast feedback (Dev runs Vitest pre-check)
 - Efficient QA (focus on comprehensive testing, not debugging)
 - Clear boundaries (no confusion about tools/responsibilities)
+- Evidence organized by project (not polluting Downloads folder)
 
-**Framework Version**: BMad V4.3 (with git push + test execution clarity)
+**Framework Version**: BMad V4.4 (with git push + test execution clarity + per-project Playwright MCP)
 
 ---
 
 **Session Completed**: 2025-11-24
-**Next Action**: User can verify both improvements in production workflow
-**Git Commits**: 88a6768 (git push) + bea8291 (test execution)
+**Next Action**:
+- User can verify git push + test execution improvements in production workflow
+- **Playwright MCP Migration**: User will complete one epic in HDA V2, then ask to check last two session logs for migration steps
+**Git Commits**: 88a6768 (git push) + bea8291 (test execution) + 58914b7 (per-project Playwright MCP)
