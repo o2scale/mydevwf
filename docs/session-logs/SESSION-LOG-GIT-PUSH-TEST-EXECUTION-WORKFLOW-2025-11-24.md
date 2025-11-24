@@ -952,9 +952,234 @@ Files:
 
 ---
 
+## Part 4: Orchestrator Handoff Length Fix (2025-11-24)
+
+### User Observation
+
+**User**: "see anything wront here? [Story Handoff snippet shown]"
+
+**Context**: User showed a Story Handoff from Orchestrator that was ~50-70 lines long instead of the expected 10-15 line compact snippet.
+
+**User Clarification**: "You remember how we have very compact handoff generations for the DevVent QA work cycle. Why is it that for the orchestrator we don't have this particular handoff? Why is it very long and you know inside the chat being very long? We have a dedicated file for the handoff right? So why is it so long? That was the main concern."
+
+**Key Issue**: Orchestrator was outputting long, detailed handoffs to terminal instead of compact 10-15 line snippets with document reference (Dual-Format Handoff Protocol violation).
+
+---
+
+### Investigation Process
+
+**Step 1: Check Orchestrator Instructions**
+
+Read `.bmad-core/agents/bmad-orchestrator.md` line 77 - Found the Story Creation Workflow instructions.
+
+**Finding**: Instructions WERE clear about Dual-Format protocol:
+- Step 10c: "Output ONLY 10-15 line compact snippet using EXACT format... DO NOT output detailed handoff to terminal"
+- Template reference: `.bmad-core/data/handoff-templates.md` lines 305-327
+
+**Step 2: Check Handoff Template**
+
+Read `.bmad-core/data/handoff-templates.md` lines 305-327 - Found the correct Story Handoff template format.
+
+**Finding**: Template WAS correct:
+```
+═══ STORY HANDOFF ═══
+📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
+📄 Full Handoff: docs/handoffs/.../story-handoff.md
+📅 Created: {timestamp} | 👤 {Orchestrator}
+📊 Scope: {brief description}
+🔍 Research: {Context7 findings}
+📚 KB Use: {KB entries to follow}
+📝 KB Create: {KB entries to create}
+📝 ACs: {N} acceptance criteria → {N} E2E scenarios
+⚠️ Notes: {special considerations}
+💡 Guidance: {implementation hints}
+═══ COPY TO DEV TERMINAL ═══
+```
+**Expected**: 10-15 lines total
+
+**Step 3: Identify Root Cause**
+
+**Analysis**: Line 77 of bmad-orchestrator.md contained a **mega-instruction** (~2,800 characters) with 10 sequential steps:
+1. Read Story Completion Summary
+2. Read KB catalog
+3. Identify relevant KB entries
+4. Load KB entries
+5. Use Context7 for research
+6. Populate Dev Notes with KB references
+6b. Anticipate KB Creation
+7. Include architecture context
+8. Include Context7 findings
+9. Include dependencies
+10a. Create detailed handoff document ✓
+10b. Commit and push to git ✓
+10c. Output compact snippet to terminal ✗ ← **FORGOTTEN/SKIPPED**
+
+**Root Cause**: By the time the LLM processed steps 1-10b, it had completed so much work that it either:
+- Forgot the final instruction (step 10c)
+- Considered the task "done" after git push (step 10b)
+- Lost track in the 2800-character instruction wall
+
+**Why It Happened**: The Dual-Format protocol instruction was buried at the END of a massive single-principle instruction.
+
+---
+
+### Solution Implemented
+
+**Strategy**: Split mega-instruction into TWO separate, focused principles:
+
+1. **Story Creation Context Loading** (steps 1-9) - Normal priority
+2. **CRITICAL: Story Handoff Dual-Format Protocol** (step 10) - Separate, high-visibility, impossible to miss
+
+**Files Modified**: `.bmad-core/agents/bmad-orchestrator.md`
+
+**Changes Made**:
+
+**Before** (Single Mega-Instruction):
+```yaml
+- 'Story Creation Workflow: When creating stories, BEFORE drafting... (1) Read Story Completion Summary... (2) Read KB catalog... (3) Identify KB entries... (4) Load KB entries... (5) Use Context7... (6) Populate Dev Notes... (6b) Anticipate KB Creation... (7) Include architecture context... (8) Include Context7 findings... (9) Include dependencies... (10) DUAL-FORMAT HANDOFF: Create TWO SEPARATE outputs... (10a) DETAILED HANDOFF → FILE... (10b) COMMIT... (10c) COMPACT SNIPPET → TERMINAL...'
+```
+**Total**: ~2,800 characters, 10 steps, Dual-Format protocol buried at end
+
+**After** (Split into Two Focused Principles):
+
+**Line 77 - Story Creation Context Loading**:
+```yaml
+- 'Story Creation Context Loading: When creating stories, BEFORE drafting story file: (1) IF previous story completed: Read Story Completion Summary document for KB entries created, architectural decisions, dependencies for next story, (2) Read docs/knowledge-base/README.md catalog to see all available KB entries from previous stories, (3) Identify KB entries relevant to next story (integrations needed, patterns to reuse, solutions to leverage), (4) Load relevant KB entries to understand implementation patterns, (5) Use Context7 MCP for technical research (up-to-date library docs, best practices), (6) Populate Dev Notes with EXPLICIT KB references: "MUST use KB: integrations/s3-uploads.md (do not reinvent)" or "Follow batch processing pattern from KB: backend-patterns/batch-processing.md (same structure as Story 2.1)", (6b) Anticipate KB Creation: Based on story requirements, add proactive KB creation expectations to Dev Notes per story-dod-checklist.md section 10 triggers - IF story implements third-party integration (Stripe, S3, Supabase, Vertex AI, SendGrid, etc.): Add note "KB Creation Required: This story implements [integration name] integration → You MUST create KB entry in docs/knowledge-base/integrations/[integration]-[feature].md per DoD checklist section 10 (document setup, configuration, code pattern, gotchas)", IF story establishes reusable pattern (pagination, auth, error handling, batch processing, middleware, etc.): Add note "KB Creation Required: This pattern will be reused in Stories [X.Y, Z.W] → Create KB entry in docs/knowledge-base/backend-patterns/ or ui-patterns/[pattern-name].md with implementation details", IF story solves complex/non-obvious issue (race conditions, performance optimization, data integrity, etc.): Add note "KB Creation Expected: Document solution approach in docs/knowledge-base/common-issues/[issue-name].md for future reference", IF Dev Notes already request KB: Reinforce with "KB Entry Mandatory: Dev Notes explicitly request KB documentation - create entry before Story Completion Summary", (7) Include architecture context from previous story: "Follows pgmq queue pattern from Story 2.1", (8) Include Context7 findings: "Latest Vertex AI SDK uses streaming approach (Context7)", (9) Include dependencies verification: "Requires S3 setup from Story 2.1 (verified complete in completion summary)"'
+```
+
+**Line 78 - CRITICAL: Story Handoff Dual-Format Protocol**:
+```yaml
+- 'CRITICAL: Story Handoff Dual-Format Protocol - After creating story file with KB references and Context7 research, you MUST create THREE SEPARATE outputs with DIFFERENT destinations (DO NOT skip step 3 - terminal output): (1) DETAILED HANDOFF → FILE: Save comprehensive Story Handoff document to docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md with KB references section (entries Dev must use) AND KB creation expectations section (entries Dev must create), (2) COMMIT Story Handoff to git (git add docs/handoffs/.../story-handoff.md && git commit -m "handoff({epic}.{story}): Create Story handoff - ready for development" with footer "Authored by O2Scale")→PUSH to remote (git push, ensures handoff is backed up), (3) COMPACT SNIPPET → TERMINAL ONLY: Output ONLY 10-15 line compact snippet using EXACT format from .bmad-core/data/handoff-templates.md "Story Handoff" section (lines 305-327). DO NOT output detailed handoff to terminal. DO NOT create your own format. DO NOT include full SQL queries, code examples, or detailed explanations in terminal output. Use template format EXACTLY: ═══ STORY HANDOFF ═══ header, document reference line (📄 Full Handoff: docs/handoffs/.../story-handoff.md), 8-9 compact data lines (📊 Scope, 🔍 Research, 📚 KB Use, 📝 KB Create, 📝 ACs, ⚠️ Notes, 💡 Guidance), ═══ COPY TO DEV TERMINAL ═══ footer. REMEMBER: Step 3 is MANDATORY - after saving file and committing to git, you MUST output the compact snippet to terminal. Without step 3, Dev cannot see the handoff in their terminal.'
+```
+
+**Key Improvements**:
+1. ✅ **CRITICAL prefix** - High visibility, separate from workflow steps
+2. ✅ **"DO NOT skip step 3 - terminal output"** - Explicit warning at the start
+3. ✅ **"DO NOT include full SQL queries, code examples..."** - Explicit what NOT to output
+4. ✅ **Listed exact emoji fields** - Shows what compact format looks like
+5. ✅ **REMEMBER clause at end** - "Step 3 is MANDATORY... Without step 3, Dev cannot see handoff"
+
+**Same Fix Applied to Test Review Handoff** (for consistency):
+
+**Line 79 - Test Vetting Analysis**:
+```yaml
+- 'Test Vetting Analysis: When vetting test scenarios, verify each AC has test cases, identify coverage gaps, check edge case handling, assess risk levels for untested scenarios'
+```
+
+**Line 80 - CRITICAL: Test Review Handoff Dual-Format Protocol**:
+```yaml
+- 'CRITICAL: Test Review Handoff Dual-Format Protocol - After analyzing test coverage, you MUST create THREE SEPARATE outputs with DIFFERENT destinations (DO NOT skip step 3 - terminal output): (1) DETAILED HANDOFF → FILE: Save comprehensive Test Review Handoff document to docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-review-handoff.md with review analysis (APPROVE/REVISE rationale, coverage assessment, strengths/gaps, specific recommendations, quality notes, risk assessment), (2) COMMIT Test Review Handoff to git (git add docs/handoffs/.../test-review-handoff.md && git commit -m "handoff({epic}.{story}): Create Test Review handoff - {APPROVE/REVISE}" with footer "Authored by O2Scale")→PUSH to remote (git push, ensures handoff is backed up), (3) COMPACT SNIPPET → TERMINAL ONLY: Output ONLY 10-15 line compact snippet using EXACT format from .bmad-core/data/handoff-templates.md "Test Review Handoff" section (lines 370-393). DO NOT output detailed handoff to terminal. DO NOT create your own format. DO NOT include full test case details or gap analysis in terminal output. Use template format EXACTLY: ═══ TEST REVIEW HANDOFF ═══ header, document reference line (📄 Full Review: docs/handoffs/.../test-review-handoff.md), 8-9 compact data lines (✅ Decision, 📊 Coverage, 💪 Strengths, ⚠️ Gaps, 🎯 Priority, 📝 Recommendations, ⏱️ Effort), ═══ COPY TO QA/DEV TERMINAL ═══ footer. REMEMBER: Step 3 is MANDATORY - after saving file and committing to git, you MUST output the compact snippet to terminal. Without step 3, QA/Dev cannot see the review decision in their terminal.'
+```
+
+---
+
+### Commit Details
+
+**Commit 1541cc5** (fix: Orchestrator Dual-Format protocol)
+
+```bash
+git add .bmad-core/agents/bmad-orchestrator.md
+git commit -m "fix(orchestrator): Prevent long Story/Test Review Handoffs by splitting mega-instructions"
+git push
+```
+
+**Commit Message**:
+```
+fix(orchestrator): Prevent long Story/Test Review Handoffs by splitting mega-instructions
+
+## Problem
+Orchestrator outputting ~50-70 line handoffs to terminal instead of compact 10-15 line snippets.
+
+## Root Cause
+Line 77 contained ~2800-character mega-instruction with 10 sequential steps. Dual-Format
+Handoff protocol (step 10c: "Output compact snippet") was buried at end. LLM processed
+steps 1-10b successfully but forgot/skipped final step 10c.
+
+## Solution
+Split mega-instructions into separate, focused principles:
+
+**Story Handoff**:
+- Line 77: "Story Creation Context Loading" (steps 1-9: KB, Context7, Dev Notes)
+- Line 78: "CRITICAL: Story Handoff Dual-Format Protocol" (handoff with terminal output)
+
+**Test Review Handoff**:
+- Line 79: "Test Vetting Analysis" (coverage analysis work)
+- Line 80: "CRITICAL: Test Review Handoff Dual-Format Protocol" (handoff with terminal output)
+
+## Key Improvements
+1. ✅ CRITICAL prefix for high visibility (separate from workflow steps)
+2. ✅ Explicit "DO NOT skip step 3 - terminal output" warnings
+3. ✅ Listed what NOT to include: "DO NOT include full SQL queries, code examples..."
+4. ✅ Added REMEMBER clause: "Step 3 is MANDATORY - ...Without step 3, Dev cannot see handoff"
+5. ✅ Listed exact emoji fields expected in compact format
+
+## Testing
+Next Orchestrator Story Handoff should output compact 10-15 line snippet (not 50-70 lines).
+
+## Files Modified
+- .bmad-core/agents/bmad-orchestrator.md (lines 77-80)
+```
+
+**Pushed to Remote**: ✅ devwf branch
+
+**Files Changed**: 1
+**Insertions**: 4 (2 new principles)
+**Deletions**: 2 (replaced 2 mega-instructions)
+
+---
+
+### Expected Behavior After Fix
+
+**Before Fix**:
+- Orchestrator outputs ~50-70 line handoff to terminal
+- Includes full SQL queries, code examples, detailed Dev Notes
+- User must scroll through large output to find relevant info
+- Violates Dual-Format Handoff Protocol
+
+**After Fix**:
+- Orchestrator outputs ONLY 10-15 line compact snippet to terminal
+- Shows: Story reference, document link, brief scope, research summary, KB references, notes
+- User sees compact handoff, reads detailed document if needed
+- Follows Dual-Format Handoff Protocol correctly
+
+**Example Expected Output** (10-15 lines):
+```
+═══ STORY HANDOFF ═══
+📋 Story: 2.5-advanced-search-filters | docs/stories/2.5.story.md
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.5-advanced-search-filters-story-handoff.md
+📅 Created: 2025-11-24 16:30:45 | 👤 Orchestrator
+📊 Scope: Implement advanced search with multi-field filtering and pagination
+🔍 Research: Context7 confirms Supabase full-text search best for complex queries
+📚 KB Use: backend-patterns/pagination.md (reuse pattern from Story 2.1)
+📝 KB Create: No KB creation expected (following existing patterns)
+📝 ACs: 5 acceptance criteria → 5 E2E scenarios expected (TC1.1-TC5.1)
+⚠️ Notes: Depends on Story 2.1 completion (pagination infrastructure)
+💡 Guidance: Use Supabase full-text search operators, implement cursor pagination
+═══ COPY TO DEV TERMINAL ═══
+```
+
+---
+
+### Key Lessons Learned
+
+**LLM Instruction Design**:
+1. ✅ **Split mega-instructions** - Keep principles focused (one workflow per principle)
+2. ✅ **Separate critical steps** - High-priority actions get own CRITICAL principle
+3. ✅ **Don't bury key instructions** - Terminal output must be separate, visible, impossible to miss
+4. ✅ **Add explicit warnings** - "DO NOT skip", "REMEMBER: Step X is MANDATORY"
+5. ✅ **Show what NOT to do** - "DO NOT include SQL queries, code examples..." prevents confusion
+6. ✅ **Reinforce at end** - REMEMBER clause explains consequences ("Without step 3, Dev cannot see...")
+
+**Testing Strategy**:
+- Next Orchestrator `*create-story` command will validate fix
+- Expect 10-15 line compact snippet (not 50-70 lines)
+- Detailed handoff should still be saved to file correctly
+
+---
+
 ## Conclusion
 
-**Objectives**: ✅ COMPLETE (3 major improvements)
+**Objectives**: ✅ COMPLETE (4 major improvements)
 
 **Part 1: Git Push Integration**
 - ✅ Added git push after all 6 commit points (9 total push points)
@@ -979,11 +1204,21 @@ Files:
 - ⏸️ **Migration Decision**: Hold off migrating HDA V2 until after completing one full epic
 - 📝 **User will ask to check last two session logs when ready to migrate**
 
+**Part 4: Orchestrator Handoff Length Fix**
+- ✅ Fixed Orchestrator outputting ~50-70 line handoffs instead of compact 10-15 line snippets
+- ✅ Root cause: ~2800-character mega-instruction buried Dual-Format protocol at end
+- ✅ Solution: Split into focused principles (Context Loading + CRITICAL Dual-Format Protocol)
+- ✅ Added explicit warnings: "DO NOT skip step 3", "DO NOT include SQL queries/code examples"
+- ✅ Added REMEMBER clause: "Step 3 is MANDATORY - ...Without step 3, Dev cannot see handoff"
+- ✅ Applied same fix to Test Review Handoff for consistency
+- ✅ Commit 1541cc5 pushed to devwf branch
+
 **Production Status**: ✅ READY
-- All 11 files updated and committed (3 commits total)
+- All 12 files updated and committed (4 commits total)
 - Git push integrated at every commit point
 - Test execution boundaries crystal clear
 - Playwright MCP per-project setup in workflow
+- Orchestrator handoffs now follow Dual-Format protocol correctly
 - HDA V2 migration pending (user decision)
 
 **Quality Impact**: ✅ CRITICAL IMPROVEMENTS
@@ -993,13 +1228,16 @@ Files:
 - Efficient QA (focus on comprehensive testing, not debugging)
 - Clear boundaries (no confusion about tools/responsibilities)
 - Evidence organized by project (not polluting Downloads folder)
+- Clean terminal output (compact handoffs, not 50-70 line dumps)
+- Better UX (Orchestrator → Dev handoffs are readable and actionable)
 
-**Framework Version**: BMad V4.4 (with git push + test execution clarity + per-project Playwright MCP)
+**Framework Version**: BMad V4.5 (with git push + test execution clarity + per-project Playwright MCP + Orchestrator handoff fix)
 
 ---
 
 **Session Completed**: 2025-11-24
 **Next Action**:
-- User can verify git push + test execution improvements in production workflow
+- User can verify git push + test execution + Orchestrator handoff improvements in production workflow
 - **Playwright MCP Migration**: User will complete one epic in HDA V2, then ask to check last two session logs for migration steps
-**Git Commits**: 88a6768 (git push) + bea8291 (test execution) + 58914b7 (per-project Playwright MCP)
+- **Test Orchestrator Fix**: Next `*create-story` should output compact 10-15 line snippet (not 50-70 lines)
+**Git Commits**: 88a6768 (git push) + bea8291 (test execution) + 58914b7 (per-project Playwright MCP) + 1541cc5 (Orchestrator handoff fix)
