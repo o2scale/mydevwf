@@ -43,10 +43,11 @@ The goal is quality delivery, not just checking boxes.]]
 
 3. **Testing:**
 
-   [[LLM: Testing proves your code works. Be honest about test coverage]]
-   - [ ] All required unit tests as per the story and `Operational Guidelines` Testing Strategy are implemented.
-   - [ ] All required integration tests (if applicable) as per the story and `Operational Guidelines` Testing Strategy are implemented.
-   - [ ] All tests (unit, integration, E2E if applicable) pass successfully.
+   [[LLM: Testing proves your code works. Be honest about test coverage. YOU MUST RUN VITEST TESTS - this is not optional. QA will run them again independently, but you must verify they pass first.]]
+   - [ ] All required Vitest tests (for complex logic with 10+ edge cases) written in `docs/qa/unit/` directory.
+   - [ ] All required E2E test scenarios written in MARKDOWN format (NOT .spec.ts files) in `docs/qa/e2e/sprint-{N}/epics/epic-{N}/story-{N}/` using TC{AC}.{case} naming (e.g., TC1.1, TC1.2).
+   - [ ] **CRITICAL**: Executed Vitest tests (run: `npm run test`) and verified ALL PASS - record pass count (e.g., "Vitest: 15 tests pass ✅") for QA Handoff.
+   - [ ] **DO NOT**: Execute E2E scenarios with Playwright MCP tools (that is QA's job - they execute interactively with browser observation).
    - [ ] Test coverage meets project standards (if defined).
 
 4. **Authentication Test Data (If story implements authentication):**
@@ -62,9 +63,10 @@ The goal is quality delivery, not just checking boxes.]]
 
 5. **Functionality & Verification:**
 
-   [[LLM: Did you actually run and test your code? Be specific about what you tested]]
-   - [ ] Functionality has been manually verified by the developer (e.g., running the app locally, checking UI, testing API endpoints).
-   - [ ] Edge cases and potential error conditions considered and handled gracefully.
+   [[LLM: Did you actually run and test your code? Manual verification = basic spot checking (click through UI, verify feature works). NOT comprehensive testing - that's QA's job.]]
+   - [ ] Basic manual verification completed (run app locally, click through UI, spot check functionality works - e.g., login page loads, form submits, data displays).
+   - [ ] **NOT REQUIRED**: Comprehensive testing with Playwright MCP (QA handles this - you only do basic spot checks).
+   - [ ] Edge cases and potential error conditions considered and handled gracefully in code.
 
 6. **Story Administration:**
 

@@ -13,7 +13,7 @@ This workflow uses a **hybrid testing approach**:
 - **E2E Testing**: Playwright MCP (interactive browser control for all user journeys)
 - **NO Jest** - Eliminated entirely
 - **Test Scenarios**: Dev writes markdown documentation (NOT test code files for E2E)
-- **Test Execution**: QA runs Vitest first, then executes E2E via Playwright MCP tools
+- **Test Execution**: Dev runs Vitest first (pre-check before QA Handoff), then QA runs Vitest independently (validation) + executes E2E via Playwright MCP tools
 - **Verification**: Hybrid approach - automated unit tests + interactive E2E with manual observation
 
 ---
@@ -28,17 +28,19 @@ This workflow uses a **hybrid testing approach**:
 - **IF** complex logic (10+ edge cases) → Writes Vitest unit tests in `docs/qa/unit/`
 - Writes E2E test SCENARIOS in markdown (NOT `.spec.ts` files)
 - Documents acceptance criteria test cases
+- **RUNS Vitest tests** (`npm run test`) and verifies ALL PASS before QA Handoff (mandatory pre-check)
+- Basic manual verification (run app locally, click through UI, spot check)
 - Manages background processes (frontend + backend servers)
-- Does NOT run tests (QA's responsibility)
-- Outputs QA Handoff when implementation complete
+- Does NOT execute E2E scenarios with Playwright MCP (QA's responsibility)
+- Outputs QA Handoff when implementation complete + Vitest passing
 
 **QA Role**:
-- **IF** Vitest tests exist → Runs `npm run test` FIRST, verifies passing
+- **IF** Vitest tests exist → Runs `npm run test` FIRST, verifies passing independently (validation from clean environment)
 - Reads E2E test scenarios from markdown
 - Executes E2E scenarios using 26 Playwright MCP tools interactively
 - Observes browser actions in real-time (visible Chrome window)
 - **IF** logic gaps found → Can add more Vitest tests
-- Decides PASS/FAIL based on manual verification
+- Decides PASS/FAIL based on manual verification (both Vitest AND E2E must pass for PASS gate)
 - Collects evidence (screenshots, console logs, page snapshots)
 - Outputs Developer Handoff (if issues) or Completion Handoff (if PASS)
 
@@ -1060,7 +1062,7 @@ Execute login test scenario using Playwright MCP browser_snapshot and browser_cl
 **A**: Dev writes Vitest during implementation if complexity is obvious (10+ edge cases). QA adds Vitest during review if gaps found or if logic testing via UI is inefficient.
 
 ### Q: Does Dev run Vitest before handing off to QA?
-**A**: NO. QA is responsible for ALL test execution (Vitest + E2E). Dev writes tests but doesn't run them. This keeps Dev's context focused on implementation.
+**A**: YES. Dev MUST run Vitest (`npm run test`) and verify all tests pass before creating QA Handoff. This is a mandatory pre-check (like a chef tasting food before serving). Dev catches obvious failures while context is fresh, preventing QA from wasting time on broken code. QA then runs Vitest AGAIN independently for validation (food critic evaluates complete dining experience). Both run Vitest but different purposes: Dev = pre-check (fast feedback), QA = validation (independent verification). Dev does NOT execute E2E scenarios with Playwright MCP - that remains QA's job.
 
 ### Q: Why write E2E test scenarios instead of test code?
 **A**: Test scenarios are:
