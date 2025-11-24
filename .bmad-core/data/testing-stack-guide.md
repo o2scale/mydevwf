@@ -555,9 +555,9 @@ QA Agent uses these tools to execute E2E test scenarios interactively.
 ### Inspection Tools
 - `browser_snapshot()` - Get page structure with element refs (use this FIRST before interactions)
 - `browser_console_messages()` - Check for JavaScript errors/warnings
-- `playwright_screenshot(name, downloadsDir, savePng)` - Capture visual evidence
-  - **CRITICAL**: ALWAYS set `downloadsDir` to project evidence folder, NOT user's Downloads
-  - Example: `downloadsDir: "docs/qa/evidence/sprint-1/epics/epic-1/story-3/"`
+- `playwright_screenshot(name, savePng)` - Capture visual evidence
+  - **Per-project Playwright MCP automatically saves to project folder** (not Windows Downloads)
+  - Organize evidence: `docs/qa/evidence/sprint-{N}/epics/epic-{N}/story-{N}/`
   - Set `savePng: true` to save file to disk
 
 ### Interaction Tools
@@ -601,13 +601,13 @@ QA Agent uses these tools to execute E2E test scenarios interactively.
 6. browser_console_messages() → Check for errors
 7. playwright_screenshot({
      name: 'tc1.1-login-success.png',
-     downloadsDir: 'docs/qa/evidence/sprint-1/epics/epic-1/story-3/',
      savePng: true
    })
+   → Per-project Playwright MCP saves to project folder automatically
 8. Manually observe: Dashboard loaded? User name visible?
 ```
 
-**CRITICAL**: Screenshot `downloadsDir` must be project evidence folder, NOT user's Downloads folder!
+**NOTE**: Per-project Playwright MCP automatically saves screenshots to project folder (not Windows Downloads).
 
 ---
 

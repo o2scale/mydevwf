@@ -89,10 +89,8 @@ MCPs give Claude Code direct access to external tools, databases, and services.
 
 ### Available MCPs
 
-**Global MCP** (installed once, available everywhere):
-- ✅ **Playwright MCP** - E2E testing and browser automation
-
-**Project-Specific MCPs** (configured in `.mcp.json`):
+**All MCPs are Project-Specific** (configured in `.mcp.json`):
+- **Playwright MCP**: E2E testing and browser automation (saves to project folder automatically)
 - **Context7 MCP**: Up-to-date library documentation and patterns
 - **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
 - **Swagger MCP**: API testing via OpenAPI/Swagger specs

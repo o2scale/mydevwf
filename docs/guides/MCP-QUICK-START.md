@@ -2,16 +2,14 @@
 
 **Purpose**: Detailed MCP setup, configuration, and usage for MyDevWF projects.
 
-**Last Updated**: 2025-11-03
+**Last Updated**: 2025-11-24
 
 ---
 
 ## Available MCPs
 
-### Global MCP (Installed Once)
-- ✅ **Playwright MCP** - E2E testing and browser automation
-
-### Project-Specific MCPs (Per Template)
+**All MCPs are Project-Specific** (configured per-project in `.mcp.json`):
+- **Playwright MCP**: E2E testing and browser automation (saves to project folder automatically)
 - **Context7 MCP**: Up-to-date library documentation and patterns
 - **shadcn-ui MCP**: Access to shadcn/ui component library (Next.js projects)
 - **Swagger MCP**: API testing via OpenAPI/Swagger specs
@@ -22,14 +20,7 @@
 
 ## MCP Installation
 
-### Global MCP Setup
-
-```bash
-# Playwright MCP (install once, available everywhere)
-claude mcp add playwright npx -- -y @executeautomation/playwright-mcp-server
-```
-
-### Project-Specific MCP Setup
+### Project-Specific MCP Setup (All MCPs)
 
 **Option 1: Via .mcp.json** (Recommended)
 
@@ -251,6 +242,12 @@ npm run mcp:setup
 ### Playwright MCP
 
 **Purpose**: E2E testing and browser automation
+
+**Per-Project Setup Benefits**:
+- ✅ Screenshots/files save to project folder automatically (not Windows Downloads)
+- ✅ Evidence organized by project (docs/qa/evidence/)
+- ✅ No need to specify `downloadsDir` parameter manually
+- ✅ Clean separation between projects
 
 **Available tools** (26 interactive tools):
 - `browser_navigate` - Navigate to URL
