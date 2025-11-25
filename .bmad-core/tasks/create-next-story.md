@@ -36,7 +36,6 @@ To identify the next logical story based on project progress and epic definition
   - **If database exists in project:**
     - Override Story 1.1 to be "Database Setup"
     - This story becomes P0 BLOCKER (all other stories depend on this)
-    - Estimated effort: 2 SP
     - Announce: "Story 1.1 will be Database Setup (P0 BLOCKER) - Required for all backend stories"
   - **If no database found:**
     - Proceed with normal Story 1.1 from epic
@@ -102,7 +101,6 @@ ALWAYS cite source documents: `[Source: architecture/{filename}.md#{section}]`
 - **Title**: "Database Setup"
 - **Epic**: 1 - Foundation
 - **Priority**: P0 (BLOCKER - all other stories depend on this)
-- **Estimate**: 2 SP
 - **Description**: "Implement complete database schema as defined in `docs/architecture/database-schema.md` using Database MCP migration tracking. This ensures the database structure matches architecture documentation exactly with zero schema drift."
 - **Acceptance Criteria**:
   - AC1: All tables/collections created as documented

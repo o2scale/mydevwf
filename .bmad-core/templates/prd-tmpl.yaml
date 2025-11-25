@@ -159,8 +159,7 @@ sections:
       - Identify and note any direct prerequisite stories
       - Focus on "what" and "why" not "how" (leave technical implementation to Architect) yet be precise enough to support a logical sequential order of operations from story to story.
       - Ensure each story delivers clear user or business value, try to avoid enablers and build them into stories that deliver value.
-      - Size stories for AI agent execution: Each story must be completable by a single AI agent in one focused session without context overflow
-      - Think "junior developer working for 2-4 hours" - stories must be small, focused, and self-contained
+      - Size stories for AI agent execution: Each story must be completable by a single AI agent in one focused session without context overflow - stories must be small, focused, and self-contained
       - If a story seems complex, break it down further as long as it can deliver a vertical slice
     elicit: true
     template: "{{epic_goal}}"

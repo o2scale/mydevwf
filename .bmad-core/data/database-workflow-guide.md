@@ -230,7 +230,6 @@ When Architect updates database schema (e.g., adds new tables, fields):
 
 **Epic**: 1 - Foundation
 **Priority**: P0 (BLOCKER - all other stories depend on this)
-**Estimate**: 2 SP
 
 ## Description
 Implement complete database schema as defined in `docs/architecture/database-schema.md` using Database MCP migration tracking.

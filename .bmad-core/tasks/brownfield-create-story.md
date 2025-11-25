@@ -146,4 +146,4 @@ The story creation is successful when:
 - If complexity grows during analysis, escalate to brownfield-create-epic
 - Always prioritize existing system integrity
 - When in doubt about integration complexity, use brownfield-create-epic instead
-- Stories should take no more than 4 hours of focused development work
+- Stories should be small, focused, and self-contained - completable in a single focused session

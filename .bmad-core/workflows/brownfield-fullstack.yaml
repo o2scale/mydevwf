@@ -18,8 +18,8 @@ workflow:
       action: classify enhancement scope
       notes: |
         Determine enhancement complexity to route to appropriate path:
-        - Single story (< 4 hours) → Use brownfield-create-story task
-        - Small feature (1-3 stories) → Use brownfield-create-epic task  
+        - Single small story (isolated change, minimal integration) → Use brownfield-create-story task
+        - Small feature (1-3 stories) → Use brownfield-create-epic task
         - Major enhancement (multiple epics) → Continue with full workflow
 
         Ask user: "Can you describe the enhancement scope? Is this a small fix, a feature addition, or a major enhancement requiring architectural changes?"

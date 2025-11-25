@@ -154,9 +154,9 @@ Reviewer: Quinn
 
 ## Quick Wins
 
-- Add rate limiting: ~2 hours
-- Increase test coverage: ~4 hours
-- Add performance monitoring: ~1 hour
+- Add rate limiting: Small effort
+- Increase test coverage: Medium effort
+- Add performance monitoring: Quick win
 ```
 
 ## Output 3: Story Update Line
