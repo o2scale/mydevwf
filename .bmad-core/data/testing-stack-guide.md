@@ -121,23 +121,17 @@ appId: com.yourapp
      - **Test Execution Notes**: Prerequisites, testing order, debugging tips, environment-specific notes
    - **Purpose**: Provides QA with deep implementation knowledge for practical, consolidated test design (Dev's strength: comprehensive analysis; QA's strength: efficient test execution)
    - Commit to git: `git commit -m "docs(story-X.Y): Create Test Insights document"`
-5. **IF user-facing feature**: Update Navigation Guide at `docs/navigation-guide.md`
-   - Use template (first time): `.bmad-core/templates/navigation-guide-tmpl.md`
-   - Update existing guide: Add new feature to Feature Catalog, update navigation structure, add user journey map, document contextual links, add to Page Inventory
-   - Include: ALL navigation entry points (minimum 2-3: primary menu, contextual links, breadcrumbs), typical + alternative user flows, page routes
-   - **Purpose**: Provides QA with cumulative UI context from ALL previous stories (solves context gap problem - QA now knows what UI exists, where features are located, how to navigate)
-   - Commit to git: `git commit -m "docs(story-X.Y): Update Navigation Guide with [feature-name]"`
-6. Start background processes:
+5. Start background processes:
    - Frontend: `npm run dev` (usually port 3000)
    - Backend: `npm run dev:api` (usually port 5001)
-7. **Run Vitest tests FIRST** (mandatory pre-check before QA Handoff):
+6. **Run Vitest tests FIRST** (mandatory pre-check before QA Handoff):
    - Execute: `npm run test`
    - Verify ALL tests PASS
    - Record pass count for QA Handoff (e.g., "Vitest: 15 tests pass ✅")
    - **IF any test fails**: Fix issues before creating QA Handoff (do NOT hand off failing tests to QA)
-8. Basic manual verification (run app locally, click through UI, spot check functionality works)
-9. **Do NOT execute E2E scenarios** with Playwright MCP (QA's responsibility)
-10. Output QA Handoff (structured format) with references to Test Insights document and Navigation Guide
+7. Basic manual verification (run app locally, click through UI, spot check functionality works)
+8. **Do NOT execute E2E scenarios** with Playwright MCP (QA's responsibility)
+9. Output QA Handoff (structured format) with references to Test Insights document
 
 **Test Scenario Writing Guidelines**:
 - One test scenario document per feature/flow
@@ -563,7 +557,22 @@ describe('calculateTax', () => {
 12. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
 13. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
     - Example: `docs/qa/gates/sprint-2/epics/epic-2/2.1-media-upload.yml`
-14. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
+14. **IF user-facing feature AND gate = PASS**: Update Navigation Guide at `docs/navigation-guide.md`
+    - **QA Ownership**: YOU own Navigation Guide updates (moved from Dev for better documentation quality)
+    - Use template (first time): `.bmad-core/templates/navigation-guide-tmpl.md`
+    - Update existing guide based on YOUR Playwright MCP exploration during testing:
+      - Add feature to Feature Catalog (document ALL navigation entry points discovered - minimum 2-3: primary menu, contextual links, breadcrumbs)
+      - Update navigation structure (primary/secondary menus you tested)
+      - Add user journey map (typical + alternative flows you executed)
+      - Document contextual links (TO feature AND FROM feature to related pages you verified)
+      - Add page to Page Inventory (route, access methods, key actions)
+      - Include timestamp and story reference
+    - **Why QA Updates**: Your Playwright MCP exploration makes YOU the expert on navigation (you discovered actual entry points, tested user flows, verified menu integration)
+    - **Purpose**: Provides cumulative UI context for future stories (solves context gap - future QA knows what UI exists, where features are located, how to navigate)
+    - Commit to git: `git commit -m "docs(story-X.Y): Update Navigation Guide with [feature-name]" --footer "Authored by O2Scale"`
+    - Push to remote: `git push`
+    - **Skip if**: Backend-only story (no UI changes) OR gate = FAIL/CONCERNS (update after Dev fixes)
+15. Output Developer Handoff (if issues) or Completion Handoff (if PASS, including Navigation Guide update reference)
 
 **QA Decision Criteria** (STRICT - Runtime Testing Mandatory):
 - **PASS**: ALL Vitest + E2E tests executed and passed, no errors, behavior matches expected, runtime verification complete

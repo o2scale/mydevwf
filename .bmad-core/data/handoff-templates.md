@@ -85,7 +85,6 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Files created/modified (complete list with paths)
    - Test details (Vitest tests written, E2E scenarios locations)
    - **Test Insights reference** (REQUIRED): Path to Test Insights document (docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md) - comprehensive testing analysis for QA to read before writing test scenarios
-   - **Navigation Guide reference** (if user-facing feature): Confirmation that docs/navigation-guide.md was updated with new feature entry, navigation structure, user journeys
    - Edge cases and focus areas (what QA should pay attention to)
    - Validation checklist (items for QA to verify)
    - Dev notes (any gotchas, workarounds, or technical decisions)
@@ -108,7 +107,6 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
 📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
 🔍 Test Insights: docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md
-🗺️ Navigation Guide: {Updated ✅ | N/A (backend-only)}
 📅 Handed Off: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Dev Agent Name}
 ✅ Done: {Brief task summary - what was completed}
 📁 Check: {Key files for QA to review - comma separated}
@@ -226,6 +224,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Complete test results (all Vitest tests passed, all E2E scenarios passed)
    - Evidence summary (number of screenshots captured, console logs checked)
    - Quality notes (code quality observations, performance notes, security checks)
+   - **Navigation Guide update** (if user-facing feature): Confirmation that docs/navigation-guide.md was updated by QA with new feature entry, navigation structure, user journeys (QA owns Navigation Guide updates for better documentation quality)
    - Approval timestamp and QA agent
    - Suggested commit message (conventional commit format)
    - Sign-off notes (any final comments or observations)
@@ -250,6 +249,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-completion-handoff.md
 📅 Approved: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {QA Agent Name}
 📁 Gate: docs/qa/gates/sprint-{N}/epics/epic-{epic}/{epic}.{story}-{slug}.yml
+🗺️ Navigation Guide: {Updated with [feature-name] ✅ | N/A (backend-only)}
 ✅ All Tests: Vitest {N}/{N}, E2E {N}/{N} (100%)
 📸 Evidence: {N} screenshots, no console errors
 🚀 Commit: "{Suggested commit message}"
@@ -261,8 +261,10 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 ```
 ═══ COMPLETION HANDOFF ═══
 📋 Story: 2.3-media-validation | Gate: PASS ✅
+📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-completion-handoff.md
 📅 Approved: 2025-11-04 15:45:30 | 👤 Quinn (QA Agent)
 📁 Gate: docs/qa/gates/sprint-2/epics/epic-2/2.3-media-validation.yml
+🗺️ Navigation Guide: Updated with Media Validation ✅
 ✅ All Tests: Vitest 3/3, E2E 8/8 (100%)
 📸 Evidence: 12 screenshots, no console errors
 🚀 Commit: "feat(upload): Add 50MB+ file validation with error handling"
