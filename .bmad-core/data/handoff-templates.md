@@ -294,6 +294,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Implementation guidance (suggested approach, patterns to follow, pitfalls to avoid)
    - Knowledge base references (relevant KB entries Dev must USE from previous stories)
    - Knowledge base creation expectations (KB entries Dev must CREATE per story-dod-checklist.md section 10 - integrations, patterns, complex solutions)
+   - **Navigation Guide context** (if user-facing story): Existing UI features story builds on (e.g., "Build on Upload Center from Story 1.1 and Media Tab from Story 2.3 per Navigation Guide"), menu structure to integrate with (e.g., "Add button to existing Documents menu shown in Navigation Guide"), user journey integration (e.g., "Extends Upload → View → [NEW FEATURE] workflow per Navigation Guide User Journey Maps")
 
 3. **CRITICAL: Commit handoff to git** (IMMEDIATELY after creation):
    ```bash
@@ -312,6 +313,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 ═══ STORY HANDOFF ═══
 📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
 📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-story-handoff.md
+🗺️ UI Context: {Builds on Stories X.Y, Z.W per Navigation Guide | N/A (backend-only)}
 📅 Created: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Orchestrator Agent Name}
 📊 Scope: {Brief description of what needs to be implemented}
 🔍 Research: {Key Context7 findings or tech decisions if applicable}
@@ -329,6 +331,7 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 ═══ STORY HANDOFF ═══
 📋 Story: 3.2-pdf-batch-processing | docs/stories/3.2.story.md
 📄 Full Handoff: docs/handoffs/sprint-3/epics/epic-3/3.2-pdf-batch-processing-story-handoff.md
+🗺️ UI Context: Builds on Upload Center (Story 1.1) and Document List (Story 2.3) per Navigation Guide
 📅 Created: 2025-11-04 10:15:00 | 👤 Alex (Orchestrator Agent)
 📊 Scope: Implement batch processing for large PDFs (500+ pages) with progress tracking
 🔍 Research: Vertex AI has 10MB payload limit, use streaming approach (Context7)
