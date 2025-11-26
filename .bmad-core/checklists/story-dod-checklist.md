@@ -99,13 +99,16 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Process IDs (PIDs) recorded for each background process.
    - [ ] All process URLs verified accessible (e.g., http://localhost:3000, http://localhost:8000).
    - [ ] **IF story modified ANY backend files** (routes, controllers, models, middleware, services, server.js, app.js, or ANY .js/.ts files in backend/server directories): Backend processes restarted with fresh code BEFORE QA Handoff (stop old PIDs, restart backend, verify successful start, record new PID + restart timestamp).
-   - [ ] Detailed QA Handoff document created in `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md` with comprehensive implementation details (implementation summary, background processes with URLs/PIDs/shell IDs, files created/modified, test details, edge cases, validation checklist, dev notes, backend restart confirmation if applicable).
+   - [ ] **MANDATORY**: Test Insights Document created in `docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md` using `.bmad-core/templates/test-insights-tmpl.md` with comprehensive testing analysis: AC breakdown (happy path, edge cases, error scenarios), technical constraints, risk areas, realistic test data suggestions, error handling coverage, debugging tips, UI states, test priorities. This provides QA with deep implementation knowledge for practical test design.
+   - [ ] Test Insights document includes ALL sections filled: Story Context, Acceptance Criteria Testing Map (for each AC), Technical Constraints, Risk Areas, Realistic Test Data, Integration Testing Insights, UI/UX Testing Insights, Test Execution Notes.
+   - [ ] Test Insights document committed to git (git add docs/qa/test-insights/... && git commit -m "docs(story-X.Y): Create Test Insights document" with footer "Authored by O2Scale")
+   - [ ] Detailed QA Handoff document created in `docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md` with comprehensive implementation details (implementation summary, background processes with URLs/PIDs/shell IDs, files created/modified, test details, **Test Insights document reference**, **Navigation Guide update confirmation (if user-facing)**, edge cases, validation checklist, dev notes, backend restart confirmation if applicable).
    - [ ] Compact QA Handoff snippet output to terminal with document reference using format from `.bmad-core/data/handoff-templates.md`.
-   - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
+   - [ ] QA Handoff snippet includes: timestamp, completed tasks summary, key files to review, test counts (Vitest + E2E), **Test Insights document path**, **Navigation Guide update status**, all background process URLs with PIDs, backend restart status (if applicable), focus areas for testing.
 
 10. **Navigation Integration (MANDATORY for user-facing changes):**
 
-   [[LLM: Navigation is CRITICAL - users must be able to REACH your feature via normal navigation flow (not just direct URL). Check story Navigation Notes section - ALL specified menu items, breadcrumbs, and navigation elements are MANDATORY. If story creates new page but has NO Navigation Notes OR Navigation Notes say "N/A - Backend only", verify story is truly backend-only with zero UI changes. If story has UI changes but missing Navigation Notes, FLAG THIS AS BLOCKING ISSUE - you CANNOT proceed without navigation design (return to UX Expert). Do NOT mark this section N/A unless story is truly backend-only with zero UI changes. QA will independently verify navigation and FAIL stories with missing menus.]]
+   [[LLM: Navigation is CRITICAL - users must be able to REACH your feature via normal navigation flow (not just direct URL). Check story Navigation Notes section - ALL specified menu items, breadcrumbs, and navigation elements are MANDATORY. If story creates new page but has NO Navigation Notes OR Navigation Notes say "N/A - Backend only", verify story is truly backend-only with zero UI changes. If story has UI changes but missing Navigation Notes, FLAG THIS AS BLOCKING ISSUE - you CANNOT proceed without navigation design (return to UX Expert). Do NOT mark this section N/A unless story is truly backend-only with zero UI changes. QA will independently verify navigation and FAIL stories with missing menus. Navigation Guide is living document providing cumulative UI context for QA - update it BEFORE QA Handoff.]]
    - [ ] **CRITICAL**: Story Navigation Notes section is populated (if missing for user-facing story, BLOCK until UX provides navigation design)
    - [ ] **CRITICAL**: Feature is accessible via normal user navigation (not just direct URL) - manually tested from dashboard/main menu
    - [ ] All menu items specified in Navigation Notes are implemented in correct menu locations (header/sidebar/dashboard)
@@ -115,6 +118,15 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] Breadcrumbs implemented correctly per Navigation Notes (page hierarchy accurate)
    - [ ] Navigation follows front-end spec design patterns (consistent with existing UI, same menu styling/behavior)
    - [ ] Navigation elements included in E2E test scenarios (at least 1 test case starts with "User navigates from X to feature via menu/link")
+   - [ ] **MANDATORY for user-facing stories**: Navigation Guide (`docs/navigation-guide.md`) created or updated using `.bmad-core/templates/navigation-guide-tmpl.md` (if first story with UI, create from template; otherwise update existing guide)
+   - [ ] Navigation Guide: Feature added to Feature Catalog with ALL navigation entry points documented (minimum 2-3: primary menu, contextual links, breadcrumbs - match implementation exactly)
+   - [ ] Navigation Guide: Navigation structure updated (primary/secondary menus reflect new feature)
+   - [ ] Navigation Guide: User journey added (typical flow + alternative flows showing how users reach and use feature)
+   - [ ] Navigation Guide: Contextual links documented (feature links TO related pages AND FROM related pages to this feature)
+   - [ ] Navigation Guide: Page added to Page Inventory (route, access methods, key actions, navigation from this page)
+   - [ ] Navigation Guide: Timestamp and story reference added ({YYYY-MM-DD HH:MM:SS}, Story {epic}.{story})
+   - [ ] Navigation Guide update committed to git (git add docs/navigation-guide.md && git commit -m "docs(story-X.Y): Update Navigation Guide with [feature-name]" with footer "Authored by O2Scale")
+   - [ ] Navigation Guide referenced in Test Insights document and QA Handoff (QA needs to know it was updated for comprehensive UI context)
 
 11. **Knowledge Base Documentation:**
 

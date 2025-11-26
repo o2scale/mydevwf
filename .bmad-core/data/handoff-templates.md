@@ -84,6 +84,8 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
    - Backend restart confirmation (if backend files modified: restart timestamp, new PID, files that triggered restart)
    - Files created/modified (complete list with paths)
    - Test details (Vitest tests written, E2E scenarios locations)
+   - **Test Insights reference** (REQUIRED): Path to Test Insights document (docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md) - comprehensive testing analysis for QA to read before writing test scenarios
+   - **Navigation Guide reference** (if user-facing feature): Confirmation that docs/navigation-guide.md was updated with new feature entry, navigation structure, user journeys
    - Edge cases and focus areas (what QA should pay attention to)
    - Validation checklist (items for QA to verify)
    - Dev notes (any gotchas, workarounds, or technical decisions)
@@ -105,6 +107,8 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 ═══ QA HANDOFF ═══
 📋 Story: {epic}.{story}-{slug} | docs/stories/{file}
 📄 Full Handoff: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+🔍 Test Insights: docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md
+🗺️ Navigation Guide: {Updated ✅ | N/A (backend-only)}
 📅 Handed Off: $(date +%Y-%m-%d\ %H:%M:%S) | 👤 {Dev Agent Name}
 ✅ Done: {Brief task summary - what was completed}
 📁 Check: {Key files for QA to review - comma separated}
@@ -121,6 +125,8 @@ Handoffs ensure clean communication between terminals with compact, copy-paste f
 ═══ QA HANDOFF ═══
 📋 Story: 2.3-media-validation | docs/stories/2.3.story.md
 📄 Full Handoff: docs/handoffs/sprint-2/epics/epic-2/2.3-media-validation-qa-handoff.md
+🔍 Test Insights: docs/qa/test-insights/sprint-2/epics/epic-2/2.3-media-validation-test-insights.md
+🗺️ Navigation Guide: Updated ✅
 📅 Handed Off: 2025-11-04 12:30:15 | 👤 James (Dev Agent)
 ✅ Done: File upload validation, error handling for 50MB+ files, progress tracking
 📁 Check: frontend/src/components/UploadValidator.tsx, backend/api/routers/media.py

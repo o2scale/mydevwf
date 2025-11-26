@@ -108,11 +108,36 @@ appId: com.yourapp
    - Organize test cases by acceptance criteria (AC)
    - Number test cases: TC{AC}.{case} (e.g., TC1.1, TC1.2, TC2.1)
    - Include: Steps, Expected behavior, Priority
-4. Start background processes:
+4. **MANDATORY**: Create Test Insights Document in `docs/qa/test-insights/sprint-N/epics/epic-N/{epic}.{story}-{slug}-test-insights.md`
+   - Use template: `.bmad-core/templates/test-insights-tmpl.md`
+   - Fill ALL sections with comprehensive testing analysis:
+     - **Story Context**: Summary, acceptance criteria, implementation approach
+     - **AC Testing Map**: For each AC - happy path, edge cases, error scenarios, suggested test data, priority
+     - **Technical Constraints**: Infrastructure requirements, performance expectations, browser compatibility
+     - **Risk Areas**: High-risk areas needing extra attention, error handling coverage, edge cases to test
+     - **Realistic Test Data**: Actual test data sets (not generic "user@test.com" - use "Thank you very much" → "Muchas gracias" for transcription)
+     - **Integration Testing Insights**: API endpoints, database schema changes, external service integration
+     - **UI/UX Testing Insights**: User journeys (typical + alternative flows), UI states, accessibility considerations
+     - **Test Execution Notes**: Prerequisites, testing order, debugging tips, environment-specific notes
+   - **Purpose**: Provides QA with deep implementation knowledge for practical, consolidated test design (Dev's strength: comprehensive analysis; QA's strength: efficient test execution)
+   - Commit to git: `git commit -m "docs(story-X.Y): Create Test Insights document"`
+5. **IF user-facing feature**: Update Navigation Guide at `docs/navigation-guide.md`
+   - Use template (first time): `.bmad-core/templates/navigation-guide-tmpl.md`
+   - Update existing guide: Add new feature to Feature Catalog, update navigation structure, add user journey map, document contextual links, add to Page Inventory
+   - Include: ALL navigation entry points (minimum 2-3: primary menu, contextual links, breadcrumbs), typical + alternative user flows, page routes
+   - **Purpose**: Provides QA with cumulative UI context from ALL previous stories (solves context gap problem - QA now knows what UI exists, where features are located, how to navigate)
+   - Commit to git: `git commit -m "docs(story-X.Y): Update Navigation Guide with [feature-name]"`
+6. Start background processes:
    - Frontend: `npm run dev` (usually port 3000)
    - Backend: `npm run dev:api` (usually port 5001)
-5. **Do NOT run tests** (QA's responsibility)
-6. Output QA Handoff (structured format)
+7. **Run Vitest tests FIRST** (mandatory pre-check before QA Handoff):
+   - Execute: `npm run test`
+   - Verify ALL tests PASS
+   - Record pass count for QA Handoff (e.g., "Vitest: 15 tests pass ✅")
+   - **IF any test fails**: Fix issues before creating QA Handoff (do NOT hand off failing tests to QA)
+8. Basic manual verification (run app locally, click through UI, spot check functionality works)
+9. **Do NOT execute E2E scenarios** with Playwright MCP (QA's responsibility)
+10. Output QA Handoff (structured format) with references to Test Insights document and Navigation Guide
 
 **Test Scenario Writing Guidelines**:
 - One test scenario document per feature/flow
@@ -494,26 +519,51 @@ describe('calculateTax', () => {
 **QA Terminal** (separate Claude Code instance):
 1. Receive QA Handoff from Dev
 2. Read story from `docs/sprint-N/epics/epic-N/story-N.md`
-3. **IF Vitest tests exist**:
+3. **MANDATORY**: Read Test Insights Document from `docs/qa/test-insights/sprint-N/epics/epic-N/{epic}.{story}-{slug}-test-insights.md`
+   - Comprehensive testing analysis from Dev (edge cases, risk areas, realistic test data, technical constraints, debugging tips)
+   - **Purpose**: Provides deep implementation knowledge for practical test design
+   - **How to Use**:
+     - Review ALL sections before writing/executing test scenarios
+     - Use suggested test data (realistic production-like data)
+     - Focus on risk areas identified by Dev
+     - Reference technical constraints for infrastructure setup
+     - Apply debugging tips when issues arise
+   - **Result**: Comprehensive coverage (Dev's analysis) + Efficient execution (your test design)
+4. **IF user-facing feature**: Read Navigation Guide from `docs/navigation-guide.md`
+   - Cumulative UI context showing ALL existing features from previous stories
+   - **Purpose**: Solves context gap - you now know what UI exists, where features are located, how to navigate
+   - **How to Use**:
+     - Read Feature Catalog to understand new feature's navigation entry points (minimum 2-3)
+     - Check User Journey Maps for multi-story workflows (e.g., Upload → View → Transcribe)
+     - Verify navigation structure matches documented menus/links
+     - Use Page Inventory to understand complete UI landscape
+   - **CRITICAL**: If Navigation Guide shows feature has UI (page route, menu item, user journey): You MUST test via frontend with Playwright MCP tools (browser_navigate, browser_click, browser_fill, etc.). NO API shortcuts. Navigation Guide + Test Insights provide complete context for comprehensive E2E testing through UI.
+5. Write practical E2E test scenarios (7-10 tests, 20-30 min execution):
+   - **Two-Stage Test Creation**: Stage 1 (Dev) = Test Insights analysis. Stage 2 (YOU) = Practical test scenario design.
+   - Consolidate related tests based on Test Insights (e.g., combine "upload MP3", "upload WAV", "upload M4A" into single test with multiple file types)
+   - Use realistic test data from Test Insights (not generic "user@test.com" - use Dev's suggested data)
+   - Add debugging context to scenarios (common issues, tools required)
+   - Cover ALL areas identified in Test Insights while optimizing for execution efficiency
+   - **Save scenarios** to: `docs/qa/e2e/sprint-N/epics/epic-N/story-N/scenario-{description}.md`
+6. **IF Vitest tests exist**:
    - Run `npm run test` (or `npm run test:unit`)
    - Verify all tests pass
    - **IF failures**: Document in Developer Handoff, return to Dev
-4. Read E2E test scenarios from `docs/qa/e2e/sprint-N/epics/epic-N/story-N/`
-5. Verify background processes running (http://localhost:3000, etc.)
-6. For each test case in scenarios:
+7. Verify background processes running (http://localhost:3000, etc.)
+8. For each test case in scenarios:
    a. Use `browser_navigate()` to start
    b. Use `browser_snapshot()` to get page structure
    c. Use interaction tools (`browser_click`, `browser_type`, `browser_fill_form`, etc.)
    d. Use `browser_console_messages()` to check for errors
    e. Use `browser_take_screenshot()` to capture evidence
    f. Manually observe: Does behavior match expected?
-7. **IF logic gaps found**: Can add more Vitest tests in `docs/qa/unit/`
-8. **IF environment issues** (processes not running, logs inaccessible, MCP errors): DIAGNOSE issue, DOCUMENT findings, CREATE Developer Handoff, HALT testing (QA diagnoses, Dev fixes)
-9. Code review (only AFTER all tests executed and passed)
-10. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
-11. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
+9. **IF logic gaps found**: Can add more Vitest tests in `docs/qa/unit/`
+10. **IF environment issues** (processes not running, logs inaccessible, MCP errors): DIAGNOSE issue, DOCUMENT findings, CREATE Developer Handoff, HALT testing (QA diagnoses, Dev fixes)
+11. Code review (only AFTER all tests executed and passed)
+12. Decide gate: PASS, CONCERNS, FAIL, or WAIVED
+13. Create gate file at `docs/qa/gates/sprint-N/epics/epic-N/{epic}.{story}-{slug}.yml`
     - Example: `docs/qa/gates/sprint-2/epics/epic-2/2.1-media-upload.yml`
-12. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
+14. Output Developer Handoff (if issues) or Completion Handoff (if PASS)
 
 **QA Decision Criteria** (STRICT - Runtime Testing Mandatory):
 - **PASS**: ALL Vitest + E2E tests executed and passed, no errors, behavior matches expected, runtime verification complete
