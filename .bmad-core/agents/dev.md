@@ -111,7 +111,113 @@ commands:
           - CRITICAL: DO NOT modify Status, Story, Acceptance Criteria, Dev Notes, Testing sections, or any other sections not listed above
       - blocking: 'HALT for: Unapproved deps needed, confirm with user | Ambiguous after story check | 3 failures attempting to implement or fix something repeatedly | Missing config | Failing regression'
       - ready-for-review: 'Code matches requirements + All validations pass + Follows standards + File List complete'
-      - completion: "All Tasks and Subtasks marked [x] and have tests→RUN VITEST TESTS (npm run test) and verify ALL PASS - this is MANDATORY pre-check before QA Handoff (DON'T BE LAZY, EXECUTE and CONFIRM all Vitest tests pass, record pass count for QA Handoff)→Basic manual verification (run app locally, click through UI, spot check functionality)→Ensure File List is Complete→run the task execute-checklist for the checklist story-dod-checklist→IF backend files modified: Execute Backend Restart Protocol (stop old PIDs, restart backend, verify, record new PID + timestamp)→Start all required background processes (frontend, backend, workers) and verify running→COMMIT implementation (feat(story-X.Y): Implementation complete with task list, test counts, file counts, footer 'Authored by O2Scale' per git-workflow-guide.md Commit Point 1)→PUSH to remote (git push origin story/{epic}.{story}-{slug} OR git push if tracking set, backs up work, enables collaboration, visible progress)→Create Test Insights Document at docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md using .bmad-core/templates/test-insights-tmpl.md (comprehensive analysis: AC breakdown with happy/edge/error scenarios, technical constraints, risk areas, realistic test data, error handling coverage, debugging tips, UI states, test priorities)→COMMIT Test Insights (git add docs/qa/test-insights/.../test-insights.md && git commit -m 'docs(story-X.Y): Create Test Insights document' with footer 'Authored by O2Scale')→PUSH to remote→Create detailed QA Handoff document (docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md) per handoff-templates.md with references to Test Insights document→COMMIT QA Handoff to git (git add docs/handoffs/.../qa-handoff.md && git commit -m 'handoff(story-X.Y): Create QA handoff - implementation complete' with footer 'Authored by O2Scale')→PUSH to remote (git push, ensures handoff is backed up)→Output QA Handoff compact snippet to terminal with document reference→set story status: 'Ready for Review'→HALT"
+      - completion: |
+          THREE-PHASE WORKFLOW with mandatory git commits at each phase:
+
+          ═══════════════════════════════════════
+          PHASE 1: IMPLEMENTATION (Ends with Git Commit)
+          ═══════════════════════════════════════
+
+          1. Verify Prerequisites:
+             - [ ] All Tasks and Subtasks marked [x]
+             - [ ] All tests written (Vitest for complex logic, E2E scenarios in markdown)
+             - [ ] File List is complete in story file
+
+          2. Run Vitest Tests (MANDATORY):
+             - Execute: npm run test
+             - Verify: ALL tests PASS
+             - Record: Pass count for QA Handoff (e.g., "Vitest: 15 tests pass ✅")
+             - HALT if ANY test fails - fix before proceeding
+
+          3. Manual Verification:
+             - Run app locally
+             - Click through UI
+             - Spot check functionality works
+
+          4. Execute Story DoD Checklist:
+             - Run task: execute-checklist for checklist story-dod-checklist
+             - Verify all applicable sections complete
+
+          5. Process Management:
+             - IF backend files modified: Execute Backend Restart Protocol (stop old PIDs, wait 5 sec, restart, verify, record new PID + timestamp)
+             - Start all required background processes (frontend, backend, workers)
+             - Verify all processes running
+             - Record URLs and PIDs for QA Handoff
+
+          6. 🚨 CHECKPOINT 1: COMMIT IMPLEMENTATION (BLOCKING) 🚨
+             - Stage all implementation files: git add .
+             - Create commit using format from git-workflow-guide.md Commit Point 1:
+               ```
+               feat(story-X.Y): Implementation complete
+
+               Tasks completed:
+               - [List key tasks from story]
+
+               Files: X created, Y modified
+               Tests: Z Vitest, W E2E scenarios
+
+               Authored by O2Scale
+               ```
+             - Push to remote: git push origin story/{epic}.{story}-{slug} OR git push
+             - Verify commit successful: git log -1
+             - 🛑 HALT if git commit fails - do not proceed to Phase 2
+
+          ═══════════════════════════════════════
+          PHASE 2: DOCUMENTATION (Ends with Git Commit)
+          ═══════════════════════════════════════
+
+          7. Create Test Insights Document:
+             - Location: docs/qa/test-insights/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-test-insights.md
+             - Use template: .bmad-core/templates/test-insights-tmpl.md
+             - Fill ALL sections: Story Context, AC Testing Map (happy/edge/error), Technical Constraints, Risk Areas, Realistic Test Data, Integration Insights, UI/UX Insights, Test Execution Notes
+             - Purpose: Provides QA with deep implementation knowledge for practical test design
+
+          8. 🚨 CHECKPOINT 2: COMMIT TEST INSIGHTS (BLOCKING) 🚨
+             - Stage: git add docs/qa/test-insights/.../test-insights.md
+             - Commit: git commit -m "docs(story-X.Y): Create Test Insights document" with footer "Authored by O2Scale"
+             - Push: git push
+             - 🛑 HALT if git commit fails - do not proceed to Phase 3
+
+          ═══════════════════════════════════════
+          PHASE 3: QA HANDOFF (Ends with Git Commit)
+          ═══════════════════════════════════════
+
+          9. Run Pre-QA Validation (MANDATORY):
+             - Execute: bash .bmad-core/scripts/validate-pre-qa-handoff.sh
+             - Verify: Validation passes (all implementation committed, Test Insights exists, processes running)
+             - 🛑 HALT if validation fails - resolve errors before proceeding
+
+          10. Create QA Handoff Document:
+              - Location: docs/handoffs/sprint-{N}/epics/epic-{N}/{epic}.{story}-{slug}-qa-handoff.md
+              - Follow format from: .bmad-core/data/handoff-templates.md
+              - Include: Implementation summary, background processes (URLs/PIDs), files created/modified, Test Insights reference, edge cases, validation checklist, dev notes
+
+          11. 🚨 CHECKPOINT 3: COMMIT QA HANDOFF (BLOCKING) 🚨
+              - Stage: git add docs/handoffs/.../qa-handoff.md
+              - Commit: git commit -m "handoff(story-X.Y): Create QA handoff - implementation complete" with footer "Authored by O2Scale"
+              - Push: git push
+              - 🛑 HALT if git commit fails
+
+          12. Output QA Handoff Snippet:
+              - Use EXACT format from .bmad-core/data/handoff-templates.md "QA Handoff" compact snippet
+              - Output to terminal ONLY (10-15 lines)
+              - Include document reference
+
+          13. Set Story Status:
+              - Update story file: Status = "Ready for Review"
+
+          14. HALT:
+              - Wait for QA to paste QA Handoff and begin testing
+              - Do NOT proceed until QA provides feedback
+
+          ═══════════════════════════════════════
+          SUMMARY: 3 Git Commits Required
+          ═══════════════════════════════════════
+          Commit 1: feat(story-X.Y): Implementation complete
+          Commit 2: docs(story-X.Y): Create Test Insights document
+          Commit 3: handoff(story-X.Y): Create QA handoff - implementation complete
+
+          All three commits MUST be pushed to remote before halting for QA.
   - explain: teach me what and why you did whatever you just did in detail so I can learn. Explain to me as if you were training a junior engineer.
   - review-qa: run task `apply-qa-fixes.md'
   - complete-story: |
